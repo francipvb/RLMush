@@ -35,7 +35,7 @@
 	
 	Búsqueda y navegación:
 	- mapa navegar <texto> 	 - Realiza una búsqueda de texto completo entre las salas cercanas y ofrece una lista si hay muchas posibilidades. En caso de existir solo una, comenzará a navegar hasta ella automáticamente.
-	- mapa buscar <texto> 	 - Realiza una búsqueda de texto completo entre todas las salas del MUD (poco útil) y la que se seleccione será marcada como la sala actual.
+	- mapa buscar <texto> 	 - Realiza una búsqueda de texto completo entre todas las salas del MUD y la que se seleccione será marcada como la sala actual.
 	
 	Base de Datos:
 	- mapa importar 		 - Importa el mapa desde una base de datos (solo soporta mapas de ZMud).
@@ -62,20 +62,10 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
 <triggers>
   <trigger
    enabled="y"
-   match="^(?:(?:.*?)(?:\&gt; |\] |\} )|)Cola de comandos borrada \(\'peleas parar\' detendrá los ataques si es lo que querías\)\.$"
+   match="^&prefijo;Cola de comandos borrada \(\'peleas parar\' detendrá los ataques si es lo que querías\)\.$"
    regexp="y"
    sequence="100"
    script="on_stop"
@@ -99,7 +89,7 @@
    enabled="y"
    group="General"
    keep_evaluating="y"
-   match="^(?:(.*?)(\&gt; |\] |\] )|)(?P&lt;room_name&gt;.*?) \[(?P&lt;exits&gt;[a-z\|\-\~\*\,]*)\]\ $"
+   match="^&prefijo;(?P&lt;room_name&gt;.*?) \[(?P&lt;exits&gt;[a-z\|\-\~\*\,]*)\]\ $"
    name="mirar"
    regexp="y"
    script="on_mirar"
@@ -183,6 +173,7 @@
    match="mapa editar"
    script="on_editar"
    sequence="100"
+   enabled="y"
   >
   </alias>
   
@@ -193,12 +184,18 @@
    enabled="y"
    sequence="100">
   </alias>
+
+  <alias
+   match="^mapa conectar (?P&lt;id&gt;\d*?) (?P&lt;hacia&gt;\w*?) (?P&lt;desde&gt;\w*?)$"
+   regexp="y"
+   sequence="100"
+   script="on_conectar"
+   enabled="y"
+  >
+  </alias>
 </aliases>
 
 <!--  Script  -->
-
-
-
 <script>
 <![CDATA[
 require "rl_stuff"
@@ -212,21 +209,25 @@ require "ppi"
 local db = nil
 local db_name = GetInfo(67).."mapa_rl.sqlite"
 
--- El directions plugin, para monitorear el sigilar, principalmente
-local directions = nil
-
 -- Las salas ya cargadas y cacheadas
 local rooms = {}
 
 -- La config (exigida por el módulo del mapper)
 local config = {}
 
--- historial de movimientos
+-- Posición actual en el mapa e historial de posiciones.
 local current = {}
+
+-- Datos para el modo edición
+local editar = {
+	dirs = {},
+	slugs = {},
+}
 
 -- Datos variados
 local data = {}
 
+-- Un mapeo de salidas para poder saber cuales son válidas
 local mapa_salidas = {
 	n = "n",
 	norte = "n",
@@ -257,8 +258,12 @@ local mapa_salidas = {
 	ab = "d",
 	abajo = "d",
 	down = "d",
+	fuera = "fu",
+	dentro = "de",
+	puerta = "pu"
 }
 
+-- Para obtener la salida inversa en el modo de edición
 local salidas_inversas = {
 	e = "w",
 	w = "e",
@@ -290,10 +295,16 @@ local salidas_localizadas = {
 
 local enviar = {
 	w = "o",
+	west = "o",
 	sw = "so",
 	nw = "no",
 	u = "ar",
+	up = "ar",
 	d = "ab",
+	down = "ab",
+	north = "n",
+	south = "s",
+	east = "e",
 }
 
 -- Tomado y adaptado de www.gammon.com/db
@@ -496,7 +507,6 @@ local function guardar_sala(sala)
 						update salidas set hasta_id = :hasta_id
 						where desde_id = :desde_id and hasta_id = :orig_hasta_id;
 					]], {hasta_id = sala.exits[v.nombre], desde_id = v.desde_id, orig_hasta_id = v.hasta_id})
-					
 				end -- if
 				
 				-- recordamos la salida, para no tener que procesarla denuevo
@@ -505,7 +515,7 @@ local function guardar_sala(sala)
 			
 			-- Luego de pasar por las de la db, pasamos por la de la sala cargada para guardarlas
 			for k, v in pairs(sala.exits) do
-				if salidas_cambiadas[k] then
+				if salidas_cambiadas[v] then
 					results = query([[
 						update salidas set nombre = :nombre
 						where desde_id = :desde_id and hasta_id = :hasta_id;
@@ -585,34 +595,80 @@ local function desdeSalida(sala, salida)
 	assert(type(salida) == "string", "La salida solo puede ser una cadena.")
 	
 	-- No es necesario ningún proceso complejo
-	return getRoom(sala).exits[salidaValida(salida, sala)]
+	return assert(getRoom(sala).exits[salidaValida(salida, sala)], string.format("No se encuentra ninguna sala en dirección a %s.", salida))
 end -- function
 
 local function mover(sala)
 	local dest_sala
 	assert(sala, "No se proporcionó un Id de sala ni una dirección.")
 	assert(type(sala) == "number" or type(sala) == "string", "La sala tiene que ser un Id numérico o una salida.")
-	
+
 	-- Lo primero es encontrar la sala por su ID, si el dato es numérico
 	if type(sala) == "number" then
 		dest_sala = assert(getRoom(sala), "La sala proporcionada no se pudo encontrar en la base de datos.")
 	else
+		local mi_sala
+
 		-- En caso de que sea una string, sencillamente buscamos entre las salidas de la sala actual.
-		
+
 		-- Puede que no haya una sala actual, por lo que sencillamente salimos para evitarnos problemas
 		if not current.room then
 			return
 		end -- if
-		
+
 		-- Evitamos errores
-		local success, mi_sala = pcall(getRoom,desdeSalida(current.room, sala))
-		
+		local success, s_id = pcall(desdeSalida, current.room, sala)
+
+		-- Si no hay éxito, significa que nos falta mapear una sala
 		if not success then
-			-- TODO: Evitar errores con salas no mapeadas
-			-- por ahora, sencillamente nos deshacemos de todo rastro de la room
-			mapper.hide()
-			current = {}
-			return
+
+			-- Si el modo de edición no está habilitado, salimos.
+			if not var.editar then
+				-- Limpiamos los datos, pues no hay salida mapeada ni estamos en modo de edición.
+				current = {}
+				mapper.hide()
+				return
+			end -- if
+			
+			-- Creamos una sala básica
+			local sala_nueva = {
+				name = data.nombre,
+				exits = {}
+			}
+			
+			local anterior = getRoom(current.room)
+
+			-- Si la salida es estándar, sencillamente registramos la inversa
+			if mapa_salidas[sala] then
+				sala_nueva.exits[salidas_inversas[mapa_salidas[sala]]] = anterior.id
+			end -- if
+
+			db:exec("begin transaction;")
+			
+			-- Guardamos la sala nueva para poder obtener el ID
+			local guardada = pcall(guardar_sala, sala_nueva)
+
+			if not guardada then
+				db:exec("rollback;")
+				assert(guardada, db:errmsg())
+			end
+
+			-- Registramos la salida desde la sala anterior a esta.
+			anterior.exits[mapa_salidas[sala] or sala] = sala_nueva.id
+
+			-- guardamos la otra sala
+			guardada = pcall(guardar_sala,anterior)
+
+			if not guardada then 
+				db:exec("rollback;")
+				assert(guardada, db:errmsg())
+			end
+			
+			db:exec("commit transaction;")
+			
+			mi_sala = sala_nueva
+		else
+			mi_sala = getRoom(s_id)
 		end -- if
 		
 		dest_sala = mi_sala
@@ -667,7 +723,7 @@ end -- function
 function mover_gmcp(mensaje, dir)
 	mover(dir:sub(2,dir:len()-1))
 	if not current.room then
-		local rooms = findRoomByName(data.nombre)
+		local rooms = findRoomsWithNameContaining(data.nombre)
 		
 		if #rooms == 1 then
 			mover(rooms[1].sala_id)
@@ -982,7 +1038,14 @@ function on_importar()
 			rs:close()
 			coroutine.yield(result)
 			
-			rs = access_db:Execute("select ExitId, FromId, ToId, Name, DirName from ExitTbl, DirTbl where DirType = DirId-1;")
+			rs = access_db:Execute([[
+				select ExitId, FromId, ToId, DirName from ExitTbl inner join DirTbl
+				on ExitTbl.DirType = DirTbl.DirId-1
+				union select ExitId, FromId, ToId, Name from ExitTbl
+				where DirType = -1
+				or DirType = 10
+				or DirType = 11;
+			]])
 
 			rs:MoveFirst()
 			while not rs.EOF do
@@ -990,8 +1053,7 @@ function on_importar()
 					ExitId = tonumber(rs.Fields:item(0).Value),
 					FromId = tonumber(rs.Fields:Item(1).Value),
 					ToId = tonumber(rs.Fields:Item(2).Value),
-					Name = rs.Fields:Item(3).Value,
-					DirName = rs.Fields:Item(4).Value
+					DirName = rs.Fields:Item(3).Value,
 				}
 				coroutine.yield(row)
 				rs:MoveNext()
@@ -1016,25 +1078,26 @@ function on_importar()
 			
 			local continue, salida = coroutine.yield()
 			local debugged = false
-			
 			while continue do
-
 				local datos = {
-					desde = ids_nuevos[salida.FromId],
-					hasta = ids_nuevos[salida.ToId]
+					desde = ids_nuevos[tonumber(salida.FromId)],
+					hasta = ids_nuevos[tonumber(salida.ToId)],
+					nombre = mapa_salidas[salida.DirName] or salida.DirName
 				}
 
-				if salida.Name and salida.Name ~= "" then
-					datos.nombre = salida.Name
-				else
-					datos.nombre = mapa_salidas[salida.DirName]
-				end -- if
 
 				local exists = query([[
 					select count(*) count from salidas
 					where desde_id = :desde
 					and hasta_id = :hasta;
 				]], datos)[1]
+
+				if not debugged and (not datos.desde or not datos.hasta) then
+					require("tprint")
+					tprint(datos)
+					tprint(sala)
+					debugged=true
+				end -- if
 
 				if exists.count == 0 then
 					local success, result = pcall(query, [[
@@ -1069,8 +1132,12 @@ function on_importar()
 		while coroutine.status(leer_access) ~= "dead" do
 			success, result = coroutine.resume(leer_access)
 			
-			if result then
-				importar_sala(result)
+			if success then
+				if result then importar_sala(result) end
+			else
+				coroutine.yield(string.format("Error: %s", result))
+				db:exec("rollback;")
+				return
 			end -- if
 
 			local errcode = db:errcode()
@@ -1085,10 +1152,23 @@ function on_importar()
 
 		coroutine.resume(importar_salidas)
 		while coroutine.status(leer_salidas) ~= "dead" do
-			result, salida = coroutine.resume(leer_salidas)
-			local success, message = coroutine.resume(importar_salidas, true, salida)
-			local errcode = db:errcode()
-			assert(errcode == 0 or errcode == 100 or errcode == 101, db:errmsg())
+			local success, salida = coroutine.resume(leer_salidas)
+			
+			if not success then
+				coroutine.yield(string.format("Error: %s", salida))
+				db:exec("rollback;")
+				return
+			end -- if
+			
+			if salida then
+				success, message = coroutine.resume(importar_salidas, true, salida)
+				local errcode = db:errcode()
+				if not (errcode == 0 or errcode == 100 or errcode == 101) then
+					coroutine.yield(db:errmsg())
+					db:exec("rollback;")
+					return
+				end -- if
+			end -- if
 			
 			pasadas = pasadas + 1
 			if pasadas == 200 then
@@ -1162,7 +1242,7 @@ function on_ir(name, line, wildcards)
 		return false
 	end -- prueba
 
-	mapper.find(prueba, false, #salas, true)
+	mapper.find(prueba, false, 20, true)
 end -- on_ir
 
 function on_limpiar(name, line, wildcards)
@@ -1205,13 +1285,50 @@ function on_stop()
 end -- on_stop
 
 function on_editar(name,line,wc)
-
+	if not var.editar then
+		mapper.mapprint("Activando el modo de edición del mapa.")
+		var.editar = true
+	else
+		mapper.mapprint("Modo de edición desactivado.")
+		var.editar = nil
+	end -- if
 end -- function
 
 function on_posicionar(n,l,wc)
 	mapper.mapprint(string.format("Estableciendo la sala %i como la sala actual.", wc.id))
 	mover(tonumber(wc.id))
 end -- function
+
+function on_conectar(name,line,wildcards)
+	local desde = getRoom(current.room)
+	local hasta = getRoom(tonumber(wildcards.id))
+	
+	if not desde then
+		mapper.maperror("No hay ninguna sala reconocida.")
+		return
+	end -- if
+	
+	if not hasta then
+		mapper.maperror("La sala con la que se quiere conectar no existe.")
+		return
+	end -- if
+	
+	local conectar = utils.msgbox(string.format("Se va a conectar con la sala %s. Proseder?", hasta.name), "Editar mapa", "yesno")
+	
+	if conectar == "yes" then
+		desde.exits[mapa_salidas[wildcards.hacia] or wildcards.hacia] = hasta.id
+		hasta.exits[mapa_salidas[wildcards.desde] or wildcards.desde] = desde.id
+		db:exec("begin transaction;")
+		guardar_sala(desde)
+		guardar_sala(hasta)
+		db:exec("commit transaction;")
+		rooms[desde.id] = nil
+		rooms[hasta.id] = nil
+		getRoom(desde.id)
+		getRoom(hasta.id)
+		mapper.draw(current.room)
+	end -- if
+end -- on_conectar
 
 ]]>
 </script>
