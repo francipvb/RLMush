@@ -533,31 +533,6 @@ local function guardar_sala(sala)
 	return sala
 end -- guardar_sala
 
-local function importar_sala(room)
-	local result
-	local sala = {
-		name = room.Name
-	}
-
-	-- antes de procesarla, comprobamos que ya no haya sido importada:
-	if query([[
-			select count(*) as 'exists' from salas_importadas
-			where id_viejo = :ObjId;
-		]], room)[1].exists == 0 then
-		sala = guardar_sala(sala)
-
-		if sala then
-			result = query([[
-				insert into salas_importadas (id_viejo, id_nuevo)
-				values(:viejo_id, :nuevo_id);
-			]], {viejo_id = room.ObjId, nuevo_id = sala.id})
-		end -- guardar_sala
-	else
-	
-	end -- if
-
-end -- function
-
 local function salidaValida(salida, sala)
 	local mi_sala
 
@@ -999,6 +974,7 @@ function on_importar()
 	
 	agregarCoro("importar", function()
 		require("luacom")
+		local exito, resultado
 		
 		-- Primero que nada tenemos que abrir la base de datos que contiene el mapa de zmud
 		local zmud_db = luacom.CreateObject("ADODB.Connection")
@@ -1007,7 +983,7 @@ function on_importar()
 		assert(zmud_db.State == 1, "No se abrió la base de datos.")
 		
 		-- Esta función lee las salas desde la base de datos y no hace nada mas.
-		local leer_access = coroutine.create(function(access_db)
+		local leer_salas = coroutine.create(function(access_db)
 			local rs = access_db:Execute("select count(*) from ObjectTbl;")
 			rs:MoveFirst()
 			local result = rs.Fields:Item(0).Value
@@ -1039,12 +1015,10 @@ function on_importar()
 			coroutine.yield(result)
 			
 			rs = access_db:Execute([[
-				select ExitId, FromId, ToId, DirName from ExitTbl inner join DirTbl
+				select ExitId, FromId, ToId, Name from ExitTbl
+				where DirType+1 not in (select distinct DirId from DirTbl)
+				union select ExitId, FromId, ToId, DirName from ExitTbl inner join DirTbl
 				on ExitTbl.DirType = DirTbl.DirId-1
-				union select ExitId, FromId, ToId, Name from ExitTbl
-				where DirType = -1
-				or DirType = 10
-				or DirType = 11;
 			]])
 
 			rs:MoveFirst()
@@ -1060,129 +1034,225 @@ function on_importar()
 			end -- while
 			
 			rs:Close()
-		end)
-
-		local success, result = coroutine.resume(leer_access, zmud_db)
-		local sala_count = result
-		local current = 0
-		coroutine.yield(string.format("Se encontraron %i salas en la base de datos.", sala_count))
-
-
-		local importar_salidas = coroutine.create(function()
-			local q = query("select * from salas_importadas;")
-			local ids_nuevos = {}
+		end) -- function
+		
+		local importar_sala = coroutine.create(function(sala)
+			-- Esta consulta preparada es la que va a insertar las salas.
+			local insertar = db:prepare([[
+				insert into salas (nombre)
+				values(:nombre)
+			]])
 			
-			for k, v in pairs(q) do
-				ids_nuevos[tonumber(v.id_viejo)] = tonumber(v.id_nuevo)
-			end -- for
+			-- Esta inserta la sala en la tabla de salas importadas.
+			local agregar_importada = db:prepare([[
+				insert into salas_importadas (id_viejo, id_nuevo)
+				values(:id_viejo, :id_nuevo);
+			]])
 			
-			local continue, salida = coroutine.yield()
-			local debugged = false
-			while continue do
-				local datos = {
-					desde = ids_nuevos[tonumber(salida.FromId)],
-					hasta = ids_nuevos[tonumber(salida.ToId)],
-					nombre = mapa_salidas[salida.DirName] or salida.DirName
-				}
-
-
-				local exists = query([[
-					select count(*) count from salidas
-					where desde_id = :desde
-					and hasta_id = :hasta;
-				]], datos)[1]
-
-				if not debugged and (not datos.desde or not datos.hasta) then
-					require("tprint")
-					tprint(datos)
-					tprint(sala)
-					debugged=true
-				end -- if
-
-				if exists.count == 0 then
-					local success, result = pcall(query, [[
-						insert into salidas (desde_id, hasta_id, nombre)
-						values (:desde, :hasta, :nombre);
-					]], datos)
-					
-					if success then
-						-- Registramos que esta salida se importó desde la base de datos
-						success, result = pcall(query,[[
-							insert into salidas_importadas (id_viejo, id_nuevo)
-							values(:viejo, :nuevo);
-						]], {viejo = salida.ExitId, nuevo=db:last_insert_rowid()})
-						
-						assert(success, result)
-					end -- success
-				end -- if
+			-- Esta sentencia busca entre las salas importadas registradas en la base de datos para evitar volver a importar la misma sala.
+			local pedir_importada = db:prepare([[
+				select count(*) > 0 as existe from salas_importadas
+				where id_nuevo = :id_nuevo;
+			]])
+			
+			-- Si se pasan datos, importar la sala. En caso contrario, salir.
+			while sala do
+				-- Datos temporales varios
+				local result, fila
+				pedir_importada:bind_names({id_viejo = sala.ObjId})
+				result = pedir_importada:step()
 				
-				continue, salida = coroutine.yield()
-			end -- while
+				-- Por defecto la sala no existe.
+				local existe = false
+				
+				if result == sqlite3.ROW then
+					existe = tonumber(pedir_importada:get_value(0)) ~= 0
+				end -- result
+				
+				-- Solo hay una fila, así que reseteamos, sea lo que sea que haya pasado.
+				pedir_importada:reset()
+				
+				if not existe then
+					-- Importamos la sala
+					local datos = {nombre = sala.Name}
+					
+					insertar:bind_names(datos)
+					local result = insertar:step()
+					
+					if result == sqlite3.DONE then
+						agregar_importada:bind_names({
+							id_viejo = sala.ObjId,
+							id_nuevo = db:last_insert_rowid()
+						})
+						result = agregar_importada:step()
+						
+						-- Reseteamos la consulta.
+						agregar_importada:reset()
+					else
+						mapper.maperror(string.format("Error %i: %s", db:errcode(), db:errmsg()))
+						break
+					end -- result
+					
+					insertar:reset()
+				end -- existe
+				
+				sala = coroutine.yield()
+			end -- sala
+			
+			insertar:finalize()
+			agregar_importada:finalize()
+			pedir_importada:finalize()
 		end) -- function
 
-		-- Lo primero es empezar una transacción
-		query("begin transaction")
-		
-		result, sal_count = coroutine.resume(leer_salidas, zmud_db)
-		coroutine.yield(string.format("Se han encontrado %i conexiones en la base de datos.", sal_count))
-
-		-- Este es un control para que no se ejecute todo el código en un solo tick
-		local pasadas = 0
-
-		while coroutine.status(leer_access) ~= "dead" do
-			success, result = coroutine.resume(leer_access)
+		local importar_salidas = coroutine.create(function(salida)
+			local ids_nuevos = {}
 			
-			if success then
-				if result then importar_sala(result) end
-			else
-				coroutine.yield(string.format("Error: %s", result))
-				db:exec("rollback;")
-				return
-			end -- if
-
-			local errcode = db:errcode()
-			assert(errcode == 0 or errcode == 100 or errcode == 101, db:errmsg())
+			for fila in db:nrows("select * from salas_importadas;") do
+				ids_nuevos[fila.id_viejo] = fila.id_nuevo
+			end -- for
 			
-			pasadas = pasadas + 1
-			if pasadas == 200 then
-				coroutine.yield()
-				pasadas = 0
-			end -- if
-		end -- while
-
-		coroutine.resume(importar_salidas)
-		while coroutine.status(leer_salidas) ~= "dead" do
-			local success, salida = coroutine.resume(leer_salidas)
+			-- Estas sentencias sql preparadas son las que insertan la salida en la sala, además de registrarla en la tabla de salas importadas.
+			local insertar_salida = db:prepare([[
+				insert into salidas (desde_id, hasta_id, nombre)
+				values(:desde_id, :hasta_id, :nombre)
+			]])
 			
-			if not success then
-				coroutine.yield(string.format("Error: %s", salida))
-				db:exec("rollback;")
-				return
-			end -- if
+			local insertar_importada = db:prepare([[
+				insert into salidas_importadas (id_viejo, id_nuevo)
+				values(:id_viejo, :id_nuevo)
+			]])
 			
-			if salida then
-				success, message = coroutine.resume(importar_salidas, true, salida)
-				local errcode = db:errcode()
-				if not (errcode == 0 or errcode == 100 or errcode == 101) then
-					coroutine.yield(db:errmsg())
-					db:exec("rollback;")
-					return
+			local pedir_importada = db:prepare([[
+				select * from salidas_importadas
+				where id_viejo = :id_viejo;
+			]])
+			
+			local pedir_existe = db:prepare([[
+				select * from salidas
+				where desde_id = :desde_id and hasta_id = :hasta_id;
+			]])
+			
+			local actualiza_salida = db:prepare([[
+				update salidas
+				set nombre = :nombre
+				where salida_id = :id;
+			]])
+			
+			while salida do
+				-- Primero buscamos si la salida ya está importada
+				pedir_importada:bind_values(salida.ExitId)
+				
+				if pedir_importada:step() ~= sqlite3.ROW then
+					-- No existe, por tanto hay que importarla
+					local datos = {
+						desde = ids_nuevos[salida.FromId],
+						hasta = ids_nuevos[salida.ToId],
+						nombre = mapa_salidas[salida.DirName] or salida.DirName
+					}
+					
+					-- Primero nos aseguramos de que la salida no esté importada ya en la base de datos
+					pedir_existe:bind_values(datos.desde, datos.hasta)
+					
+					if pedir_existe:step() == sqlite3.ROW then
+						-- Actualizamos
+						actualiza_salida:bind_values(datos.nombre, pedir_existe:get_value(0))
+						actualiza_salida:step()
+						actualiza_salida:reset()
+					else
+						-- insertamos
+						insertar_salida:bind_values(datos.desde, datos.hasta, datos.nombre)
+						
+						if insertar_salida:step() == sqlite3.DONE then
+							insertar_importada:bind_values(salida.ExitId, db:last_insert_rowid())
+							insertar_importada:step()
+							insertar_importada:reset()
+						end -- if
+						
+						insertar_salida:reset()
+					end -- if
+					
+					pedir_existe:reset()
 				end -- if
+				
+				pedir_importada:reset()
+				
+				salida = coroutine.yield()
+			end -- salida
+			
+			-- Liberamos recursos
+			pedir_importada:finalize()
+			insertar_salida:finalize()
+			insertar_importada:finalize()
+		end) -- function
+		
+		-- Ahora el proceso real, en el que vamos a usar las corrutinas antes creadas.
+		exito, resultado = coroutine.resume(leer_salas, zmud_db)
+		local cuenta_salas = resultado
+		exito, resultado = coroutine.resume(leer_salidas, zmud_db)
+		local cuenta_salidas = resultado
+		mapper.mapprint(string.format("Se han encontrado %i salas y %i conexiones en la base de datos.", cuenta_salas, cuenta_salidas))
+		
+		-- Un contador para evitar todo el trabajo de un tirón y no colgar mushclient
+		local maxpasos, pasos = 300, 0
+
+		-- Lo primero es empezar una transacción
+		db:exec("begin transaction;")
+		
+		-- primero importamos las salas
+		while coroutine.status(leer_salas) ~= "dead" do
+			exito, resultado = coroutine.resume(leer_salas)
+	
+			local sala = resultado
+			
+			exito, resultado = coroutine.resume(importar_sala, sala)
+			
+			if not exito then
+				mapper.maperror(string.format("Error: %s", resultado))
+				break
 			end -- if
 			
-			pasadas = pasadas + 1
-			if pasadas == 200 then
+			pasos = pasos + 1
+			
+			if pasos == maxpasos then
 				coroutine.yield()
-				pasadas = 0
+				pasos = 0
 			end -- if
-		end -- while
+		end -- resultado
 		
-		coroutine.resume(importar_salidas, false)
+		
+		while coroutine.status(leer_salidas) ~= "dead" do
+			exito, resultado = coroutine.resume(leer_salidas)
+
+			local salida = resultado
+			
+			exito, resultado = coroutine.resume(importar_salidas, salida)
+			
+			if not exito then
+				mapper.maperror(string.format("Error: %s", resultado))
+				break
+			end -- if
+			
+			pasos = pasos + 1
+			
+			if pasos == maxpasos then
+				coroutine.yield()
+				pasos = 0
+			end -- if
+		end -- status de leer_salidas
+		
+		local salas_actual = query("select count(*) as cuenta from salas")[1].cuenta
+		local salidas_actual = query("select count(*) as cuenta from salidas")[1].cuenta
+		
+		mapper.mapprint(string.format([[
+			En la base de datos original se encontraron %i salas y se importaron %i salas correctamente.
+			Se encontraron además %i salidas, de las cuales %i se importaron correctamente.
+		]], cuenta_salas, salas_actual, cuenta_salidas, salidas_actual))
+		
+		db:exec("commit;")
 		zmud_db:Close()
 		zmud_db = nil
 		
-		query("commit;")
-		coroutine.yield("La importación se realizó correctamente.")
+		mapper.mapprint("La importación se realizó correctamente.")
 		rooms = {}
 		agregarCoro("cargar", cargar_salas)
 	end) -- function
