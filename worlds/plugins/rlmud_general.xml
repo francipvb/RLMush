@@ -56,22 +56,22 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   >
   </trigger>
   <trigger
-   enabled="y"
+   enabled="n"
    group="Nickeador"
-   match="^(?:[\-]*?)\] (?P&lt;pjlist&gt;Mortales|Enemigos) \[(?:[\-]*?)|Mortales(?:\w*?)$"
+   match="^(?:[\-]+\] |)Mortales(?: \[[\-]+|\s+)$"
    name="start_who"
    regexp="y"
    script="on_who"
-   sequence="100"
+   sequence="80"
   >
   </trigger>
   <trigger
    group="Nickeador"
-   match="^(?:\s{1,})(?P&lt;pjname&gt;[a-zA-Z]*?) (?:.*? |)(?:la|el) (?:.*?)$"
+   match="^(?:\s+)(?P&lt;pjname&gt;[a-zA-Z]*?) (?:.*? |)(?:la|el) (?:.*?)$"
    name="add_pj"
    regexp="y"
    script="on_who"
-   sequence="100"
+   sequence="80"
   >
   </trigger>
   <trigger
@@ -253,13 +253,13 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <send>play_sound("notificaciones/ataque a takome.ogg")</send>
   </trigger>
   <trigger
-   enabled="y"
+   enabled="n"
    group="Nickeador"
-   match="^(?:[\=]*?\[ |)(?:Hay (.*?) en Eirea|Sólo hay un mortal en Eirea)( \][\=]*?|\s*?)|[\=]*?$"
+   match="^(?:[\=]+\[ |)(?:Hay (.*?) en Eirea)(?: \][\=]+|)|[\=]+$"
    name="stop_who"
    regexp="y"
    script="on_who"
-   sequence="100"
+   sequence="80"
   >
   </trigger>
   <trigger
@@ -2159,28 +2159,38 @@ function list_to_string(list)
 end -- function
 
 function on_who(name, line, wildcards)
-if var.tarjeted == nil or var.pjlist == nil then
-return
-end
-if name == "start_who" then
-pjs[var.pjlist] = {}
-EnableTrigger("add_pj", 1)
-end -- if
+	-- Lo primero es habilitar el trigger de agregación
+	if name == "start_who" then
+		pjs[var.pjlist] = {}
+		EnableTrigger("add_pj", 1)
+		EnableTrigger("stop_who", 1)
+		return
+	end -- if
 
-if name == "add_pj" then
-table.insert(pjs[var.pjlist], wildcards.pjname:lower())
-end -- if
+	-- Luego insertar los nombres que salgan
+	if name == "add_pj" then
+		table.insert(pjs[var.pjlist], wildcards.pjname:lower())
+		return
+	end -- if
 
-if name == "stop_who" then
-EnableTrigger("add_pj", 0)
-var[var.pjlist] = list_to_string(pjs[var.pjlist])
-if var.tarjeted_list == var.pjlist then
-var.tarjet = var[var.pjlist]
-end
-var.pjlist = nil
-var.tarjeted = nil
-end -- if
+	-- Y cuando termine, desactivar todo
+	if name == "stop_who" then
+		EnableTrigger("add_pj", 0)
+		EnableTrigger("start_who", 0)
+		EnableTrigger("stop_who", 0)
 
+		-- Los nombres los convertimos a una string
+		var[var.pjlist] = list_to_string(pjs[var.pjlist])
+		
+		-- Y seteamos la lista para que se pueda detectar jugadores
+		if var.tarjeted_list == var.pjlist then
+			var.tarjet = var[var.pjlist]
+		end
+		
+		-- Limpiamos todo
+		var.pjlist = nil
+		var.tarjeted = nil
+	end -- if
 end -- on_who
 
 function do_nick(name)
@@ -2189,6 +2199,7 @@ function do_nick(name)
 	pjs.omiq = {}
 
 	Execute("tarjet "..name)
+	EnableTrigger("start_who", 1)
 
 	if name == "enemigos" then
 		Send("who matar hostil")
@@ -2200,7 +2211,6 @@ function do_nick(name)
 		var.tarjeted = nil
 		var.pjlist = nil
 	end -- if
-
 end -- function
 
 function on_room_pjs(n,ln,wc)
