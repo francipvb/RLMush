@@ -38,13 +38,15 @@
 	- mapa buscar <texto> 	 - Realiza una búsqueda de texto completo entre todas las salas del MUD y la que se seleccione será marcada como la sala actual.
 	
 	Base de Datos:
-	- mapa importar 		 - Importa el mapa desde una base de datos (solo soporta mapas de ZMud).
+	- mapa importar 				 - Importa el mapa desde una base de datos (solo soporta mapas de ZMud).
+	- mapa editar 						 - Alterna el modo de edición.
+	- mapa conectar <id> <hacia> <desde> - Conecta la sala actual con la próxima bidireccionalmente.
+	- mapa cambiar <id> <nombre> 		 - Renombra una salida.
 	
 	Este plugin tiene unas cuantas carencias:
 	
 	1. El plugin se apoya totalmente en el módulo llamado "mapper.lua" incluido con MUSHClient, por lo que todos los mensajes relacionados directamente con el mapper están en inglés y su interfaz es poco intuitiva para usuarios de lectores de pantalla.
 	2. Como se dijo arriba, por ahora solo se soportan mapas de ZMud, pero se espera poder añadir soporte para mapas de CMud y Mudlet (incluso de tintin) en el futuro.
-	3. No posee un modo de edición.
 ]]>
 </description>
 
@@ -190,6 +192,15 @@
    regexp="y"
    sequence="100"
    script="on_conectar"
+   enabled="y"
+  >
+  </alias>
+
+  <alias
+   match="^mapa cambiar (?P&lt;id&gt;\d*?) (?P&lt;hacia&gt;\w*?)$"
+   regexp="y"
+   sequence="100"
+   script="on_cambiar"
    enabled="y"
   >
   </alias>
@@ -843,7 +854,6 @@ function OnPluginInstall()
 		get_room = getRoom,
 		show_help = OnHelp,
 		show_up_down = true,
-		-- speedwalk_prefix = GetInfo(21),
 	}
 	
 	mapper.init(init_config)
@@ -942,7 +952,7 @@ end -- on_pedir
 
 function on_ver()
 	if not current.room then
-		mapper.mapprint("No hay ninguna sala reconocida")
+		mapper.maperror("No hay ninguna sala reconocida")
 		return
 	end -- if
 	
@@ -957,7 +967,11 @@ function on_ver()
 	
 	
 	for k, v in pairs(sala.exits) do
-		mapper.mapprint("			${salida}: ${destino}" % {salida = salidas_localizadas[k] or k, destino = getRoom(v).name})
+		mapper.mapprint("			${salida}: ${destino} (${id})" % {
+			salida = salidas_localizadas[k] or k,
+			destino = getRoom(v).name,
+			id = getRoom(v).id
+		})
 	end -- exits
 	
 	mapper.mapprint("		Fin")
@@ -1261,6 +1275,7 @@ end -- function
 function on_buscar(name, line, wildcards)
 	if not data.nombre then
 		mapper.maperror "No hay datos con qué buscar."
+		return
 	end -- if
 	
 	local ids = {}
@@ -1273,6 +1288,7 @@ function on_buscar(name, line, wildcards)
 	
 	if sala then
 		mover(sala)
+		on_ver()
 	end -- selected
 end -- function
 
@@ -1399,6 +1415,51 @@ function on_conectar(name,line,wildcards)
 		mapper.draw(current.room)
 	end -- if
 end -- on_conectar
+
+function on_cambiar(name,line,wc)
+	if not current.room then
+		mapper.maperror("No hay ninguna sala reconocida.")
+		return
+	end -- if
+	
+	if not getRoom(tonumber(wc.id)) then
+		mapper.maperror(string.format("La sala con el Id %s no existe.", wc.id))
+		return
+	end -- if
+	
+	local q = query([[
+		select * from salidas
+		where desde_id = :desde and hasta_id = :hasta
+		limit 1;
+	]], {
+		desde = current.room,
+		hasta = tonumber(wc.id)
+	})[1]
+	
+	-- No vamos a usar la función query para todo, así que creamos una instrucción preparada primero
+	local actualizar = db:prepare([[
+		update salidas
+		set nombre = :nombre
+		where salida_id = :id;
+	]])
+	
+	-- Empezamos una transacción
+	db:exec("begin transaction;")
+	
+	actualizar:bind_values(mapa_salidas[wc.hacia] or wc.hacia, q.salida_id)
+	
+	if actualizar:step() == sqlite3.DONE then
+		mapper.mapprint(string.format("Se cambió la salida de %s a %s.", salidas_localizadas[q.nombre] or q.nombre, salidas_localizadas[wc.hacia] or wc.hacia))
+	end -- if
+	
+	-- Liberamos
+	actualizar:finalize()
+	db:exec("commit transaction;")
+	
+	-- volvemos a dibujar la sala
+	rooms[current.room] = nil
+	mapper.draw(current.room)
+end -- on_cambiar
 
 ]]>
 </script>
