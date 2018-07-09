@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso8859-15"?>
 <!DOCTYPE muclient [
   <!ENTITY prefijo "(?:(?:.*?)(?:\&gt; |\] |\} )|)" >
-  <!ENTITY intens "(?:(con |)(débilmente |poca fuerza |fuerza |mucha fuerza |violentamente |fuerza sobrehumana |fuerza divina |increíble potencia |cólera titánica |))" >
+  <!ENTITY intens "(?:(con (poca fuerza|fuerza|mucha fuerza|fuerza sobrehumana|fuerza divina|increíble potencia|cólera titánica)|débilmente|violentamente) |)" >
   ]>
 <!-- Saved on sábado, mayo 06, 2017, 6:03 p.m. -->
 <!-- MuClient version 4.94 -->
@@ -47,6 +47,7 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   </trigger>
   <trigger
    enabled="y"
+   group="general"
    match="^&prefijo;(?P&lt;pj&gt;.*?) llega desde el (\w*)\.$"
    script="on_llegar"
    lowercase_wildcard="y"
@@ -57,7 +58,7 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <trigger
    enabled="y"
    group="Nickeador"
-   match="^(?:[\-]*?)\] (?P&lt;pjlist&gt;Mortales|Enemigos) \[(?:[\-]*?)$"
+   match="^(?:[\-]*?)\] (?P&lt;pjlist&gt;Mortales|Enemigos) \[(?:[\-]*?)|Mortales(?:\w*?)$"
    name="start_who"
    regexp="y"
    script="on_who"
@@ -99,7 +100,7 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
    match="^\[(?P&lt;pjname&gt;\w*)(?: .*?|) orbita a Eirea\]$"
    regexp="y"
    send_to="12"
-   sequence="100"
+   sequence="99"
   >
   <send>play_sound("canales/login.ogg")</send>
   </trigger>
@@ -109,7 +110,7 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
    match="^\[(?P&lt;pjname&gt;\w*)(?: .*?|) orbita al Limbo\]$"
    regexp="y"
    script="on_logout"
-   sequence="100"
+   sequence="90"
   >
   </trigger>
   <trigger
@@ -139,7 +140,7 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
    regexp="y"
    sequence="100"
   >
-  <send>play_sound("habilidades/carga/impacto.ogg", "30")</send>
+  <send>play_sound("habilidades/carga/impacto.ogg", "50")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -165,7 +166,7 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <trigger
    enabled="y"
    group="Combate"
-   match="^&prefijo;\* (?P&lt;pjname&gt;.*?) te intenta dar (?P&lt;golpe&gt;.*?) en (?P&lt;bodypart&gt;.*?)\, pero paras su ataque\."
+   match="^&prefijo;\* Logras parar el ataque de (?:.*?)\."
    regexp="y"
    send_to="12"
    sequence="100"
@@ -254,7 +255,7 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <trigger
    enabled="y"
    group="Nickeador"
-   match="^(?:[\=]*?)\[ Hay (?:.*?) en Eirea \](?:[\=]*?)|(?:[\=]*?)\[ Sólo hay un mortal en Eirea \](?:[\=]*?)$"
+   match="^(?:[\=]*?\[ |)(?:Hay (.*?) en Eirea|Sólo hay un mortal en Eirea)( \][\=]*?|\s*?)|[\=]*?$"
    name="stop_who"
    regexp="y"
    script="on_who"
@@ -309,7 +310,37 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
    send_to="12"
    sequence="100"
   >
-  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-50")</send>
+  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-30")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Combate"
+   match="^&prefijo;\* (?:.*?) intenta (?:.*?)\, pero logras parar críticamente su ataque\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-30")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Combate"
+   match="^&prefijo;\* (?:.*?) intenta (?:.*?)\, pero logras parar su ataque\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-30")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Combate"
+   match="^&prefijo;\* Logras parar críticamente el ataque de (?:.*?)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-30")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -527,7 +558,29 @@ Sound(file)</send>
   <trigger
    enabled="y"
    group="combate"
-   match="^&prefijo;\* (.*?) te intenta (.*?) en (.*?), pero logras esquivar |críticamente su ataque\.$"
+   match="^&prefijo;\* Logras esquivar críticamente el ataque de (?:.*?)\.$"
+   omit_from_output="n"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("combate/esquivar/" .. math.random(1,15) .. ".ogg", -30)</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="combate"
+   match="^&prefijo;\* Logras esquivar críticamente (?:.*?)\.$"
+   omit_from_output="n"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("combate/esquivar/" .. math.random(1,15) .. ".ogg", -30)</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="combate"
+   match="^&prefijo;\* (.*?) intenta (.*?)\, pero logras esquivar su ataque\.$"
    omit_from_output="n"
    regexp="y"
    send_to="12"
@@ -538,7 +591,7 @@ Sound(file)</send>
   <trigger
    enabled="y"
    group="combate"
-   match="^&prefijo;\* (.*?) intenta (.*?)\, pero logras esquivar (|críticamente )su ataque\.$"
+   match="^&prefijo;\* Logras esquivar el ataque de (?:.*?)\.$"
    omit_from_output="n"
    regexp="y"
    send_to="12"
@@ -554,17 +607,6 @@ Sound(file)</send>
    sequence="100"
   >
   <send>play_sound("magia/rayo de energia positiva.ogg")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="combate"
-   match="^&prefijo;\* (.*?) te intenta (.*?) en (.*?), pero logras parar |críticamente su ataque\.$"
-   omit_from_output="n"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("combate/parar/" .. math.random(1,29) .. ".ogg", -40)</send>
   </trigger>
   <trigger
    enabled="y"
@@ -604,7 +646,7 @@ play_sound("habilidades/bribones/apuñalar/" .. math.random(1,7) .. ".ogg")</send
    send_to="12"
    sequence="99"
   >
-  <send>play_sound("habilidades/picar/desprendimiento" .. random(1, 2) .. ".ogg")</send>
+  <send>play_sound("habilidades/picar/desprendimiento" .. math.random(1, 2) .. ".ogg")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -775,7 +817,17 @@ Sound(file)</send>
   <trigger
    enabled="y"
    group="efectos"
-   match="^&prefijo;Â¡Tu golpe causa una profunda herida a (.*?) en (.*?)!$"
+   match="^¡Tu golpe causa una profunda herida a (?:.*?) en (.*?)!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("equipo/efectos/sangrado.ogg", 30)</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="efectos"
+   match="^¡Tu golpe causa una profunda herida a (?:.*?)!$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -834,7 +886,29 @@ play_sound("habilidades/luchadores/incursor/escupitajo ácido/empezar.ogg")</send
    send_to="12"
    sequence="100"
   >
-  <send>play_sound("combate/armas/penetrantes/"..math.random(1,15)..".ogg", 30)</send>
+  <send>play_sound("combate/armas/penetrantes/"..math.random(1,15)..".ogg", 50)</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="combate"
+   match="^&prefijo;\# (Perforas|Pinchas) críticamente a (.*?)\.$"
+   omit_from_output="n"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("combate/armas/penetrantes/critico.ogg", 30)</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="combate"
+   match="^&prefijo;\# (Perforas|Pinchas) &intens;a (.*?)\.$"
+   omit_from_output="n"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("combate/armas/penetrantes/"..math.random(1,15)..".ogg", 50)</send>
   </trigger>
   <trigger
    enabled="y"
@@ -1246,12 +1320,34 @@ end)</send>
    send_to="12"
    sequence="100"
   >
-  <send>play_sound("combate/armas/cortantes/"..math.random(1,9)..".ogg", 30)</send>
+  <send>play_sound("combate/armas/cortantes/"..math.random(1,9)..".ogg", 50)</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="combate"
+   match="^&prefijo;\# (Cortas|Rajas|Sesgas) &intens;a (?:.*?)\.$"
+   omit_from_output="n"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("combate/armas/cortantes/"..math.random(1,9)..".ogg", 50)</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="combate"
+   match="^&prefijo;\# (Cortas|Rajas|Sesgas) críticamente a (?:.*?)\.$"
+   omit_from_output="n"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("combate/armas/cortantes/critico.ogg", 30)</send>
   </trigger>
   <trigger
    enabled="y"
    group="habilidades"
-   match="^&prefijo;Â¡Lanzas un ataque de oportunidad contra (.*?)$"
+   match="^&prefijo;¡Lanzas un ataque de oportunidad contra (.*?)$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -1502,24 +1598,13 @@ end)</send>
   <trigger
    enabled="y"
    group="combate"
-   match="^&prefijo;\# Realizas un salto hacia (.*?) descargando un tremendo corte crítico con brutalidad en (.*?).$"
+   match="^&prefijo;\# Realizas un salto hacia (?:.*?) descargando un tremendo corte crítico con brutalidad en (?:.*?)\.$"
    omit_from_log="y"
    regexp="y"
    send_to="12"
    sequence="100"
   >
   <send>play_sound("combate/armas/cortantes/critico.ogg", 30)</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="combate"
-   match="^&prefijo;\* (.*?) te intenta (.*?), pero logras parar |críticamente su ataque\.$"
-   omit_from_output="n"
-   regexp="y"
-   send_to="12"
-   sequence="99"
-  >
-  <send>play_sound("combate/parar/".. math.random(1,29) ..".ogg", -40)</send>
   </trigger>
   <trigger
    enabled="y"
