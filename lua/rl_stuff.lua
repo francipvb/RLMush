@@ -1,4 +1,4 @@
-require("ppi")
+require "ppi"
 local snd = nil
 local gmcp = nil
 
@@ -10,7 +10,7 @@ mushreader = nil
 local html_replacements = {
 	['&lt;'] = "<",
 	['&gt;'] = ">",
-	['&quot;'] = '"'
+	['&quot;'] = "\""
 }
 
 local coros = {}
@@ -21,9 +21,13 @@ local function interp(s, tab)
 end
 getmetatable("").__mod = interp
 
-
-function replaceHTMLEscape(s)
-	return html_replacements[s]
+function replace_html(s)
+	-- Substituye los caracteres html por sus correspondientes simples.
+	for k, v in pairs(html_replacements) do
+		s = s:gsub(k, v)
+	end -- html
+	
+	return s
 end -- function
 
 function RLStuffListChanged()
@@ -117,6 +121,8 @@ function OnPluginTick()
 				if type(r1) == "string" then
 					print(r1)
 				end -- if
+			else
+				print(r1)
 			end -- if
 		else
 			coros[k] = nil
