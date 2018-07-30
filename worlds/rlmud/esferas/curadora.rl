@@ -1,0 +1,80 @@
+{
+  nombre = "curadora",
+  comandos_menor = {
+    [1] = {
+      ignorar = true,
+      comando = "formular curar heridas ligeras: y%1",
+      regexp = true,
+      alias = "^1(\\d*)$",
+      variables = false,
+      },
+    [2] = {
+      ignorar = true,
+      comando = "formular curar heridas moderadas: y%1",
+      regexp = true,
+      alias = "^2(\\d*)$",
+      variables = false,
+      },
+    [3] = {
+      ignorar = true,
+      comando = "formular curar heridas serias: y%1",
+      regexp = true,
+      alias = "^3(\\d*)$",
+      variables = false,
+      },
+    [4] = {
+      ignorar = true,
+      comando = "formular cicatrizar: y%1",
+      regexp = true,
+      alias = "^ci(\\d*)$",
+      variables = false,
+      },
+    [5] = {
+      ignorar = true,
+      comando = "formular curar enfermedad: y%1",
+      regexp = true,
+      alias = "^ce(\\d*)$",
+      variables = false,
+      },
+    [6] = {
+      ignorar = true,
+      comando = "formular neutralizar veneno: y%1",
+      regexp = true,
+      alias = "^nv(\\d*)$",
+      variables = false,
+      },
+    [7] = {
+      ignorar = true,
+      comando = "formular extirpar maldicion: y%1",
+      regexp = true,
+      alias = "^eml(\\d*)$",
+      variables = false,
+      },
+    [8] = {
+      ignorar = true,
+      comando = "formular curar sordera: y%1",
+      regexp = true,
+      alias = "^csor(\\d*)$",
+      variables = false,
+      },
+    },
+  nombre_completo = "curadora",
+  comandos_neutral = {
+    [1] = {
+      ignorar = true,
+      comando = "formular curar heridas criticas: y%1",
+      regexp = true,
+      alias = "^4(\\d*)$",
+      variables = false,
+      },
+    [2] = {
+      ignorar = true,
+      comando = "formular curacion: y%1",
+      regexp = true,
+      alias = "^5(\\d*)$",
+      variables = false,
+      },
+    },
+  comandos_mayor = {
+    },
+  }

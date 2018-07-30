@@ -2299,58 +2299,6 @@ function on_llegar(name, line, wc)
 	end -- if
 end -- function
 
-function TableFromFile(filename)
-		local ret = nil
-		local f = nil
-		local str = nil
-		local message = nil
-		local errcode = nil
-		
-		f, message, errcode = io.open(filename, "r")
-		
-		if f == nil then
-				return nil, message, errcode
-		end -- if
-		
-		str, message, errcode = f:read("*a")
-		if str == nil then
-				f:close()
-				return nil, message, errcode
-		end -- if
-		f:close()
-		
-		ret = loadstring("return "..str)()
-		if ret ~= nil then
-				return ret
-		end -- if
-end -- TableFromFile
-
-function SaveTableToFile(filename, t)
-		require("serialize")
-		
-		local f = nil
-		local result = nil
-		local errcode = nil
-		local message = nil
-		local str = nil
-		
-		f, message, errcode = io.open(filename, "ww")
-		
-		if f == nil then
-				return false, message, errcode
-		end -- if
-		str = serialize.save_simple(t)
-		result, message, errcode = f:write(str)
-		if result == nil then
-				f:close()
-				return false, message, errcode
-		end -- if
-		
-		f:close()
-
-		return true
-end -- SaveTableToFile
-
 
 ]]>
 </script>

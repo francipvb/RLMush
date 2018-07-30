@@ -34,6 +34,10 @@ function RLStuffListChanged()
 	mushreader = ppi.Load("16ba6b7a227a9dab54f5c76e")
 	snd = ppi.Load("aedf0cb0be5bf045860d54b7")
 	gmcp = ppi.Load("3b764c2d9d7e85dbf01ddfab")
+	
+	if gmcp then
+		
+	end -- gmcp
 end -- OnPluginListChanged
 
 function playSound(sound,loop,pan,vol)
@@ -104,7 +108,7 @@ function subscribir(mensaje, funcion)
 	
 	if gmcp then
 		gmcp.add_callback(mensaje, GetPluginID(), funcion)
-	end 
+	end -- gmcp
 end -- function
 
 function desuscribir(mensaje, funcion)

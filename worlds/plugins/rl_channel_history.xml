@@ -439,10 +439,10 @@ function Mensaje_GMCP(mensaje, datos)
 	-- No hay peligro, siempre viene formateado correctamente como JSON
 	local data = json.decode(datos)
 	
-	-- Parseamos los datos
-	data.mensaje = utf8convert(data.mensaje)
+	-- Parseamos los datos, convirtiendo a utf-8 y reemplazando los caracteres html
+	data.mensaje = utf8convert(replace_html(data.mensaje))
+	
 
-	-- TODO: Pendiente mostrar el mensaje en pantalla.
 	AnsiNote(data.mensaje)
 
 	if mensaje == "Comm.MensajeCanal" then

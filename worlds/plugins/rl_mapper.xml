@@ -882,7 +882,7 @@ function OnPluginSend(texto)
 	end -- if
 end -- function
 
-function OnPluginRemove()
+function OnPluginClose()
 	db:close()
 end -- OnPluginRemove
 
