@@ -1,15 +1,20 @@
 {
   nombre = "bien",
   comandos_menor = {
+    pm = {
+      comando = "formular proteccion mal: @nombre",
+      ignorar = false,
+      regexp = false,
+      variables = true,
+      },
     },
   nombre_completo = "bien",
   comandos_neutral = {
-    [1] = {
-      ignorar = false,
+    cas = {
       comando = "formular castigar al mal: x",
-      regexp = false,
-      alias = "f5",
       variables = false,
+      regexp = false,
+      ignorar = false,
       },
     },
   comandos_mayor = {

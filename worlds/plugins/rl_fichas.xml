@@ -23,24 +23,24 @@
 	Este plugin se encarga de gestionar todo lo relativo a los alias del cliente para personajes, clases, razas, escuelas y esferas.
 
 	Comandos disponibles:
-	$calias <opciones> <enviar> <comando>
+	$calias [<opciones> ]<enviar> <comando>
 		Añade un alias de cliente al perfil de clase para el personaje conectado actualmente.
 		
 		- opciones: Ver abajo.
 		- enviar: El comando, por ejemplo, f1 o ^1(\d*?)$ si se agrega una expresión regular.
 		- comando: El comando que se envía al MUD. Se pueden usar substituciones como %1, %2, etc.
 
-	$palias <opciones> <enviar> <comando>
+	$palias [<opciones> ]<enviar> <comando>
 		Añade un alias de cliente  al perfil del personaje conectado.
 		
 		La entrada es igual que para el comando $calias.
 
-	$ oalias <opciones> <enviar> <comando>
+	$ oalias [<opciones> ]<enviar> <comando>
 		Añade un alias al perfil de oficio.
 		
 		Este comando no está implementado.
 
-	$falias <esfera> <acceso> <enviar> <comando>
+	$falias <esfera> <acceso> [<opts> ]<enviar> <comando>
 		Agrega un alias de cliente al perfil de la esfera.
 		
 		- esfera: Nombre de la esfera a la que se añade el comando.
@@ -54,6 +54,16 @@
 	$ealias <escuela> <acceso> <enviar> <comando>
 		Ver $falias, aplicado a escuelas.
 
+	Si se utiliza cualquiera de los comandos anteriores con la forma siguiente se despliega un cuadro de texto para añadir alias multilineales.
+	  $xalias <opciones> <enviar>
+
+	Las opciones incluyen especificadores de acceso y nombre de escuelas.
+
+	Por último, para eliminar un alias se puede utilizar la formasiguiente:
+	  $xalias [<nombre> <acceso> ]-r <alias>
+
+	Esto elimina el alias y guarda el objeto.
+
 	$ead <escuela> <acceso>
 		Añade una escuela a la clase del personaje.
 		
@@ -63,10 +73,10 @@
 			2. Acceso a neutral.
 			3. Acceso a mayor.
 
-	$ fadd <esfera> <acceso>
+	$fadd <esfera> <acceso>
 		Ver $eadd, aplicale a esferas.
 
-	$ guardar <tipo>[ <nombre>]
+	$guardar <tipo>[ <nombre>]
 		Escribe los datos para un objeto en el disco.
 		
 		- Tipo: El tipo de objeto que se va a escribir al disco.
@@ -92,7 +102,24 @@
    regexp="y"
    sequence="100"
    enabled="y"
-   name="alias"
+  >
+  </alias>
+
+  <alias
+   match="^&prefijo;(?P&lt;tipo&gt;p|c|r|o)alias (?P&lt;opts&gt;\-[xvi]+ |)(?P&lt;alias&gt;\w+|\^.*?\$)$"
+   script="on_alias_multilinea"
+   regexp="y"
+   sequence="100"
+   enabled="y"
+  >
+  </alias>
+
+  <alias
+   match="^&prefijo;(?P&lt;tipo&gt;p|c|r|o)alias -r (?P&lt;alias&gt;\w+|\^.*?\$)$"
+   script="on_alias_eliminar"
+   regexp="y"
+   sequence="100"
+   enabled="y"
   >
   </alias>
 
@@ -102,10 +129,26 @@
    script="on_alias"
    regexp="y"
    sequence="100"
-   name="magia"
   >
   </alias>
-  
+
+  <alias
+   enabled="y"
+   match="^&prefijo;(?P&lt;tipo&gt;f|e)alias (?P&lt;nombre&gt;[a-z]+) (?P&lt;acceso&gt;1|2|3) (?P&lt;opts&gt;\-[xvi]+ |)(?P&lt;alias&gt;[a-zA-Z0-9]+|\^.*?\$)$"
+   script="on_alias_multilinea"
+   regexp="y"
+   sequence="100"
+  >
+  </alias>
+
+  <alias
+   enabled="y"
+   match="^&prefijo;(?P&lt;tipo&gt;f|e)alias (?P&lt;nombre&gt;[a-z]+) (?P&lt;acceso&gt;1|2|3) -r (?P&lt;alias&gt;[a-zA-Z0-9]+|\^.*?\$)$"
+   script="on_alias_eliminar"
+   regexp="y"
+   sequence="100"
+  >
+  </alias>
   <alias
    enabled="y"
    match="^&prefijo;guardar (clase|personaje|raza|oficio|(?P&lt;etipo&gt;escuela|esfera) (?P&lt;nombre&gt;[a-z]+))$"
@@ -184,8 +227,8 @@ local function guardar_objeto(objeto, nombre)
 	archivo:close()
 end -- function
 
-local function agregar_alias(objeto)
-	check(AddAlias("", objeto.alias, objeto.comando, (function()
+local function agregar_alias(alias, objeto)
+	check(AddAlias("", alias, objeto.comando, (function()
 		-- Esta función devuelve los flags para el alias trducidos a mushclient
 		local flags = alias_flag.Enabled + alias_flag.Temporary
 		
@@ -357,7 +400,7 @@ local function guardar(tipo, clase)
 		obj = get_esfera(clase)
 		carpeta = "esferas"
 		stipo = string.format("la esfera \"%s\"", obj.nombre_completo)
-	else
+	elseif tipo == 6 then
 		obj = get_personaje(clase)
 		carpeta = "perfiles"
 		stipo = string.format("el perfil para %s", obj.nombre_completo)
@@ -372,19 +415,19 @@ end -- function
 local function cargar_magia(obj, acceso)
 	if acceso >= 1 then
 		for ki, vi in pairs(obj.comandos_menor) do
-			agregar_alias(vi)
+			agregar_alias(ki, vi)
 		end -- comandos a menor
 	end -- acceso menor
 	
 	if acceso >= 2 then
 		for ki, vi in pairs(obj.comandos_neutral) do
-			agregar_alias(vi)
+			agregar_alias(ki, vi)
 		end -- comandos a neutral
 	end -- acceso a neutral
 
 	if acceso >= 3 then
 		for ki, vi in pairs(obj.comandos_mayor) do
-			agregar_alias(vi)
+			agregar_alias(ki, vi)
 		end -- comandos a mayor
 	end -- acceso a mayor
 end -- cargar_magia
@@ -414,16 +457,16 @@ local function recargar_todo()
 		-- Cargamos los comandos para la clase
 		for k, v in pairs(clase.comandos) do
 			-- Sencillamente añadimos el alias
-			agregar_alias(v)
+			agregar_alias(k, v)
 		end -- clase.comandos
 		
 		-- Ahora las escuelas y esferas
 		for k, v in pairs(clase.esferas) do
-			cargar_esfera(v.nombre, v.acceso)
+			cargar_esfera(k, v)
 		end -- esferas
 		
 		for k, v in pairs(clase.escuelas) do
-			cargar_escuela(v.nombre, v.acceso)
+			cargar_escuela(k, v)
 		end -- esferas
 	end -- if
 	
@@ -437,7 +480,7 @@ local function recargar_todo()
 		
 		-- cargamos los comandos agregados a la ficha
 		for k, v in pairs(ficha.comandos) do
-			agregar_alias(v)
+			agregar_alias(k, v)
 		end -- for
 	end -- if
 end -- function
@@ -460,7 +503,6 @@ function on_alias(nombre,linea,wc)
 
 	-- Generamos el alias
 	local alias = {
-		alias = wc.alias,
 		comando = wc.comando,
 
 		-- Este flag define si se usan las variables definidas en mushclient
@@ -475,40 +517,142 @@ function on_alias(nombre,linea,wc)
 
 	if wc.tipo == "c" then
 		-- Sencillamente agregamos el alias a la tabla de la clase
-		table.insert(clase.comandos, alias)
-		print(string.format("El alias se agregó a la clase %s.", clase.nombre_completo))
+		if not clase.comandos[wc.alias] then
+			print(string.format("El alias se agregó a la clase %s.", clase.nombre_completo))
+		else
+			print(string.format("Se modificó el alias %s para la clase %s.", wc.alias, clase.nombre_completo))
+		end -- if
+		clase.comandos[wc.alias] = alias
+		guardar(1, clase.nombre)
 	elseif wc.tipo == "p" then
 		local ficha = get_personaje(var.nombre)
-		table.insert(ficha.comandos, alias)
-		print(string.format("Se agregó el alias al perfil d%s.", ficha.nombre_completo))
+		if not ficha.comandos[wc.alias] then
+			print(string.format("El alias %s se agregó al perfil %s.", wc.alias, ficha.nombre_completo))
+		else
+			print(string.format("Se modificó el alias %s para el perfil de %s.", wc.alias, ficha.nombre_completo))
+		end -- if
+		ficha.comandos[wc.alias] = alias
+		guardar(6, ficha.nombre)
 	elseif wc.tipo == "e" or wc.tipo == "f" then
 		-- Este es el caso de las escuelas/esferas
-		local obj
+		local obj, tipo
 		
 		if wc.tipo == "f" then
 			obj = get_esfera(wc.nombre)
+			tipo = "esfera"
 		else
 			obj = get_escuela(wc.nombre)
+			tipo = "escuela"
 		end -- tipo
 		
 		-- Ahora comprobamos el acceso
 		local acceso = tonumber(wc.acceso)
 		
 		if acceso == 1 then -- menor
-			table.insert(obj.comandos_menor, alias)
-			print(string.format("Se agregó el alias a la lista de comandos de acceso a menor para %s.", wc.nombre))
+			if not obj.comandos_menor[wc.alias] then
+				print(string.format("El alias %s se agregó a la %s %s con nivel de acceso menor.", wc.alias, tipo, obj.nombre_completo))
+			else
+				print(string.format("Se modificó el alias %s con acceso a menor para la %s %s.", wc.alias, tipo, clase.nombre_completo))
+			end -- if
+			obj.comandos_menor[wc.alias] = alias
 		elseif acceso == 2 then
-			table.insert(obj.comandos_neutral, alias)
-			print(string.format("Se agregó el alias a la lista de comandos de acceso a neutral para %s.", wc.nombre))
+			if not obj.comandos_neutral[wc.alias] then
+				print(string.format("El alias %s se agregó a la %s %s con nivel de acceso neutral.", wc.alias, tipo, obj.nombre_completo))
+			else
+				print(string.format("Se modificó el alias %s con acceso a neutral para la %s %s.", wc.alias, tipo, clase.nombre_completo))
+			end -- if
+			obj.comandos_neutral[wc.alias] = alias
 		else
-			table.insert(obj.comandos_mayor, alias)
-			print(string.format("Se agregó el alias a la lista de comandos de acceso a mayor para %s.", wc.nombre))
+			if not obj.comandos_mayor[wc.alias] then
+				print(string.format("El alias %s se agregó a la %s %s con nivel de acceso mayor.", wc.alias, tipo, obj.nombre_completo))
+			else
+				print(string.format("Se modificó el alias %s con acceso a mayor para la %s %s.", wc.alias, tipo, clase.nombre_completo))
+			end -- if
+			obj.comandos_mayor[wc.alias] = alias
 		end -- acceso
+		
+		-- Guardamos todo
+		if wc.tipo == "f" then
+			guardar(5, obj.nombre)
+		else
+			guardar(4, obj.nombre)
+		end -- if
 	end -- if
 	
 	-- Ahora recargamos todo para poder comprobar que todo fue bien
 	recargar_todo()
 end -- function
+
+function on_alias_multilinea(name,line,wc)
+	local wc_pasados, alias_pasado
+	
+	if not var.nombre then
+		print("No hay ninguna ficha conectada.")
+		return
+	end -- if
+	
+	wc_pasados = wc
+	
+	comando_pasado = utils.editbox("Puedes escribir un alias en el cuadro de texto y este se enviará tal cual al juego.", "Comando multilinear")
+	
+	if not comando_pasado then
+		return
+	end -- if
+	
+	wc_pasados.comando = comando_pasado
+	on_alias(name, line, wc_pasados)
+end -- function
+
+function on_alias_eliminar(n,l,wc)
+	-- Definiciones
+	local obj, objtipo, listacomandos
+	
+	-- Primero comprobamos si está todo correcto
+	if not IsConnected() or not var.nombre then
+		print("No hay ningún personaje conectado todavía.")
+		return
+	end -- if
+	
+	if wc.tipo == "c" then
+		objtipo = 1
+		obj = get_clase(var.clase)
+	elseif wc.tipo == "r" then
+	elseif wc.tipo == "o" then
+	elseif wc.tipo == "e" then
+		objtipo = 4
+		obj = get_escuela(wc.nombre)
+	elseif wc.tipo == "f" then
+		objtipo = 5
+		obj = get_esfera(wc.nombre)
+	elseif wc.tipo == "p" then
+		objtipo = 6
+		obj = get_personaje(var.nombre)
+	end -- wc.tipo
+	
+	-- Ya que las tablas siempre son las mismas, incluso si se asignan a otra variable, sencillamente vemos que objeto nos interesa
+	if objtipo == 4 or objtipo == 5 then
+		local acceso = tonumber(wc.acceso)
+		if acceso == 1 then
+			listacomandos = obj.comandos_menor
+		elseif acceso == 2 then
+			listacomandos = obj.comandos_neutral
+		else
+			listacomandos = obj.comandos_mayor
+		end -- if
+	else
+		listacomandos = obj.comandos
+	end -- if
+	
+	if not listacomandos[wc.alias] then
+		print(string.format("El alias \"%s\" no existe en %s.", wc.alias, obj.nombre_completo))
+		return
+	end -- if
+	
+	listacomandos[wc.alias] = nil
+	guardar(objtipo, obj.nombre)
+	print(string.format("Se quitó correctamente el alias \"%s\" del objeto %s.", wc.alias, obj.nombre_completo))
+	recargar_todo()
+end -- on_alias_eliminar
 
 function on_agregar(name,line,wc)
 	require "var"
@@ -532,17 +676,23 @@ function on_agregar(name,line,wc)
 	end -- if
 	
 	if wc.tipo == "f" then
-		print(string.format("Añadiendo la esfera %s a la clase %s con nivel de acceso %s.", wc.nombre, clase.nombre_completo, acceso))
-		table.insert(clase.esferas, {
-			nombre = wc.nombre,
-			acceso = tonumber(wc.acceso)
-		})
+		if not clase.esferas[wc.nombre] then
+			print(string.format("Añadiendo la esfera %s a la clase %s con nivel de acceso %s.", wc.nombre, clase.nombre_completo, acceso))
+		else
+			print(string.format("Cambiando el nivel de acceso de la esfera %s para la clase %s a %s", wc.nombre, clase.nombre_completo, acceso))
+		end -- if
+		clase.esferas[wc.nombre] = tonumber(wc.acceso)
+		
+		guardar(1, clase.nombre)
 	else
-		print(string.format("Añadiendo la escuela %s a la clase %s con nivel de acceso %s.", wc.nombre, clase.nombre_completo, acceso))
-		table.insert(clase.escuelas, {
-			nombre = wc.nombre,
-			acceso = tonumber(wc.acceso)
-		})
+		if not clase.escuelas[wc.nombre] then
+			print(string.format("Añadiendo la esfera %s a la clase %s con nivel de acceso %s.", wc.nombre, clase.nombre_completo, acceso))
+		else
+			print(string.format("Cambiando el nivel de acceso de la escuela %s para la clase %s a %s.", wc.nombre, clase.nombre_completo, acceso))
+		end -- if
+		clase.escuelas[wc.nombre] = tonumber(wc.acceso)
+		
+		guardar(4, wc.nombre)
 	end -- if
 	
 	recargar_todo()

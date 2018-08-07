@@ -1,11 +1,10 @@
 {
   nombre = "guardiana",
   comandos_menor = {
-    [1] = {
+    ["^gs(\\d+)$"] = {
       variables = false,
       ignorar = false,
       regexp = true,
-      alias = "^gs(\\d+)$",
       comando = "formular guardian sagrado: y%1",
       },
     },

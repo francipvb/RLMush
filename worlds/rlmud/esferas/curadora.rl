@@ -1,77 +1,85 @@
 {
   nombre = "curadora",
   comandos_menor = {
-    [1] = {
-      ignorar = true,
-      comando = "formular curar heridas ligeras: y%1",
-      regexp = true,
-      alias = "^1(\\d*)$",
-      variables = false,
+    ["1"] = {
+      comando = "formular curar heridas ligeras: @nombre",
+      ignorar = false,
+      regexp = false,
+      variables = true,
       },
-    [2] = {
-      ignorar = true,
-      comando = "formular curar heridas moderadas: y%1",
-      regexp = true,
-      alias = "^2(\\d*)$",
-      variables = false,
-      },
-    [3] = {
-      ignorar = true,
+    ["^3(\\d+)$"] = {
       comando = "formular curar heridas serias: y%1",
+      ignorar = true,
       regexp = true,
-      alias = "^3(\\d*)$",
       variables = false,
       },
-    [4] = {
-      ignorar = true,
-      comando = "formular cicatrizar: y%1",
-      regexp = true,
-      alias = "^ci(\\d*)$",
-      variables = false,
+    ["3"] = {
+      comando = "formular curar heridas serias: @nombre",
+      ignorar = false,
+      regexp = false,
+      variables = true,
       },
-    [5] = {
-      ignorar = true,
+    ["2"] = {
+      comando = "formular curar heridas moderadas: @nombre",
+      ignorar = false,
+      regexp = false,
+      variables = true,
+      },
+    ["^ce(\\d+)$"] = {
       comando = "formular curar enfermedad: y%1",
+      ignorar = true,
       regexp = true,
-      alias = "^ce(\\d*)$",
       variables = false,
       },
-    [6] = {
+    ["^1(\\d+)$"] = {
+      comando = "formular curar heridas ligeras: y%1",
       ignorar = true,
-      comando = "formular neutralizar veneno: y%1",
       regexp = true,
-      alias = "^nv(\\d*)$",
       variables = false,
       },
-    [7] = {
+    ["^2(\\d+)$"] = {
+      comando = "formular curar heridas moderadas: y%1",
       ignorar = true,
-      comando = "formular extirpar maldicion: y%1",
       regexp = true,
-      alias = "^eml(\\d*)$",
       variables = false,
       },
-    [8] = {
-      ignorar = true,
-      comando = "formular curar sordera: y%1",
-      regexp = true,
-      alias = "^csor(\\d*)$",
+    ce = {
+      comando = "formular curar enfermedad: @nombre",
+      ignorar = false,
+      regexp = false,
+      variables = true,
+      },
+    ["^1(\\d*)$"] = {
+      comando = "formular curar heridas ligeras: y%1",
       variables = false,
+      regexp = true,
+      ignorar = true,
       },
     },
   nombre_completo = "curadora",
   comandos_neutral = {
-    [1] = {
-      ignorar = true,
+    ["5"] = {
+      comando = "formular curacion: @nombre",
+      ignorar = false,
+      regexp = false,
+      variables = true,
+      },
+    ["4"] = {
+      comando = "formular curar heridas criticas: @nombre",
+      ignorar = false,
+      regexp = false,
+      variables = true,
+      },
+    ["^4(\\d+)$"] = {
       comando = "formular curar heridas criticas: y%1",
+      ignorar = true,
       regexp = true,
-      alias = "^4(\\d*)$",
       variables = false,
       },
-    [2] = {
-      ignorar = true,
+    ["^5(\\d+)$"] = {
       comando = "formular curacion: y%1",
+      ignorar = true,
       regexp = true,
-      alias = "^5(\\d*)$",
       variables = false,
       },
     },

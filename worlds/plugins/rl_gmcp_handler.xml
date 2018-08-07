@@ -41,6 +41,17 @@
    sequence="100"
   >
   </alias>
+  
+  <alias
+   match="gmcpr"
+   enabled="y"
+   sequence="100"
+  >
+  <send>
+consentir gmcp off
+consentir gmcp on
+  </send>
+  </alias>
 </aliases>
 
 

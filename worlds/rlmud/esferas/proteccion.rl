@@ -1,11 +1,10 @@
 {
   nombre = "proteccion",
   comandos_menor = {
-    [1] = {
+    ["pc"] = {
       ignorar = false,
       comando = "formular piel de corteza",
       regexp = false,
-      alias = "pc",
       variables = false,
       },
     },
