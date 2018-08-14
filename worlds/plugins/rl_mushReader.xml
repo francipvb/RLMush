@@ -36,10 +36,8 @@
    sequence="100"
    script="on_interrupt"
   >
-  <send>
-</send>
   </alias>
-<alias
+  <alias
    match="tts_note *"
    enabled="y"
    send_to="12"
@@ -70,12 +68,13 @@
 require("rl_stuff")
 require("ppi")
 
-tts_enabled = true
+local tts_enabled = true
+local ignorar_sig = false
 
 function OnPluginInstall ()
 	assert(package.loadlib("MushReader.dll", "luaopen_audio"))()
 	stop()
-	say("mush reader initialized")
+	say("MushReader inicializado.")
 end -- OnPluginInstall
 
 function say(str)
@@ -92,10 +91,22 @@ end -- stop
 -- también exportamos esta
 ppi.Expose "stop"
 
+function ignorar_siguiente()
+	ignorar_sig = true
+end -- function
+
+ppi.Expose "ignorar_siguiente"
+
 function OnPluginScreendraw(t, log, line)
 	if not tts_enabled then
 		return
 	end --tts off
+	
+	if t == 0 and ignorar_sig then
+		ignorar_sig = false
+		return
+	end -- if
+	
 	-- checking for an empty string, or a string composed only of spaces.
 	-- If we don't, NVDA says blank.
 	if (t == 0 or t == 1) and not line:find("^%s*$") then
@@ -131,5 +142,5 @@ function on_interrupt(name, line, wildcards)
 end -- function
 
 ]]>            
- </script> 
+</script> 
 </muclient>

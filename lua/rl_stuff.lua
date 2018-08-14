@@ -34,17 +34,13 @@ function RLStuffListChanged()
 	mushreader = ppi.Load("16ba6b7a227a9dab54f5c76e")
 	snd = ppi.Load("aedf0cb0be5bf045860d54b7")
 	gmcp = ppi.Load("3b764c2d9d7e85dbf01ddfab")
-	
-	if gmcp then
-		
-	end -- gmcp
 end -- OnPluginListChanged
 
-function playSound(sound,loop,pan,vol)
+function play_sound(sound,pan,loop,vol)
 	if not snd then
 		return
 	end -- if
-	return snd.play(GetInfo(67)..sound,loop,pan,vol)
+	return snd.play(GetInfo(67).."sounds/"..sound,loop or 0,pan,vol)
 end -- PlaySound
 
 function playDelay(sound,time,pan,vol)
@@ -93,12 +89,6 @@ end -- utf8convert
 function history_add(cat, msg)
 	CallPlugin("f6153a4ac099403418c11711", "history_add", cat, msg)
 end -- add_history
-
-function play_sound(filepath, pan)
-	local folder = "sounds/" .. filepath
-
-	return playSound(folder, 0, pan or 0)
-end -- play_sound
 
 function subscribir(mensaje, funcion)
 	assert(mensaje, "No se definió un mensaje.")

@@ -32,27 +32,7 @@ Este plugin está diseñado para funcionar con el MUD Reinos de Leyenda, y permite
 
 <triggers>
   <trigger
-   enabled="y"
-   match="^&prefijo;La (?:.*?) (.*?) está cerrad[o,a]\.$"
-   regexp="y"
-   script="OnClosed"
-   sequence="100"
-   omit_from_log="y"
-   omit_from_output="y"
-  >
-  </trigger>
-  <trigger
-   script="OnQuietFail"
-   enabled="y"
-   match="^&prefijo;Parece que sigilar (.*?) no produjo efecto alguno\.$"
-   omit_from_log="y"
-   omit_from_output="y"
-   regexp="y"
-   sequence="100"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
+   enabled="n"
    match="^&prefijo;(?P&lt;room_name&gt;.*?) \[(?P&lt;room_exits&gt;[a-z\\\|\-\~\*\,]*?)\]"
    name="mirar_salidas"
    regexp="y"
@@ -60,18 +40,26 @@ Este plugin está diseñado para funcionar con el MUD Reinos de Leyenda, y permite
    script="OnRoom"
   >
   </trigger>
-</triggers>
-
-<aliases>
-  <alias
-   script="OnMove"
-   match="^(?P&lt;dir&gt;n|ne|e|se|s|so|o|no|ar|ab|de|fu)$"
+  
+  <trigger
+   match="^(?:\s+)Los Dioses te dan la bienvenida a sus Reinos de Leyenda, (\w+).(?:\s+)$"
    enabled="y"
-   regexp="y"
    sequence="100"
+   regexp="y"
+   send_to="12"
   >
-  </alias>
-</aliases>
+  <send>EnableTrigger("mirar_salidas", true)</send>
+  </trigger>
+  
+  <trigger 
+   match="LPmud version: *."
+   enabled="y"
+   sequence="100"
+   send_to="12"
+  >
+  <send>EnableTrigger("mirar_salidas", false)</send>
+  </trigger>
+</triggers>
 
 <!--  Get our standard constants -->
 
@@ -87,6 +75,7 @@ local nav_right = false
 local quiet = false
 local last_move = nil
 local attempts = 2
+local salidas = nil
 
 local nav_left_keys = {
 	["ALT+w"]= "n",
@@ -99,8 +88,6 @@ local nav_left_keys = {
 	["ALT+q"]= "no",
 	["ALT+f"]= "ar",
 	["ALT+v"]= "ab",
-	["ALT+s"]= "de",
-	["ALT+r"]= "fu",
 	}
 
 local std_dirs = {
@@ -146,63 +133,36 @@ local mapper = nil
 
 function OnPluginListChanged()
 	RLStuffListChanged()
-	
-	mapper = ppi.Load("e634c782be2e150ffc27eded")
 end -- ListChanged
-
-function OnRoom(name, line, wc)
-	play_sound("std/pasos_"..math.random(1,10)..".ogg")
-	attempts = 2
-	
-	local dirs = utils.split(wc.room_exits, ",")
-	local snd_list = {}
-	
-	for k, v in pairs(dirs) do
-		local m1 = string.match(v, "[\|\~\*\\-](%a+)[\|\~\*\\-]")
-		local snd = nil
-		
-		if m1 ~= nil then
-			snd = std_dirs[m1]
-			
-			if snd == nil then
-				snd = s_dirs[m1]
-			end -- dir
-		else
-			snd = std_dirs[v]
-			
-			if snd == nil then
-				snd = s_dirs[v]
-			end -- snd
-		end
-		
-		table.insert(snd_list,  snd)
-	end
-	
-	-- playListOfSounds(snd_list, 200, 0)
-end -- OnRoom
 
 function OnPluginInstall()
 	OnPluginEnable()
 end -- OnPluginInstall
 
-function OnPluginRemove()
+function OnPluginClose()
 	OnPluginDisable()
 end --  OnPluginRemove
 
-function ToggleQuiet()
-	if quiet then
-		Note("Sigilar deshabilitado.")
-		quiet = false
-	else
-		Note("Habilitando sigilar")
-		quiet = true
-	end
-end --  function
-
-function isQuiet()
-	return quiet
+function OnPluginSend(texto)
+	local dir, estado
+	
+	if not salidas then return true end
+	
+	if texto:match("^%a+$") then
+		dir = texto:match("^%a+$")
+		
+		-- Si la salida no existe directamente no aparece aquí.
+		if not salidas[dir] then
+			return true
+		end -- if
+		
+		if salidas[dir] == "c" then
+			return false
+		end -- salidas
+	end -- texto
+	
+	return true
 end -- function
-ppi.Expose("sigilar", isQuiet)
 
 function OnPluginEnable()
 	if not nav_right then
@@ -211,7 +171,11 @@ function OnPluginEnable()
 		end
 	end -- nav_right
 	
-	AcceleratorTo("ALT+SHIFT+s", "ToggleQuiet()", sendto.script)
+	AcceleratorTo("ALT+s", "mostrar_salidas()", sendto.script)
+	
+	if IsConnected() then
+		EnableTrigger("mirar_salidas", true)
+	end -- if
 end -- OnPluginEnable
 
 function OnPluginDisable()
@@ -221,34 +185,8 @@ function OnPluginDisable()
 		end -- nav_left_keys
 	end
 	
-	Accelerator("ALT+SHIFT+s", "")
+	Accelerator("ALT+s", "")
 end -- OnPluginDisable
-
-function OnMove(n,l,wc)
-	if quiet then
-
-		Send("sigilar "..wc.dir)
-	else
-		Send(wc[1])
-	end
-end -- OnMove
-
-function OnQuietFail(n,l,wc)
-	quiet = false
-end -- OnQuietFail
-
-function OnClosed(n,l,wc)
-	local  last_cmd = GetInfo(87)
-	
-	if attempts == 0 then
-		return
-	end
-	
-	Send("abrir "..wc[1])
-	Send(wc[1])
-	
-	attempts = attempts - 1
-end -- OnClosed
 
 ]]>
 </script>

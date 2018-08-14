@@ -18,6 +18,7 @@
    date_written="2017-05-06 18:01:08"
    requires="4.84"
    version="1.0"
+   
    >
 <description trim="y">
 <![CDATA[
@@ -36,6 +37,8 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
 
 
 <triggers>
+
+  <!-- Generales -->
   <trigger
    enabled="y"
    group="General"
@@ -48,50 +51,11 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <trigger
    enabled="y"
    group="general"
-   match="^&prefijo;(?P&lt;pj&gt;.*?) llega desde el (\w*)\.$"
+   match="^&prefijo;(?P&lt;personaje&gt;.*?) llega desde (?:el |)(?P&lt;direccion&gt;\w+)(?P&lt;seguidores&gt; seguido de (.*?)|)\.$"
    script="on_llegar"
    lowercase_wildcard="y"
    regexp="y"
    sequence="100"
-  >
-  </trigger>
-  <trigger
-   enabled="n"
-   group="Nickeador"
-   match="^(?:[\-]+\] |)Mortales(?: \[[\-]+|\s+)$"
-   name="start_who"
-   regexp="y"
-   script="on_who"
-   sequence="80"
-  >
-  </trigger>
-  <trigger
-   group="Nickeador"
-   match="^(?:\s+)(?P&lt;pjname&gt;[a-zA-Z]*?) (?:.*? |)(?:la|el) (?:.*?)$"
-   name="add_pj"
-   regexp="y"
-   script="on_who"
-   sequence="80"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Habilidades-Cargar"
-   match="^&prefijo;\# ¡Maldición\!\, ¡(?P&lt;pjname&gt;.*?) consigue evitar vuestra carga\, dejándoos en muy mala posición\!$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_random_sound("combate/esquivar", 1, 15, ".ogg", "30")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Canales"
-   match="^&prefijo;(?P&lt;pjname&gt;\w*) dice(?:.*?)\: (?P&lt;message&gt;.*?)$"
-   name="decir"
-   regexp="y"
-   script="on_channel"
-   sequence="95"
   >
   </trigger>
   <trigger
@@ -116,12 +80,35 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <trigger
    enabled="y"
    group="General"
-   match="^&prefijo;(?P&lt;pjname&gt;.*?) empieza a formular un hechizo\.$"
-   name="formulando"
+   match="^(?P&lt;pjs&gt;.*?) está(?:n|) aquí\.$"
    regexp="y"
-   script="on_formular"
+   script="on_room_pjs"
+   sequence="101"
+  >
+  </trigger>
+
+  <!-- Habilidades -->
+
+  <!-- Carga -->
+  <trigger
+   enabled="y"
+   group="Habilidades-Cargar"
+   match="^&prefijo;Vociferas gritos de guerra\, demandando a (?P&lt;pjname&gt;.*?) un desafío y comienzas tu brutal carga\.$"
+   regexp="y"
+   send_to="12"
    sequence="100"
   >
+  <send>play_sound("habilidades/carga/iniciar.ogg", "-50")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Habilidades-Cargar"
+   match="^&prefijo;\# ¡Maldición\!\, ¡(?P&lt;pjname&gt;.*?) consigue evitar vuestra carga\, dejándoos en muy mala posición\!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_random_sound("combate/esquivar", 1, 15, ".ogg", "30")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -135,80 +122,12 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <trigger
    enabled="y"
    group="Habilidades-Cargar"
-   match="^&prefijo;\# (Terminas tu carga|Con la decisión de los grandes caballeros)"
+   match="^&prefijo;\# (Terminas tu carga|Con la decisión de los grandes caballeros|Avanzas zigzagueando hacia|Consumas tu devastador asalto contra|Enarbolas tu (.*?) para amedrentar a|Tus bramidos de guerra reverberan en el entorno|Lanzas rápidamente todo tu cuerpo como un poderoso latigazo|¡En el último instante\, (.*) logra eludirse de tu devastadora carga|Lanzas un amago de golpe con)"
    send_to="12"
    regexp="y"
    sequence="100"
   >
   <send>play_sound("habilidades/carga/impacto.ogg", "50")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="General"
-   match="^(?P&lt;pjs&gt;.*?) está(?:n|) aquí\.$"
-   regexp="y"
-   script="on_room_pjs"
-   sequence="101"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
-   group="General"
-   keep_evaluating="y"
-   match="^&prefijo;(?P&lt;room_name&gt;.*?) \[(?P&lt;exits&gt;[a-z\|\-\~\*\,]*)\]\ $"
-   name="mirar"
-   regexp="y"
-   script="on_look"
-   sequence="100"
-   lowercase_wildcard="y"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Combate"
-   match="^&prefijo;\* Logras parar el ataque de (?:.*?)\."
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-50")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Eventos"
-   match="^&prefijo;Lish la Aborrecible\, el Venerable Dragón Rojo os presenta el mismísimo Infierno"
-   name="lish_fuego"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("eventos/fuego.ogg")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Hechizos"
-   match="Nubes negras de tormenta se ciernen sobre el área."
-   name="lliniciar"
-   script="on_hechizo"
-   sequence="100"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Canales"
-   match="^&prefijo;(?P&lt;pjname&gt;\w*?) grita(?:.*?)\: (.*?)$"
-   name="gritar"
-   regexp="y"
-   script="on_channel"
-   sequence="95"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
-   match="^&prefijo;¡Te estremeces y pierdes la concentración\!$"
-   regexp="y"
-   sequence="100"
-  >
   </trigger>
   <trigger
    enabled="y"
@@ -223,47 +142,6 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   </trigger>
   <trigger
    enabled="y"
-   group="Combate"
-   match="^&prefijo;Estás siendo atacad[a,o] por (.*?)\.$"
-   omit_from_output="y"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("luaaudio/error.ogg")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Habilidades-Cargar"
-   match="^&prefijo;Vociferas gritos de guerra\, demandando a (?P&lt;pjname&gt;.*?) un desafío y comienzas tu brutal carga\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("habilidades/carga/iniciar.ogg", "-50")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Ataque"
-   match="^&prefijo;¡La campana de la Torre de la Santa Cruzada resuena por todo el reino\, anunciando un ataque al Bastión del Bien\!$"
-   regexp="y"
-   send_to="12"
-   sequence="200"
-  >
-  <send>play_sound("notificaciones/ataque a takome.ogg")</send>
-  </trigger>
-  <trigger
-   enabled="n"
-   group="Nickeador"
-   match="^(?:[\=]+\[ |)(?:Hay (.*?) en Eirea)(?: \][\=]+|)|[\=]+$"
-   name="stop_who"
-   regexp="y"
-   script="on_who"
-   sequence="80"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
    group="Habilidades-Cargar"
    match="^&prefijo;\* (?P&lt;pjname&gt;.*?) choca contra ti\, culminando su carga con un golpe de su (.*?) (.*?)$"
    regexp="y"
@@ -271,6 +149,162 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
    sequence="100"
   >
   <send>play_sound("habilidades/carga/impacto.ogg", "-50")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Habilidades-Cargar"
+   match="^&prefijo;\* Logras evitar la carga de (?P&lt;pjname&gt;.*?)\, dejándole en muy mala posición\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_random_sound("combate/esquivar", 1, 15, ".ogg", "-50")</send>
+  </trigger>
+
+
+  <!-- Golpe arcano -->
+  <trigger
+   enabled="y"
+   group="habilidades_golpearcano"
+   match="^&prefijo;Pasas tu mano sobre tu (.*?) mientras te concentras intentando despertar su magia\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("habilidades/hechiceros/golpe arcano/despertar.ogg", -30)</send>
+  </trigger>
+
+  <!-- Ataque doble -->
+  <trigger
+   enabled="y"
+   group="habilidades_maestria"
+   lines_to_match="2"
+   match="^&prefijo;\+ Tensas tus músculos preparando un nuevo ataque\. ¡Golpeas a (.*?) y rápidamente\, secundas tu ataque con un certero movimiento\!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+   <send>
+	play_sound("habilidades/maestria/ataquedoble/"..math.random(1,6)..".ogg", -30)
+	playDelay("habilidades/maestria/ataquedoble/"..math.random(1,6)..".ogg", 0.13, 50)
+   </send>
+  </trigger>
+
+
+  <!-- Apu;alar -->
+  <trigger
+   enabled="y"
+   group="habilidades"
+   match="^&prefijo;\* ¡Convulsionas en agonía cuando (.*?) te apuñala por la espalda\!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("habilidades/bribones/apuñalar/" .. math.random(1,7) .. ".ogg", -50)</send>
+  </trigger>
+
+  <!-- Golpe certero -->
+  <trigger
+   enabled="y"
+   group="habilidades"
+   match="^&prefijo;¡Imbuído por el fragor de la batalla\, canalizas toda la ira que habita en tí en tu arma\, descargándola sobre tu enemigo con un (.*?) y (.*?) movimiento"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+	if "%1" == "armonioso" and "%2" == "equilibrado" then
+		play_sound("habilidades/luchadores/soldado/golpecertero/normal.ogg", 40)
+	elseif "%1" == "fugaz" and "%2" == "preciso" then
+		play_sound("habilidades/luchadores/soldado/golpecertero/rápido.ogg", 40)
+	elseif "%1" == "sádico" and "%2" == "brutal" then
+		play_sound("habilidades/luchadores/soldado/golpecertero/poderoso.ogg", 40)
+	end
+  </send>
+  </trigger>
+
+  <!-- Barrido -->
+  <trigger
+   enabled="y"
+   group="habilidades"
+   lines_to_match="2"
+   keep_evaluating="y"
+   match="^&prefijo;¡Con un amplio movimiento en forma de arco de tu poderoso brazo barres a todos los oponentes frente a ti\!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("habilidades/barrido.ogg")</send>
+  </trigger>
+
+  <!-- Escupitajo ácido -->
+  <trigger
+   enabled="y"
+   group="incursor"
+   match="^&prefijo;Tras acumular un montón de saliva\, lanzas una esfera gelatinosa de ácido contra (.*?) volando en dirección (.*?)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("habilidades/luchadores/incursor/escupitajo ácido/escupir" .. math.random(1,2) .. ".ogg", -40)</send>
+  </trigger>
+
+
+  <!-- Herir -->
+  <trigger
+   enabled="y"
+   group="habilidades"
+   match="^&prefijo;¡(.*?) comienza a sangrar abundantemente por sus heridas múltiples en (.*?)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("habilidades/maestria/herir/sangramiento.ogg", 35)</send>
+  </trigger>
+
+  <!-- Oficios -->
+
+  <trigger
+   enabled="y"
+   group="oficios"
+   match="^Veta de (.*?)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("habilidades/picar/encontrar veta.ogg")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Habilidades-Picar"
+   match="^&prefijo;Veta de (.*?) parece haberse agotado\.$"
+   regexp="y"
+   send_to="12"
+   sequence="99"
+  >
+  <send>play_sound("habilidades/picar/desprendimiento" .. math.random(1, 2) .. ".ogg")</send>
+  </trigger>
+
+  <!-- Canales -->
+  <trigger
+   enabled="y"
+   group="Canales"
+   match="^&prefijo;(?P&lt;pjname&gt;\w*) dice(?:.*?)\: (?P&lt;message&gt;.*?)$"
+   name="decir"
+   regexp="y"
+   script="on_channel"
+   sequence="95"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Canales"
+   match="^&prefijo;(?P&lt;pjname&gt;\w*?) grita(?:.*?)\: (.*?)$"
+   name="gritar"
+   regexp="y"
+   script="on_channel"
+   sequence="95"
+  >
   </trigger>
   <trigger
    enabled="y"
@@ -283,44 +317,63 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
    lowercase_wildcard="y"
   >
   </trigger>
+
+  <!-- Hechizos -->
+
   <trigger
    enabled="y"
-   group="Habilidades-Cargar"
-   match="^&prefijo;\* Logras evitar la carga de (?P&lt;pjname&gt;.*?)\, dejándole en muy mala posición\.$"
+   group="hechizos"
+   match="^&prefijo;(?P&lt;pjname&gt;.*?) empieza a formular un hechizo\.$"
+   name="formulando"
    regexp="y"
-   send_to="12"
+   script="on_formular"
    sequence="100"
   >
-  <send>play_random_sound("combate/esquivar", 1, 15, ".ogg", "-50")</send>
   </trigger>
   <trigger
    enabled="y"
-   group="General"
-   match="^&prefijo;Nada con el nombre (.*?) está aquí\.$"
+   match="^&prefijo;¡Te estremeces y pierdes la concentración\!$"
+   regexp="y"
+   sequence="100"
+  >
+  </trigger>
+
+  <!-- Llamar rayos -->
+  <trigger
+   enabled="y"
+   group="Hechizos"
+   match="Nubes negras de tormenta se ciernen sobre el área."
+   name="lliniciar"
+   script="on_hechizo"
+   sequence="100"
+  >
+  </trigger>
+
+  <!-- Combate -->
+
+  <trigger
+   enabled="y"
+   group="Combate"
+   match="^&prefijo;Estás siendo atacad[a,o] por (.*?)\.$"
    omit_from_output="y"
    regexp="y"
-   sequence="97"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Combate"
-   match="^&prefijo;\* Paras críticamente el ataque desarmado de (?P&lt;pjname&gt;.*?)\.$"
-   regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-30")</send>
+  <send>play_sound("luaaudio/error.ogg")</send>
   </trigger>
+
+  <!-- Enemigo -->
   <trigger
    enabled="y"
    group="Combate"
-   match="^&prefijo;\* (?:.*?) intenta (?:.*?)\, pero logras parar críticamente su ataque\.$"
+   match="^&prefijo;\* Logras parar el ataque de (?:.*?)\."
    regexp="y"
    send_to="12"
    sequence="100"
+   name="parar_enemigo"
   >
-  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-30")</send>
+  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-50")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -335,33 +388,62 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <trigger
    enabled="y"
    group="Combate"
-   match="^&prefijo;\* Logras parar críticamente el ataque de (?:.*?)\.$"
+   match="^&prefijo;\* Paras críticamente el ataque desarmado de (?P&lt;pjname&gt;.*?)\.$"
    regexp="y"
    send_to="12"
    sequence="100"
+   name="parar_enemigo_critico"
   >
   <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-30")</send>
   </trigger>
   <trigger
    enabled="y"
    group="Combate"
-   match="^&prefijo;\* Paras el ataque desarmado de (?:..*?)\.$"
+   match="^&prefijo;\* (?:.*?) intenta (?:.*?)\, pero logras parar críticamente su ataque\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+   name="parar_enemigo_critico_2"
+  >
+  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-30")</send>
+  </trigger>
+
+  <!-- Eventos -->
+  <trigger
+   enabled="y"
+   group="Eventos"
+   match="^&prefijo;Lish la Aborrecible\, el Venerable Dragón Rojo os presenta el mismísimo Infierno"
+   name="lish_fuego"
    regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-50")</send>
+  <send>play_sound("eventos/fuego.ogg")</send>
   </trigger>
   <trigger
    enabled="y"
-   group="Hechizos"
-   match="^(.*?) te toca\, curándote algunas de tus heridas más (.*?)\.$"
-   name="cura"
+   group="Eventos"
+   match="^&prefijo;El gutural sonido de una poderosa inspiración hace retumbar las paredes de la cueva\. Algo no va bien\.\.\.$"
+   name="lish_aliento_exterior"
    regexp="y"
-   script="on_hechizo"
+   send_to="12"
    sequence="100"
   >
+  <send>play_sound("notificaciones/alerta.ogg")</send>
   </trigger>
+
+  <!-- Ataque a ciudadanías -->
+  <trigger
+   enabled="y"
+   group="Ataque"
+   match="^&prefijo;¡La campana de la Torre de la Santa Cruzada resuena por todo el reino\, anunciando un ataque al Bastión del Bien\!$"
+   regexp="y"
+   send_to="12"
+   sequence="200"
+  >
+  <send>play_sound("notificaciones/ataque a takome.ogg")</send>
+  </trigger>
+
   <trigger
    enabled="y"
    group="Hechizos"
@@ -374,7 +456,7 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <trigger
    enabled="y"
    group="General"
-   match="^(?:\s*?)Los Dioses te dan la bienvenida a sus Reinos de Leyenda\, (?P&lt;pjname&gt;[a-zA-Z]*?)\.(?:\s*?)$"
+   match="^(?:\s*?)Los Dioses te dan la bienvenida a sus Reinos de Leyenda\, (?P&lt;pjname&gt;\w*)\.(?:\s*?)$"
    name="login"
    regexp="y"
    script="on_login"
@@ -385,20 +467,9 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <trigger
    enabled="y"
    group="General"
-   lines_to_match="2"
-   match="^&prefijo;(?P&lt;room_name&gt;.*?)\n\s\[(?P&lt;exits&gt;[a-z\|\-\~\*\,]*)\] \((?P&lt;branches&gt;[a-z\|\-\~\*\,]*)\)\ $"
-   multi_line="y"
+   match="^&prefijo;(.*?) se va hacia (?P&lt;dir&gt;\w+)\.$"
    regexp="y"
-   script="on_look"
-   sequence="100"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
-   group="General"
-   match="^&prefijo;(?:\-\||)(?P&lt;pjname&gt;.*?)(?:\/\-|) se va hacia (?P&lt;dir&gt;\w*?)\.$"
-   regexp="y"
-   script="on_move"
+   script="on_irse"
    sequence="100"
   >
   </trigger>
@@ -411,16 +482,6 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
    sequence="100"
   >
   <send>EnableAlias("galopar", 0)</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Canales"
-   match="^&prefijo;\[Grupo\-(?P&lt;pjname&gt;\w*?)\] (?P&lt;message&gt;.*?)$"
-   name="grupo"
-   regexp="y"
-   script="on_channel"
-   sequence="95"
-  >
   </trigger>
   <trigger
    enabled="y"
@@ -442,23 +503,69 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   >
   <send>play_sound("info/comando incorrecto.ogg")</send>
   </trigger>
+  
   <trigger
    enabled="y"
-   group="Canales"
-   match="^\[(?P&lt;channame&gt;[a-zA-Z]*?)\] (?P&lt;message&gt;.*?)$"
-   name="basic"
+   match="^pjs\: (.*?)$"
+   sequence="100"
+   script="on_jugadores"
    regexp="y"
-   script="on_channel"
-   sequence="95"
+   omit_from_output="y"
+   omit_from_log="y"
+   name="todos"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   match="^aliados\: (.*?)$"
+   regexp="y"
+   sequence="100"
+   script="on_jugadores"
+   omit_from_output="y"
+   omit_from_log="y"
+   name="aliados"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   match="^matar\: (.*?)$"
+   regexp="y"
+   sequence="100"
+   script="on_jugadores"
+   omit_from_output="y"
+   omit_from_log="y"
+   name="matar"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   match="^peleas\: (.*?)$"
+   regexp="y"
+   sequence="100"
+   script="on_jugadores"
+   name="peleas"
+   omit_from_output="y"
+   omit_from_log="y"
   >
   </trigger>
 </triggers>
+<aliases>
+  <alias
+   match="cprompt"
+   enabled="y"
+   group="General"
+   sequence="100"
+  >
+  <send>prompt pjs: $j$lmatar: $k$laliados: $K$l
+promptcombate pjs: $j$lmatar: $k$laliados: $K$lpeleas: $a$l</send>
+  </alias>
+</aliases>
+
 <triggers>
   <trigger
    enabled="y"
    group="combate"
    match="&prefijo;(.*?) te (corta|raja|sesga) &intens;en (.*?)\.$"
-   omit_from_output="n"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -483,7 +590,7 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <trigger
    enabled="y"
    group="area"
-   match="^&prefijo;Escuchas un grito ahogado.$"
+   match="^&prefijo;Escuchas un grito ahogado\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -492,35 +599,6 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
 wait.make(function()
 wait.time(0.5)
 play_sound("area/nagrung/templo ancestral/espectro/chillido.ogg")
-end)</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="habilidades"
-   match="^&prefijo;Pasas tu mano sobre tu (.*?) mientras te concentras intentando despertar su magia.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("habilidades/hechiceros/golpe arcano/despertar.ogg", -30)</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="habilidades_maestria"
-   lines_to_match="2"
-   keep_evaluating="y"
-   match="^&prefijo;Tensas tus músculos preparando un nuevo ataque. Â¡Golpeas a (.*?) rápidamente, secundas tu ataque con un certero movimiento!$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("habilidades/maestria/ataquedoble/"..math.random(1,6)..".ogg", -30)
-
-require "wait"
-wait.make(function()
-wait.time(0.1)
-Sound("pan=-50")
-play_sound("habilidades/maestria/ataquedoble/"..math.random(1,6)..".ogg")
 end)</send>
   </trigger>
   <trigger
@@ -619,37 +697,6 @@ Sound(file)</send>
   </trigger>
   <trigger
    enabled="y"
-   group="habilidades"
-   match="^&prefijo;\* Â¡Convulsionas en agonía cuando (.*?) te apuñala por la espalda\!$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>Sound("pan=-50")
-play_sound("habilidades/bribones/apuñalar/" .. math.random(1,7) .. ".ogg")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="oficios"
-   match="^Veta de (.*?)\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("habilidades/picar/encontrar veta.ogg")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Habilidades-Picar"
-   match="^&prefijo;Veta de (.*?) parece haberse agotado\.$"
-   regexp="y"
-   send_to="12"
-   sequence="99"
-  >
-  <send>play_sound("habilidades/picar/desprendimiento" .. math.random(1, 2) .. ".ogg")</send>
-  </trigger>
-  <trigger
-   enabled="y"
    group="otros"
    match="^&prefijo;\[Obtienes el logro '(.*?)' (.*?)\]$"
    regexp="y"
@@ -679,27 +726,6 @@ play_sound("magia/proyectil magico.ogg")</send>
   </trigger>
   <trigger
    enabled="y"
-   group="habilidades"
-   match="^&prefijo;Â¡Imbuído por el fragor de la batalla, canalizas toda la ira que habita en tí en tu arma, descargándola sobre tu enemigo con un (.*?) y (.*?) movimiento"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>if "%1" == "armonioso" and "%2" == "equilibrado" then
-Sound("pan=40")
-play_sound("habilidades/luchadores/soldado/golpecertero/normal.ogg")
-elseif "%1" == "fugaz" and "%2" == "preciso" then
-Sound("pan=40")
-Sound("volume=100")
-play_sound("habilidades/luchadores/soldado/golpecertero/rápido.ogg")
-elseif "%1" == "sádico" and "%2" == "brutal" then
-Sound("pan=40")
-Sound("volume=100")
-play_sound("habilidades/luchadores/soldado/golpecertero/poderoso.ogg")
-end</send>
-  </trigger>
-  <trigger
-   enabled="y"
    group="hechizos"
    match="Â¡* invoca una columna de fuego sobre ti!"
    send_to="12"
@@ -707,18 +733,6 @@ end</send>
   >
   <send>Sound("pan=-50")
 play_sound("magia/columna de fuego.ogg")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="habilidades"
-   lines_to_match="2"
-   keep_evaluating="y"
-   match="Â¡Con un amplio movimiento en forma de arco de tu poderoso brazo barres a todos los oponentes frente a ti!\Z"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("habilidades/barrido.ogg")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -743,17 +757,6 @@ Sound(file)</send>
   </trigger>
   <trigger
    enabled="y"
-   group="incursor"
-   match="^(.*?)Tras acumular un montón de saliva, lanzas una esfera gelatinosa de ácido contra (.*?) volando en dirección (.*?).$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>Sound("pan=-40")
-play_sound("habilidades/luchadores/incursor/escupitajo ácido/escupir" .. math.random(1,2) .. ".ogg")</send>
-  </trigger>
-  <trigger
-   enabled="y"
    group="hechizos"
    match="^(.*?)Un llameante rayo de fuego rojo se forma en tus manos\.$"
    regexp="y"
@@ -762,16 +765,6 @@ play_sound("habilidades/luchadores/incursor/escupitajo ácido/escupir" .. math.ra
   >
   <send>file = GetInfo(67).."/sonidos/magia/hoja de llamas.ogg"
 Sound(file)</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="combate"
-   match="^&prefijo;Â¡(.*?) comienza a sangrar abundantemente por sus heridas múltiples en (.*?)\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("habilidades/maestria/herir/sangramiento.ogg", 35)</send>
   </trigger>
   <trigger
    enabled="y"
@@ -1910,38 +1903,18 @@ end)</send>
   >
   <send>play_sound("habilidades/picar/"..math.random(1,6)..".ogg")</send>
   </trigger>
-  
-  <trigger
-   enabled="y"
-   group="Eventos"
-   match="^&prefijo;El gutural sonido de una poderosa inspiración hace retumbar las paredes de la cueva\. Algo no va bien\.\.\.$"
-   name="lish_aliento_exterior"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("notificaciones/alerta.ogg")</send>
-  </trigger>
+
 </triggers>
 
 <!--  Aliases  -->
 
 <aliases>
-  <alias
-   name="omiq"
-   script="do_nick"
-   match="wo"
-   enabled="y"
-   group="General"
-   sequence="100"
-  >
-  </alias>
 </aliases>
 
 <aliases>
   <alias
    script="on_tarjet"
-   match="^tarjet (?P&lt;tarjet&gt;.*?)$"
+   match="^tarjet (?P&lt;tarjet&gt;\w+)$"
    enabled="y"
    group="General"
    regexp="y"
@@ -1956,61 +1929,20 @@ end)</send>
   >
   <send>galopar %1</send>
   </alias>
-  <alias
-   match="mt"
-   enabled="y"
-   expand_variables="y"
-   group="General"
-   send_to="2"
-   sequence="100"
-  >
-  <send>Tu nick es @tarjet</send>
-  </alias>
-  <alias
-   match="seg *"
-   enabled="y"
-   group="General"
-   send_to="12"
-   sequence="100"
-  >
-  <send>require("var")
-Note("Persiguiendo a %1.")
-var.perseguido = "%1"</send>
-  </alias>
-  <alias
-   match="ss"
-   enabled="y"
-   expand_variables="y"
-   group="General"
-   send_to="12"
-   sequence="100"
-  >
-  <send>require("var")
-if var.ultimadir then
-Send(var.ultimadir)
-end</send>
-  </alias>
-  <alias
-   name="enemigos"
-   script="do_nick"
-   match="we"
-   enabled="y"
-   group="General"
-   sequence="100"
-  >
-  </alias>
-  <alias
-   name="matar"
-   script="do_nick"
-   match="wm"
-   enabled="y"
-   group="General"
-   sequence="100"
-  >
-  </alias>
 </aliases>
 
 <!--  Script  -->
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script>
@@ -2029,7 +1961,6 @@ local pjs = {
 	matar = {},
 	omiq = {},
 }
-
 
 armas = {
 	aplastante = {
@@ -2158,61 +2089,6 @@ function list_to_string(list)
 	return sresult
 end -- function
 
-function on_who(name, line, wildcards)
-	-- Lo primero es habilitar el trigger de agregación
-	if name == "start_who" then
-		pjs[var.pjlist] = {}
-		EnableTrigger("add_pj", 1)
-		EnableTrigger("stop_who", 1)
-		return
-	end -- if
-
-	-- Luego insertar los nombres que salgan
-	if name == "add_pj" then
-		table.insert(pjs[var.pjlist], wildcards.pjname:lower())
-		return
-	end -- if
-
-	-- Y cuando termine, desactivar todo
-	if name == "stop_who" then
-		EnableTrigger("add_pj", 0)
-		EnableTrigger("start_who", 0)
-		EnableTrigger("stop_who", 0)
-
-		-- Los nombres los convertimos a una string
-		var[var.pjlist] = list_to_string(pjs[var.pjlist])
-		
-		-- Y seteamos la lista para que se pueda detectar jugadores
-		if var.tarjeted_list == var.pjlist then
-			var.tarjet = var[var.pjlist]
-		end
-		
-		-- Limpiamos todo
-		var.pjlist = nil
-		var.tarjeted = nil
-	end -- if
-end -- on_who
-
-function do_nick(name)
-	var.tarjeted = "mortales"
-	var.pjlist = name
-	pjs.omiq = {}
-
-	Execute("tarjet "..name)
-	EnableTrigger("start_who", 1)
-
-	if name == "enemigos" then
-		Send("who matar hostil")
-	elseif name == "matar" then
-		Send("who matar")
-	elseif name == "omiq" then
-		Send("who omiq")
-	else
-		var.tarjeted = nil
-		var.pjlist = nil
-	end -- if
-end -- function
-
 function on_room_pjs(n,ln,wc)
 	if var.tarjet == nil then
 		return
@@ -2227,32 +2103,10 @@ function on_room_pjs(n,ln,wc)
 end -- function
 
 function on_tarjet(name,line,wc)
-	if wc.tarjet == "enemigos" or wc.tarjet == "matar" or wc.tarjet == "omiq" then
-		var.tarjet = var[wc.tarjet]
-	else
-		var.tarjet = wc.tarjet
-	end
+	var.tarjet = wc.tarjet
 
-	var.tarjeted_list = wc.tarjet
 	print("Tarjet puesto a " .. wc.tarjet)
 end -- function
-
-function move_nick(name,line,wc)
-	local tb = utils.split(var.tarjet, ",")
-	local inlist, idx = in_tarjet(wc.nick:lower())
-	
-	if inlist then
-		if name == "move_start" then
-			table.insert(tb, table.remove(tb, idx), 1)
-		else
-			table.insert(tb, table.remove(tb, idx))
-		end
-		var.tarjet = list_to_string(tb)
-		Execute("mt")
-	else
-		Note("El nick '"..wc.nick.."' no existe")
-	end -- if
-end -- move_nick
 
 function on_channel(name, line, wildcards)
 	if wildcards.channame == nil then
@@ -2263,42 +2117,75 @@ function on_channel(name, line, wildcards)
 	history_add(wildcards.channame, wildcards.message)
 end -- on_channel
 
-function in_tarjet(pj)
-	if not var.tarjet then
-		return true, 1
-	end -- if
 
-	for k, v in pairs(utils.split(var.tarjet, ",")) do
-		if pj:lower():find(v) then
-			return true, k
-		end -- if
-	end -- for
+function on_irse(name, line, wildcards)
+	local nombre, dir = wildcards[1], wildcards[2]
 	
-	return false
-end -- function
-
-function on_move(name, line, wildcards)
-	local mv, idx = in_tarjet(wildcards.pjname)
-
-	if mv then
-		play_sound("salidas/"..wildcards.dir..".ogg")
+	-- Necesitamos limpiar primero el nombre
+	local nombre_filtrado = nombre:gsub("[-\\|/]", "")
+	
+	-- Una vez filtrado el nombre, necesitamos reconocer algunos patrones (por ejemplo, por si el jugador va con espejismo)
+	if nombre_filtrado:match("%a+ %a+s") then
+		nombre_filtrado = nombre_filtrado:match("%a+ (%a+)s")
+	end -- if
+	
+	-- Faltan patrones, pero por momento dejamos así
+	
+	-- El siguiente paso es buscar el nombre en las variables
+	if var.matar and var.matar:find(nombre_filtrado) then
+		play_sound(string.format("Movimiento/Enemigos/se va %s.mp3", dir))
+	elseif var.peleas and var.peleas:find(nombre_filtrado) then
+		play_sound(string.format("Movimiento/Enemigos/se va %s.mp3", dir))
 	else
-		return
-	end
-	
-	if idx == 1 then
-		var.ultimadir = wildcards.dir
-	end -- perseguido
-end -- function
-
-function on_llegar(name, line, wc)
-	local mv, idx = in_tarjet(wc.pj)
-	
-	if mv then
-		play_sound("notificaciones/enemigo.ogg")
+		play_sound(string.format("Movimiento/Aliados/se va %s.mp3", dir))
 	end -- if
 end -- function
 
+function on_llegar(name, line, wildcards)
+	local nombre, dir = wildcards[1], wildcards[2]
+	
+	-- Necesitamos limpiar primero el nombre
+	local nombre_filtrado = nombre:gsub("[-\\|/]", "")
+	
+	-- Una vez filtrado el nombre, necesitamos reconocer algunos patrones (por ejemplo, por si el jugador va con espejismo)
+	if nombre_filtrado:match("%a+ %a+s") then
+		nombre_filtrado = nombre_filtrado:match("%a+ (%a+)s")
+	end -- if
+	
+	-- Faltan patrones, pero por momento dejamos así
+
+	-- Guardamos el player en una variable, para cuando tengamos el prompt y podamos ver si llegó.
+	var.llego = nombre_filtrado
+	var.llego_dir = dir
+end -- function
+
+function on_jugadores(nombre,lista,wildcards)
+	var[nombre] = wildcards[1]:gsub("[-\\|/]", "")
+	
+	if nombre == "matar" and var.matar ~= "" then
+		play_sound("Generales/Enemigo.wav")
+	end -- if
+	
+	if nombre == "peleas" and var.peleas then
+		play_sound("Generales/En peleas.wav")
+	end -- if
+	
+	if nombre == "aliados" and var.aliados ~= "" then
+		play_sound("Generales/Aliado.wav")
+	end -- if
+
+	if var.llego and var[nombre]:find(var.llego) then
+		if nombre == "matar" or nombre == "peleas" then
+			play_sound(string.format("Movimiento/Enemigos/Llega %s.mp3", var.llego_dir))
+		else
+			play_sound(string.format("Movimiento/Aliados/Llega %s.mp3", var.llego_dir))
+		end -- if
+		
+		-- Limpiamos
+		var.llego = nil
+		var.llego_dir = nil
+	end -- if
+end -- function
 
 ]]>
 </script>

@@ -38,29 +38,29 @@ function PanPvs()
 	local pvs_pan = -100 + ((data.pvs.min/data.pvs.max)*20)*10
 
 	if data.pvs.min == data.pvs.max then
-		play_sound("info/pvs_completo.ogg")
+		play_sound("std/pvs_completo.ogg")
 		return
 	end -- pan_pvs
 
 
-	play_sound("info/pv.ogg", pvs_pan)
+	play_sound("std/pvs.ogg", pvs_pan)
 end -- PanPVS
 
 function PanPe()
 	local pe_pan = -100 + ((data.pe.min/data.pe.max)*20)*10
 
 	if data.pe.min == data.pe.max then
-		play_sound("info/pe_completo.ogg")
+		play_sound("std/pe_completo.ogg")
 		return
 	end
 	
-	play_sound("info/pe.ogg", pe_pan)
+	play_sound("std/pe.ogg", pe_pan)
 end -- PanPe
 
 function PanXp()
 	local xp_pan = -100 + ((data.xp.min/data.xp.max)*20)*10
 
-	play_sound("info/xp.ogg", xp_pan)
+	play_sound("std/xp.ogg", xp_pan)
 end -- PanXP
 
 function mostrar_pvs()
