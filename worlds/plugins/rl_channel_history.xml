@@ -153,7 +153,6 @@ require "json"
 
 function OnPluginListChanged()
 	RLStuffListChanged()
-	subscribir("Comm.MensajeCanal", "Mensaje_GMCP")
 end -- ListChanged
 
 modes = {} -- for keyboard states
@@ -435,18 +434,22 @@ function history_msgcopy(name, line, wc)
  say("copied")
 end
 
-function Mensaje_GMCP(mensaje, datos)
-	-- No hay peligro, siempre viene formateado correctamente como JSON
-	local data = json.decode(datos)
+function OnGMCPInit()
+	Send_GMCP_Packet('Core.Supports.add ["Comm 1"]')
+end -- function
+
+function OnGMCP(mensaje)
+	if mensaje ~= "Comm.MensajeCanal" then
+		return
+	end -- if
+	
+	-- Pedimos los datos, eso lo primero
+	local data = PedirGMCP(mensaje)
 	
 	-- Parseamos los datos, convirtiendo a utf-8 y reemplazando los caracteres html
 	data.mensaje = utf8convert(replace_html(data.mensaje))
-	
-
-	AnsiNote(data.mensaje)
 
 	if mensaje == "Comm.MensajeCanal" then
-
 
 		if data.canal == "bueno"
 				or data.canal == "malo"
@@ -458,6 +461,7 @@ function Mensaje_GMCP(mensaje, datos)
 			play_sound("canales/bando.ogg")
 		elseif data.canal == "takome"
 				or data.canal == "poldarn"
+				or data.canal == "thorin"
 				or data.canal == "veleiron"
 				or data.canal == "kheleb"
 				or data.canal == "kattak"
@@ -472,6 +476,7 @@ function Mensaje_GMCP(mensaje, datos)
 			history_add(data.canal, StripANSI(data.mensaje))
 			play_sound("canales/"..data.canal..".ogg")
 		end -- data.canal
+		if mushreader then mushreader.say(StripANSI(data.mensaje)) end
 	end -- text
 end -- OnPluginBroadcast
 

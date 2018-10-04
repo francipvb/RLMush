@@ -22,7 +22,7 @@
 
 <!--  Get our standard constants -->
 
-<include name="constants.lua"/>
+<!-- <include name="constants.lua"/> -->
 
 <!-- script -->
 
@@ -30,76 +30,42 @@
 <![CDATA[
 require "rl_stuff"
 require "json"
-require "copytable"
 
-local data = nil
-
-function PanPvs()
-	local pvs_pan = -100 + ((data.pvs.min/data.pvs.max)*20)*10
-
-	if data.pvs.min == data.pvs.max then
-		play_sound("std/pvs_completo.ogg")
-		return
-	end -- pan_pvs
-
-
-	play_sound("std/pvs.ogg", pvs_pan)
-end -- PanPVS
-
-function PanPe()
-	local pe_pan = -100 + ((data.pe.min/data.pe.max)*20)*10
-
-	if data.pe.min == data.pe.max then
-		play_sound("std/pe_completo.ogg")
-		return
-	end
-	
-	play_sound("std/pe.ogg", pe_pan)
-end -- PanPe
-
-function PanXp()
-	local xp_pan = -100 + ((data.xp.min/data.xp.max)*20)*10
-
-	play_sound("std/xp.ogg", xp_pan)
-end -- PanXP
+gmcpdata = {}
+prev_data = {}
 
 function mostrar_pvs()
-	-- Comprobamos que podemos hablar
-	if IsConnected() and mushreader then
-		if data then
-			mushreader.say(string.format("%d/%d (%d%%)",
-				data.pvs.min, data.pvs.max,
-				(data.pvs.min/data.pvs.max)*100))
+	if mushreader then
+		if IsConnected() then
+			mushreader.say(string.format([[
+			%i/%i (%i%%)
+			]], gmcpdata.pvs.min, gmcpdata.pvs.max, (gmcpdata.pvs.min / gmcpdata.pvs.max) * 100))
 		else
-			mushreader.say("No hay datos todavía")
-		end -- data
-	else
-		mushreader.say("No estás conectado, no hay nada de qué hablar.")
-	end -- IsConnected
+			mushreader.say("No estás conectado.")
+		end -- if
+	end -- if
 end -- function
 
 function mostrar_pes()
-	-- Solo hablamos si estamos conectados y si hay datos
-	if IsConnected() and mushreader then
-		if data then
-			mushreader.say(string.format("%d/%d (%d%%)",
-				data.pe.min, data.pe.max,
-				(data.pe.min/data.pe.max)*100))
+	if mushreader then
+		if IsConnected() then
+			mushreader.say(string.format([[
+			%i/%i (%i%%)
+			]], gmcpdata.pe.min, gmcpdata.pe.max, (gmcpdata.pe.min / gmcpdata.pe.max) * 100))
 		else
-			mushreader.say("Todavía no hay datos.")
+			mushreader.say("No estás conectado.")
 		end -- if
 	end -- if
 end -- function
 
 function mostrar_xp()
-	-- Solo hablamos si estamos conectados y si hay datos
-	if IsConnected() and mushreader then
-		if data then
-			mushreader.say(string.format("%d/%d (%d%%)",
-				data.xp.min, data.xp.max,
-				(data.xp.min/data.xp.max)*100))
+	if mushreader then
+		if IsConnected() then
+			mushreader.say(string.format([[
+			%i/%i (%i%%)
+			]], gmcpdata.xp.min, gmcpdata.xp.max, (gmcpdata.xp.min / gmcpdata.xp.max) * 100))
 		else
-			mushreader.say("Todavía no hay datos.")
+			mushreader.say("No estás conectado.")
 		end -- if
 	end -- if
 end -- function
@@ -111,6 +77,10 @@ function OnPluginEnable()
 end -- OnPluginEnable
 
 function OnPluginInstall()
+	if IsConnected() then
+		Send_GMCP_Packet('Core.Supports.add ["Char 1"]')
+	end -- if
+	
 	OnPluginEnable()
 end -- OnPluginInstall
 
@@ -120,187 +90,105 @@ function OnPluginDisable()
 	Accelerator("ALT+SHIFT+x", "")
 end -- function
 
-function OnPluginRemove()
+function OnPluginClose()
 	OnPluginDisable()
+end -- function
+
+function OnPluginConnect()
+	print("Conectado")
 end -- function
 
 function OnPluginDisconnect()
 	data, prev_data = nil, nil
 end -- function
 
-local function actualizarTabla(anterior, nuevos)
-	assert(anterior, "No se proporcionó una tabla original.")
-	assert(type(anterior) == "table", "anterior tiene que ser una tabla válida.")
-	assert(nuevos, "No se proporciono una tabla de valores nuevos.")
-	assert(type(nuevos) == "table", "Los valores nuevos tienen que ser una tabla.")
-	
-	for k, v in pairs(nuevos) do
-		if type(v) == "table" then
-			anterior[k] = anterior[k] or {}
-			actualizarTabla(anterior[k], v)
-		else -- No es una tabla
-			anterior[k] = v
-		end -- table
-	end -- nuevos
+function OnGMCPInit()
+	Send_GMCP_Packet('Core.Supports.add ["Char 1"]')
 end -- function
 
-local function valid_status(status)
-	-- Un valor nil es un valor no valido
-	if not status then return false end
-	
-	-- Si los datos no están completos, tampoco.
-	if not status.min or not status.max then
-		return false
-	end -- status
-
-	return true
+function OnGMCPReload()
+	gmcpdata = {}
+	prev_data = {}
 end -- function
 
-local function valid_data()
-	-- Chequeamos los datos para comprobar que sean válidos
-	
-	-- Lo primero es ver que no sea un valor nulo
-	if not data then
-		return false
+function OnGMCP(mensaje)
+	if mensaje ~= "Char.Status" then
+		return
 	end -- if
 	
-	for k, v in pairs(data) do
-		if not valid_status(v) then
-			return false
+	-- Primero que nada, cargamos los datos
+	prev_data = gmcpdata
+	gmcpdata = PedirGMCP("Char.Status")
+	
+	-- Tiempo de espera para reproducir el próximo
+	local delay = 0
+	
+	-- Panning predefinido
+	local pvs_pan, pes_pan, xp_pan
+	
+	-- Diferencias
+	local pvs_delta, maxpvs_delta, pvs_faltan
+	local pes_delta, maxpes_delta, pes_faltan
+	local xp_delta, maxxp_delta, xp_faltan
+	
+	-- Primero los pvs
+	pvs_faltan = gmcpdata.pvs.max - gmcpdata.pvs.min
+	if not prev_data.pvs then
+		-- Si no hay datos previos, se actúa como si los datos anteriores valieran 0
+		pvs_delta = gmcpdata.pvs.min
+		maxpvs_delta = gmcpdata.pvs.max
+	else
+		-- En caso de que hayan datos anteriores, la diferencia serán los actuales por sobre los anteriores
+		pvs_delta = gmcpdata.pvs.min - prev_data.pvs.min
+		maxpvs_delta = gmcpdata.pvs.max - prev_data.pvs.max
+	end -- if
+	pvs_pan = -100 + (gmcpdata.pvs.min / gmcpdata.pvs.max) * 200
+	
+	pes_faltan = gmcpdata.pe.max - gmcpdata.pe.min
+	if not prev_data.pe then
+		-- Si no hay datos previos, se actúa como si los datos anteriores valieran 0
+		pes_delta = gmcpdata.pe.min
+		maxpes_delta = gmcpdata.pe.max
+	else
+		-- En caso de que hayan datos anteriores, la diferencia serán los actuales por sobre los anteriores
+		pes_delta = gmcpdata.pe.min - prev_data.pe.min
+		maxpes_delta = gmcpdata.pe.max - prev_data.pe.max
+	end -- if
+	pes_pan = -100 + (gmcpdata.pe.min / gmcpdata.pe.max) * 200
+	
+	-- Este sonido se reproduce solo si las barras de pgs y pvs están completas
+	if pvs_faltan == 0 and pes_faltan == 0 
+		and (pvs_delta ~= 0 or pes_delta ~= 0) then
+		play_sound("std/todo_completo.ogg")
+		return
+	end -- if
+	
+	require "wait"
+	
+	wait.make(function()
+		-- Sonido para pvs completos solo si los pvs están completos y la diferencia es mayor a 0
+		if pvs_faltan == 0 and pvs_delta ~= 0 then
+			play_sound("std/pvs_completo.ogg")
+			wait.time(0.5)
+		elseif pvs_delta ~= 0 then
+			play_sound("std/pvs.ogg", pvs_pan)
+			wait.time(0.5)
 		end -- if
-	end -- data
-
-	return true
-end -- valid_data
-
-function procesar(mensaje, gmcpdata)
-	-- Primero que nada pasamos los datos por el decoder
-	gmcpdata = json.decode(gmcpdata)
-	
-	-- Si no hay datos previos, sencillamente usamos los primeros que hay
-	if not data then
-		data = gmcpdata
-		return
-	end -- if
-
-	-- Lo primero es comprobar si no faltan datos
-	if not valid_data() then
-		return
-	end -- valid_data
-
-	-- Establecemos un par de variables
-	local pvsmax_delta, pemax_delta = 0, 0
-	local xpmax_delta, oficiomax_delta = 0, 0
-	local pvsmin_delta, pemin_delta = 0, 0
-	local xpmin_delta, oficiomin_delta = 0, 0
-	
-	if gmcpdata.pvs then
-		local pvs = gmcpdata.pvs
-		local old_pvs = data.pvs
 		
-		if pvs.min then
-			pvsmin_delta = pvs.min - old_pvs.min
-		end -- pvs min
-		
-		if pvs.max then
-			pvsmax_delta = pvs.max - old_pvs.max
-		end -- pvs max
-	end -- pvs
-
-	-- Ahora los pes
-	if gmcpdata.pe then
-		local pe = gmcpdata.pe
-		local old_pe = data.pe
-		
-		if pe.min then
-			pemin_delta = pe.min - old_pe.min
-		end -- pe min
-		
-		if pe.max then
-			pemax_delta = pe.max - old_pe.max
-		end -- pe max
-	end -- pe
-	
-	-- También la XP y la XP de oficio
-	if gmcpdata.xp then
-		local xp = gmcpdata.xp
-		local old_xp = data.xp
-		
-		if xp.min then
-			xpmin_delta = xp.min - old_xp.min
-		end -- xp min
-
-		if xp.max then
-			xpmax_delta = xp.max - old_xp.max
-		end -- xp max
-	end -- xp
-
-	if gmcpdata.xp_oficio then
-		local oficio = gmcpdata.xp_oficio
-		local old_oficio = data.xp_oficio
-		
-		if oficio.min then
-			oficiomin_delta = oficio.min - old_oficio.min
-		end -- pes min
-		
-		if oficio.max then
-			oficiomax_delta = oficio.max - old_oficio.max
-		end -- oficiomax.max
-	end -- oficio
-
-	-- Por último, parcheamos los datos con los datos nuevos
-	actualizarTabla(data, gmcpdata)
-
-	-- Mostramos las diferencias para los puntos de vida y energía
-	if pvsmax_delta ~= 0 then
-		print(string.format("PVS Max Delta: %i", pvsmax_delta))
-	end -- if
-
-	if pvsmin_delta ~= 0 and math.abs(pvsmin_delta) >= 30 then
-		print(string.format("PVS Delta: %i", pvsmin_delta))
-	end -- if
-
-	if pemax_delta ~= 0 then
-		print(string.format("PE Max Delta: %i", pemax_delta))
-	end -- if
-
-	if pemin_delta ~= 0 and math.abs(pemin_delta) >= 5 then
-		print(string.format("PE Delta: %i", pemin_delta))
-	end -- if
-
-	-- Lo que sigue es reproducir un sonido si las barras están todas llenas
-	if data.pvs.min == data.pvs.max and data.pe.min == data.pe.max and (pvsmin_delta ~= 0 or pemin_delta ~= 0) then
-		play_sound("info/todo_completo.ogg")
-		return
-	end -- barra completa
-	
-	-- Ahora reproducimos un sonido para los que van cambiando o cambiaron
-	local segundos = 0.1
-	
-	if pvsmin_delta ~= 0 then
-		DoAfterSpecial(segundos, "PanPvs()", sendto.script)
-		segundos = segundos + 1
-	end -- if
-	
-	if pemin_delta ~= 0 then
-		DoAfterSpecial(segundos, "PanPe()", sendto.script)
-		segundos = segundos + 1
-	end -- if
-
-	-- Faltaría algo relativo a la XP pero no sabría que mas puede ser.
+		-- Algo similar con los pes
+		if pes_faltan == 0 and pes_delta ~= 0 then
+			play_sound("std/pe_completo.ogg")
+			wait.time(0.5)
+		elseif pes_delta ~= 0 then
+			play_sound("std/pe.ogg", pes_pan)
+			wait.time(0.5)
+		end -- if
+	end) -- function
 end -- function
 
 function OnPluginListChanged()
 	RLStuffListChanged()
-	
-	subscribir("Char.Status", "procesar")
-	subscribir("Core.Hello", "limpiar")
 end -- ListChanged
-
-function limpiar()
-	data = nil
-	history_data = nil
-end -- limpiar
 
 ]]>
 </script>

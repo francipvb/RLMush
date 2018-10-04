@@ -280,8 +280,8 @@ local mapa_salidas = {
 	e = "e",
 	este = "e",
 	east = "e",
-	se = "se",
 	sudeste = "se",
+	se = "se",
 	s = "s",
 	sur = "s",
 	south = "s",
@@ -295,12 +295,12 @@ local mapa_salidas = {
 	no = "nw",
 	noroeste = "nw",
 	nw = "nw",
-	ar = "u",
-	arriba = "u",
-	u = "u",
-	ab = "d",
-	abajo = "d",
-	d = "d",
+	ar = "up",
+	arriba = "up",
+	up = "up",
+	ab = "down",
+	abajo = "down",
+	down = "down",
 	fuera = "fu",
 	dentro = "de",
 	puerta = "pu"
@@ -316,8 +316,8 @@ local salidas_inversas = {
 	nw = "se",
 	ne = "sw",
 	sw = "ne",
-	u = "d",
-	d = "u",
+	up = "down",
+	down = "up",
 }
 
 -- Esta tabla contiene nombres largos para las salidas. Usado sobre todo para mostrar correctamente los nombres dentro del plugin
@@ -330,8 +330,8 @@ local salidas_localizadas = {
 	ne = "noreste",
 	sw = "suroeste",
 	se = "sudeste",
-	u = "arriba",
-	d = "abajo",
+	up = "arriba",
+	down = "abajo",
 	fu = "fuera",
 	de = "dentro",
 }
@@ -340,8 +340,8 @@ local enviar = {
 	w = "o",
 	sw = "so",
 	nw = "no",
-	u = "ar",
-	d = "ab",
+	up = "ar",
+	down = "ab",
 	n = "n",
 	s = "s",
 	e = "e",
@@ -691,8 +691,16 @@ local function findRoomsWithNameContaining(pattern)
 	return result
 end -- function
 
-function mover_gmcp(mensaje, dir)
-	mover(dir:sub(2,dir:len()-1))
+function OnGMCPInit()
+	Send_GMCP_Packet('Core.Supports.add ["Room 1"]')
+end -- function
+
+function OnGMCP(mensaje)
+	if mensaje ~= "Room.Movimiento" then return end
+	
+	local dir = PedirGMCP("Room.Movimiento")[1]
+	
+	mover(dir)
 	if not current.room then
 		local rooms = findRoomsWithNameContaining(data.nombre)
 		
@@ -728,8 +736,6 @@ end -- OnPluginDisconnect
 
 function OnPluginListChanged()
 	RLStuffListChanged()
-	
-	subscribir("Room.Movimiento", "mover_gmcp")
 end -- function
 
 function OnPluginInstall()
@@ -843,7 +849,7 @@ function OnPluginInstall()
 	
 	mapper.init(init_config)
 	config.SCAN.depth = 5000
-	config.delay = 0
+	config.DELAY.time = 0
 	
 
 	if var.oculto then
@@ -1396,7 +1402,7 @@ function on_ocultar()
 	
 	var.oculto = true
 	mapper.hide()
-	mapper.mapprint("Se ocult[o el mapa")
+	mapper.mapprint("Se ocultó el mapa")
 end -- function
 
 function OnHelp ()

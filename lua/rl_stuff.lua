@@ -1,9 +1,7 @@
 require "ppi"
-local snd = nil
-local gmcp = nil
+require "gmcphelper"
 
--- Funciones asociadas a mensajes enviados mediante GMCP
-local suscriptores = {}
+local snd = nil
 
 mushreader = nil
 
@@ -33,7 +31,6 @@ end -- function
 function RLStuffListChanged()
 	mushreader = ppi.Load("16ba6b7a227a9dab54f5c76e")
 	snd = ppi.Load("aedf0cb0be5bf045860d54b7")
-	gmcp = ppi.Load("3b764c2d9d7e85dbf01ddfab")
 end -- OnPluginListChanged
 
 function play_sound(sound,pan,loop,vol)
@@ -90,49 +87,35 @@ function history_add(cat, msg)
 	CallPlugin("f6153a4ac099403418c11711", "history_add", cat, msg)
 end -- add_history
 
-function subscribir(mensaje, funcion)
-	assert(mensaje, "No se definió un mensaje.")
-	assert(type(mensaje) == "string", "El mensaje no es válido.")
-	assert(funcion, "No se suplió una función.")
-	assert(type(funcion) == "string", "Solo se admite el nombre de la función.")
-	
-	if gmcp then
-		gmcp.add_callback(mensaje, GetPluginID(), funcion)
-	end -- gmcp
-end -- function
-
-function desuscribir(mensaje, funcion)
-	if gmcp then
-		gmcp.remove_callback(mensaje, GetPluginID(), funcion)
-	end
-end -- function
-
-function OnPluginTick()
-	for k, v in pairs(coros) do
-		if not completo(k) then
-			local success, r1, r2, r3 = coroutine.resume(v)
-			if success then
-				if type(r1) == "string" then
-					print(r1)
-				end -- if
-			else
-				print(r1)
-			end -- if
+function OnPluginBroadcast (msg, id, name, text)
+	if (id == '3e7dedbe37e44942dd46d264') then
+		if msg == 1 then
+			local fragmento = "if %s then %s() end"
+			
+			if text == "init" then
+				loadstring(string.format(fragmento, "OnGMCPInit", "OnGMCPInit"))()
+			elseif text == "reload" then
+				loadstring(string.format(fragmento, "OnGMCPReload", "OnGMCPReload"))()
+			end -- Mensajes globales
 		else
-			coros[k] = nil
+			loadstring(string.format([[
+				if OnGMCP then
+					OnGMCP("%s")
+				end -- if
+			]], text))()
 		end -- if
-	end -- for
+	end -- gmcp_handler
 end -- function
 
-function completo(nombre)
-	if not coros[nombre] then
-		return true
-	else
-		local success, result = pcall(coroutine.status, coros[nombre])
-		return success and result == "dead"
-	end -- if
-end -- function
+function PedirGMCP(valor)
+	assert(valor, "Tiene que proveerse un valor para la función.")
+	assert(type(valor) == "string", "El valor no es un string.")
+	
+	-- Necesitamos una manera fácil de comprobar los errores
+	require "check"
 
-function agregarCoro(nombre, funcion)
-	coros[nombre] = coroutine.create(funcion)
+	local rc, datos = CallPlugin("3e7dedbe37e44942dd46d264","gmcpval", valor)
+	assert(datos, "No se pudieron conseguir los datos")
+	
+	return (loadstring("return "..datos))()
 end -- function

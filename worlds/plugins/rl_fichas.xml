@@ -721,12 +721,9 @@ end -- function
 
 function OnPluginListChanged()
 	RLStuffListChanged()
-	subscribir("Core.Hello", "on_conectar")
-	subscribir("Core.Goodbye", "on_salir")
-	subscribir("Char.Ficha", "on_ficha")
 end -- function
 
-function on_conectar(mensaje)
+function OnGMCPInit()
 	require "var"
 	
 	var.clase = nil
@@ -735,7 +732,7 @@ function on_conectar(mensaje)
 	var.nombre = nil
 end -- function
 
-function on_salir(mensaje)
+function OnPluginDisconnect()
 	require "var"
 	
 	var.clase = nil
@@ -744,12 +741,13 @@ function on_salir(mensaje)
 	var.nombre = nil
 end -- function
 
-function on_ficha(mensaje, datos)
+function OnGMCP(mensaje)
 	require "var"
-	require "json"
+	
+	if mensaje ~= "Char.Ficha" then return end
 	
 	-- Parseamos los datos mediante json
-	local ficha = json.decode(datos)
+	local ficha = PedirGMCP("Char.Ficha")
 	
 	-- Si se define la clase, reemplazamos la variable con el valor nuevo
 	if ficha.clase then
@@ -780,9 +778,6 @@ function OnPluginInstall()
 end -- function
 
 function OnPluginClose()
-	desuscribir("Core.Hello", "on_conectar")
-	desuscribir("Core.Goodbye", "on_salir")
-	desuscribir("Char.Ficha", "on_ficha")
 	DeleteTemporaryAliases()
 end -- function
 

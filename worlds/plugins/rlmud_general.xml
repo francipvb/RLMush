@@ -87,6 +87,116 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   >
   </trigger>
 
+  <trigger
+   group="General"
+   lines_to_match="2"
+   match="^&prefijo;(?P&lt;room_name&gt;.*?)\n\s\[(?P&lt;exits&gt;[a-z\|\-\~\*\,]*)\] \((?P&lt;branches&gt;[a-z\|\-\~\*\,]*)\)\ $"
+   multi_line="y"
+   regexp="y"
+   script="on_mirar"
+   sequence="100"
+   enabled="y"
+   name="mirar_arbol"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="General"
+   match="^&prefijo;(?P&lt;room_name&gt;.*?) \[(?P&lt;exits&gt;[a-z\|\-\~\*\,]*)\]\ (?:\[.*\] |)$"
+   name="mirar"
+   regexp="y"
+   script="on_mirar"
+   sequence="100"
+   lowercase_wildcard="y"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="General"
+   match="^(.*?) te sigue(?:n|)\.$"
+   regexp="y"
+   sequence="100"
+   script="on_seguir"
+  >
+  </trigger>
+
+  <trigger
+   enabled="n"
+   group="Nickeador"
+   match="^(?:\-+\] |)Mortales(?: \[\-+|\s+)$"
+   name="empezar_who"
+   regexp="y"
+   sequence="100"
+   script="on_who"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   group="Nickeador"
+   match="^(\=+\[ |)Hay (.*?) en Eirea( \]\=+|\s+)|\=+$"
+   name="terminar_who"
+   regexp="y"
+   sequence="100"
+   script="on_who"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   group="Nickeador"
+   match="^\s+(?P&lt;pj&gt;\w+)(?: .*?|) (el|la) .*$"
+   name="agregar_pj"
+   regexp="y"
+   sequence="100"
+   lowercase_wildcard="y"
+   script="on_who"
+  >
+  </trigger>
+
+  <trigger
+   enabled="n"
+   group="Objetivos"
+   lines_to_match="2"
+   match="^&prefijo;Añadiendo nombre corto (?P&lt;nickname&gt;\w+) como\s(?P&lt;actual&gt;.*?)\.$"
+   multi_line="y"
+   name="nuevo_nick"
+   regexp="y"
+   sequence="100"
+   script="on_nick"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   group="Objetivos"
+   lines_to_match="2"
+   match="^&prefijo;Nombre corto ((?:\w+(?:\,|))+) borrado de (?P&lt;nickname&gt;\w+) quedando\s(?P&lt;actual&gt;(?:\w+(?:\,|))+)\.$"
+   multi_line="y"
+   name="nick_eliminado"
+   regexp="y"
+   sequence="100"
+   script="on_nick"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   group="Objetivos"
+   lines_to_match="3"
+   match="^&prefijo;Nombre corto (?&lt;nickname&gt;\w+) cambiado de\s(?:(?:\w+(?:\,|))+) a\s(?P&lt;actual&gt;(?:\w+(?:\,|))+)\.$"
+   multi_line="y"
+   name="nick_cambiado"
+   regexp="y"
+   sequence="100"
+   script="on_nick"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   group="Objetivos"
+   match="^Nombre corto (\w+) borrado\.$"
+   regexp="y"
+   sequence="100"
+  >
+  </trigger>
+
   <!-- Habilidades -->
 
   <!-- Carga -->
@@ -503,61 +613,32 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   >
   <send>play_sound("info/comando incorrecto.ogg")</send>
   </trigger>
-  
-  <trigger
-   enabled="y"
-   match="^pjs\: (.*?)$"
-   sequence="100"
-   script="on_jugadores"
-   regexp="y"
-   omit_from_output="y"
-   omit_from_log="y"
-   name="todos"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
-   match="^aliados\: (.*?)$"
-   regexp="y"
-   sequence="100"
-   script="on_jugadores"
-   omit_from_output="y"
-   omit_from_log="y"
-   name="aliados"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
-   match="^matar\: (.*?)$"
-   regexp="y"
-   sequence="100"
-   script="on_jugadores"
-   omit_from_output="y"
-   omit_from_log="y"
-   name="matar"
-  >
-  </trigger>
-  <trigger
-   enabled="y"
-   match="^peleas\: (.*?)$"
-   regexp="y"
-   sequence="100"
-   script="on_jugadores"
-   name="peleas"
-   omit_from_output="y"
-   omit_from_log="y"
-  >
-  </trigger>
 </triggers>
+
 <aliases>
   <alias
-   match="cprompt"
+   match="wh"
    enabled="y"
-   group="General"
+   script="do_who"
+   name="hostil"
    sequence="100"
   >
-  <send>prompt pjs: $j$lmatar: $k$laliados: $K$l
-promptcombate pjs: $j$lmatar: $k$laliados: $K$lpeleas: $a$l</send>
+  </alias>
+  <alias
+   match="wm"
+   enabled="y"
+   script="do_who"
+   name="matar"
+   sequence="100"
+  >
+  </alias>
+  <alias
+   match="wa"
+   enabled="y"
+   script="do_who"
+   name="pk"
+   sequence="100"
+  >
   </alias>
 </aliases>
 
@@ -1914,11 +1995,32 @@ end)</send>
 <aliases>
   <alias
    script="on_tarjet"
-   match="^tarjet (?P&lt;tarjet&gt;\w+)$"
+   match="^mt (?P&lt;tarjet&gt;(?:\w+(?:\,|))+)$"
    enabled="y"
    group="General"
    regexp="y"
    sequence="100"
+   name="asignar"
+  >
+  </alias>
+  <alias
+   script="on_tarjet"
+   match="^mta (?P&lt;tarjet&gt;\w+)$"
+   enabled="y"
+   group="General"
+   regexp="y"
+   sequence="100"
+   name="agregar"
+  >
+  </alias>
+  <alias
+   script="on_tarjet"
+   match="^mtr (?P&lt;tarjet&gt;\w+)$"
+   enabled="y"
+   group="General"
+   regexp="y"
+   sequence="100"
+   name="quitar"
   >
   </alias>
   <alias
@@ -2089,23 +2191,57 @@ function list_to_string(list)
 	return sresult
 end -- function
 
-function on_room_pjs(n,ln,wc)
-	if var.tarjet == nil then
-		return
-	end -- if
+local function en_lista(lista, texto)
+	-- Chequea una lista de personajes contra el texto de lista de players enviado por el mud.
 	
-	for k, v in pairs(utils.split(var.tarjet,",")) do
-		if string.find(wc.pjs:lower(), v) then
-			play_sound("notificaciones/enemigo.ogg")
-			return
-		end
-	end
+	if not lista or lista == "" then return false end
+	if not texto or texto == "" then return false end
+	
+	for _, pj in ipairs(utils.split(lista, ",")) do
+		if texto:find(pj) then
+			-- Si se encuentra el nombre del jugador en el nombre de una montura, sencillamente se sale devolviendo un "false"
+			if texto:find("%a+ de "..pj) then
+				return false
+			elseif texto:find(string.format("%%a+ %%[%s%%]", pj)) then
+				-- El jugador va montado así que es positivo.
+				return true
+			end -- patterns
+			
+			-- Si la búsqueda tiene éxito entonces retornamos un éxito
+			return true 
+		end -- texto
+	end -- for
+end -- function
+
+function on_mirar()
+	var.personajes = 0
+end -- function
+
+function on_room_pjs(n,ln,wc)
+	local depurada = wc.pjs:gsub("[|-\\/*]", ""):lower()
+	
+	if en_lista(var.objetivos, depurada) then
+		play_sound("Generales/hostil.wav")
+	end -- if
+
+	if en_lista(var.aliados, depurada) then
+		play_sound("Generales/aliado.wav")
+	end -- if
 end -- function
 
 function on_tarjet(name,line,wc)
-	var.tarjet = wc.tarjet
-
-	print("Tarjet puesto a " .. wc.tarjet)
+	if name == "agregar" then
+		print(string.format("Agregando %s a la lista de objetivos extras", wc.tarjet))
+		
+		if not var.extras then
+			var.extras = wc.tarjet:lower()
+		else
+			var.extras = var.extras .. "," .. wc.tarjet:lower()
+		end -- if
+	else
+		print(string.format("Asignando los extras %s.", wc.tarjet))
+		var.extras = wc.tarjet
+	end -- agregar
 end -- function
 
 function on_channel(name, line, wildcards)
@@ -2117,73 +2253,102 @@ function on_channel(name, line, wildcards)
 	history_add(wildcards.channame, wildcards.message)
 end -- on_channel
 
-
-function on_irse(name, line, wildcards)
-	local nombre, dir = wildcards[1], wildcards[2]
-	
-	-- Necesitamos limpiar primero el nombre
-	local nombre_filtrado = nombre:gsub("[-\\|/]", "")
-	
-	-- Una vez filtrado el nombre, necesitamos reconocer algunos patrones (por ejemplo, por si el jugador va con espejismo)
-	if nombre_filtrado:match("%a+ %a+s") then
-		nombre_filtrado = nombre_filtrado:match("%a+ (%a+)s")
+function do_who(nombre)
+	if var.lista then
+		print("Ya se están buscando nicks.")
+		return
 	end -- if
 	
-	-- Faltan patrones, pero por momento dejamos así
+	var.lista = nombre
+	EnableTrigger("empezar_who", true)
+	Send("who "..nombre)
+end -- do_who
+
+function OnPluginSent(texto)
+	if texto == "who" then
+		var.lista = "todos"
+		EnableTrigger("empezar_who", true)
+	end -- if
 	
-	-- El siguiente paso es buscar el nombre en las variables
-	if var.matar and var.matar:find(nombre_filtrado) then
-		play_sound(string.format("Movimiento/Enemigos/se va %s.mp3", dir))
-	elseif var.peleas and var.peleas:find(nombre_filtrado) then
-		play_sound(string.format("Movimiento/Enemigos/se va %s.mp3", dir))
+	return true
+end -- function
+
+function on_irse(name, line, wildcards)
+	local personaje, direccion = wildcards[1]:lower():gsub("[|-\\/*]", ""), wildcards[2]
+	
+	if en_lista(var.objetivos, personaje)  then
+		play_sound(string.format("Movimiento/Enemigos/se va %s.mp3", direccion))
 	else
-		play_sound(string.format("Movimiento/Aliados/se va %s.mp3", dir))
+		play_sound(string.format("Movimiento/Aliados/se va %s.mp3", direccion))
 	end -- if
 end -- function
 
 function on_llegar(name, line, wildcards)
-	local nombre, dir = wildcards[1], wildcards[2]
+	local personaje, direccion = wildcards[1]:lower():gsub("[|-\\/*]", ""), wildcards[2]
 	
-	-- Necesitamos limpiar primero el nombre
-	local nombre_filtrado = nombre:gsub("[-\\|/]", "")
-	
-	-- Una vez filtrado el nombre, necesitamos reconocer algunos patrones (por ejemplo, por si el jugador va con espejismo)
-	if nombre_filtrado:match("%a+ %a+s") then
-		nombre_filtrado = nombre_filtrado:match("%a+ (%a+)s")
+	if en_lista(var.objetivos, personaje)  then
+		play_sound(string.format("Movimiento/Enemigos/Llega %s.mp3", direccion))
+	else
+		play_sound(string.format("Movimiento/Aliados/Llega %s.mp3", direccion))
 	end -- if
-	
-	-- Faltan patrones, pero por momento dejamos así
-
-	-- Guardamos el player en una variable, para cuando tengamos el prompt y podamos ver si llegó.
-	var.llego = nombre_filtrado
-	var.llego_dir = dir
 end -- function
 
-function on_jugadores(nombre,lista,wildcards)
-	var[nombre] = wildcards[1]:gsub("[-\\|/]", "")
+function on_who(nombre,l,wc)
+	if nombre == "empezar_who" then
+		EnableTrigger("agregar_pj", true)
+		EnableTrigger("terminar_who", true)
+		return
+	end -- empezar who
 	
-	if nombre == "matar" and var.matar ~= "" then
-		play_sound("Generales/Enemigo.wav")
-	end -- if
-	
-	if nombre == "peleas" and var.peleas then
-		play_sound("Generales/En peleas.wav")
-	end -- if
-	
-	if nombre == "aliados" and var.aliados ~= "" then
-		play_sound("Generales/Aliado.wav")
-	end -- if
-
-	if var.llego and var[nombre]:find(var.llego) then
-		if nombre == "matar" or nombre == "peleas" then
-			play_sound(string.format("Movimiento/Enemigos/Llega %s.mp3", var.llego_dir))
-		else
-			play_sound(string.format("Movimiento/Aliados/Llega %s.mp3", var.llego_dir))
-		end -- if
+	if nombre == "agregar_pj" then
+		var[var.lista] = var[var.lista] or ""
 		
-		-- Limpiamos
-		var.llego = nil
-		var.llego_dir = nil
+		if var[var.lista] ~= "" then
+			var[var.lista] = var[var.lista]..","
+		end -- agregar pj
+		
+		var[var.lista] = var[var.lista]..wc.pj:lower()
+		return
+	end -- agregar_pj
+	
+	if nombre == "terminar_who" then
+		if var.lista == "matar" or var.lista == "hostil" then
+			var.objetivos = var[var.lista]
+			
+			if var.extras then
+				var.objetivos = var.objetivos..","..var.extras
+			end -- if
+		elseif var.lista == "pk" then
+			var.aliados = var[var.lista]
+		end -- if
+
+		var[var.lista] = nil
+		var.lista = nil
+		EnableTrigger("agregar_pj", false)
+		EnableTrigger("terminar_who", false)
+		EnableTrigger("empezar_who", false)
+		return
+	end -- if
+end -- function
+
+function on_nick(nombre,linea,wc)
+	local nickname, actual = wc.nickname, wc.actual
+	local pjlist = rex.new("^(\\w+(\\,|))+$")
+	
+	if pjlist:match(actual) then
+		if nickname == "x" then
+			var.objetivos = actual
+		elseif nickname == "y" then
+			var.aliados = actual
+		end -- if
+	end -- if
+end -- function
+
+function on_seguir(n,l,wc)
+	local pjs = wc[1]:lower()
+	
+	if en_lista(var.objetivos, pjs) then
+		play_sound("notificaciones/Enemigo.ogg")
 	end -- if
 end -- function
 
