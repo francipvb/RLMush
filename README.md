@@ -7,7 +7,7 @@ Estos archivos contienen scripts que facilitan jugar a reinos de leyenda bajo mu
 1. Descargar el repositorio, bien mediante git, o bien mediante [este enlace](https://github.com/francipvb/RLMush/archive/master.zip).
 2. Extraer los archivos en la carpeta raíz de MUSHClient.
 3. Abrir MUSHClient y generar un nuevo mundo.
-4. Pulsar CTRL+SHIFT+p y agregar todos los plugins con el prefijo rl, además del plugin luaaudio.
+4. Pulsar CTRL+SHIFT+p y agregar todos los plugins con el prefijo rl, además del plugin luaaudio y el GMCP_Handler.
 5. Entrar con una ficha y habilitar el GMCP tecleando `consentir gmcp on`.
 
 Tras esto, ya se puede jugar normalmente, aunque hay un paso específico todavía.
