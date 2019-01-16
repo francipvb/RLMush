@@ -79,7 +79,7 @@
   <trigger
    group="General"
    lines_to_match="2"
-   match="^&prefijo;(?P&lt;room_name&gt;.*?)\n\s\[(?P&lt;exits&gt;[a-z\|\-\~\*\,]*)\] \((?P&lt;branches&gt;[a-z\|\-\~\*\,]*)\)\ $"
+   match="^&prefijo;(?P&lt;room_name&gt;.*?)\n\s\[(?P&lt;exits&gt;[a-z\|\-\~\*\,]*)\] \((?P&lt;branches&gt;[a-z\|\-\~\*\,]*)\)$"
    multi_line="y"
    regexp="y"
    script="on_mirar"
@@ -91,7 +91,7 @@
   <trigger
    enabled="y"
    group="General"
-   match="^&prefijo;(?P&lt;room_name&gt;.*?) \[(?P&lt;exits&gt;[a-z\|\-\~\*\,]*)\]\ (?:\[.*\] |)$"
+   match="^&prefijo;(?P&lt;room_name&gt;.*?) \[(?P&lt;exits&gt;[a-z\|\-\~\*\,]*)\](?:\[.*\] |)$"
    name="mirar"
    regexp="y"
    script="on_mirar"
@@ -697,6 +697,7 @@ end -- function
 
 function OnGMCP(mensaje)
 	if mensaje ~= "Room.Movimiento" then return end
+	play_sound("std/pasos_"..math.random(1,10)..".ogg")
 	
 	local dir = PedirGMCP("Room.Movimiento")[1]
 	
@@ -849,7 +850,7 @@ function OnPluginInstall()
 	
 	mapper.init(init_config)
 	config.SCAN.depth = 5000
-	config.DELAY.time = 0
+	config.DELAY.time = 0.9
 	
 
 	if var.oculto then
@@ -922,17 +923,20 @@ function OnPluginDisconnect()
 end -- function
 
 function on_mirar(name, line, wildcards, style)
+	require "rex"
+	local regexp = rex.new("^([\\-*~|]*)(\\w+)([\\-*~|]*)$")
 	local aviso_puertas
 
 	data.nombre = wildcards.room_name
 	data.salidas = wildcards.exits
-
-	play_sound("std/pasos_"..math.random(1,10)..".ogg")
 	
 	salidas = {}
 	
 	for _, salida in pairs(utils.split(wildcards.exits, ",")) do
-		local tipo, nombre = salida:match("^([%|%-%*%~]?)(%a+)%1$")
+		local sstart, send, matches = regexp:match(salida)
+		local tipo = matches[1]
+		local nombre = matches[2]
+		
 		nombre = salidaValida(nombre) or nombre
 		
 		if tipo == "|" then
@@ -1348,11 +1352,10 @@ function on_ir(name, line, wildcards)
 
 	-- Esta es la función que usamos para buscar las salas
 	local function prueba(x)
-		-- Si ya tenemos el contador al máximo, salimos
-		if counter == #salas then
+		if #salas == 0 then
 			return false, true
-		end -- counter
-
+		end -- if
+		
 		for k, v in pairs(salas) do
 			if x == tonumber(v.sala_id) then
 				counter = counter + 1
@@ -1363,12 +1366,12 @@ function on_ir(name, line, wildcards)
 				end -- if
 
 				-- La sala es válida
-				return true
+				return true, false
 			end -- if
 		end -- salas
 
 		-- Claro está, no encontramos nada
-		return false
+		return false, false
 	end -- prueba
 
 	mapper.find(prueba, false, 20, true)

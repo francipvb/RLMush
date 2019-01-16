@@ -170,7 +170,7 @@
 
 <!--  Get our standard constants -->
 
-<include name="constants.lua"/>
+<!-- <include name="constants.lua"/> -->
 
 <!--  Script  -->
 
@@ -186,6 +186,7 @@ local clases = {}
 local esferas = {}
 local escuelas = {}
 local oficios = {}
+local razas = {}
 local personajes = {}
 
 local function cargar_objeto(nombre)
@@ -373,6 +374,23 @@ local function get_personaje(nombre)
 	return personajes[nombre]
 end -- get_ficha
 
+local function get_raza(nombre)
+	if not razas[nombre] then
+		local resultado, raza, mensaje = pcall(cargar, 2, nombre)
+		
+		if not resultado then
+			razas[nombre] = {
+				nombre = nombre,
+				comandos = {}
+			}
+		else
+			razas[nombre] = raza
+		end -- if
+	end -- if
+
+	return razas[nombre]
+end -- function
+
 local function guardar(tipo, clase)
 	assert(clase, "No se pasó ningún argumento.")
 	assert(type(clase) == "string", "El nombre no es una cadena válida.")
@@ -389,6 +407,7 @@ local function guardar(tipo, clase)
 	elseif tipo == 2 then
 		carpeta = "razas"
 		stipo = "la raza \"%s\""
+		obj = get_raza(clase)
 	elseif tipo == 3 then
 		carpeta = "oficios"
 		stipo = "el oficio"
@@ -533,6 +552,15 @@ function on_alias(nombre,linea,wc)
 		end -- if
 		ficha.comandos[wc.alias] = alias
 		guardar(6, ficha.nombre)
+	elseif wc.tipo == "r" then
+		local raza = get_raza(var.raza)
+		if not raza.comandos[wc.alias] then
+			print(string.format("El alias %s se agregó al perfil de raza %s.", wc.alias, raza.nombre))
+		else
+			print(string.format("Se modificó el alias %s para el perfil de raza %s.", wc.alias, raza.nombre))
+		end -- if
+		raza.comandos[wc.alias] = alias
+		guardar(2, raza.nombre)
 	elseif wc.tipo == "e" or wc.tipo == "f" then
 		-- Este es el caso de las escuelas/esferas
 		local obj, tipo
@@ -759,7 +787,8 @@ function OnGMCP(mensaje)
 		var.oficio = ficha.oficio
 	end -- if
 	
-	-- Igual con la raza, aunque es poco probable que tengan comandos propios
+	-- Igual con la raza, aunque es poco probable que tengan comandos propios.
+	-- Se aplica mas a druidas cambiaformas y quizás orgos/orcos
 	if ficha.raza then
 		var.raza = ficha.raza
 	end -- if

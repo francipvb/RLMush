@@ -625,6 +625,14 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   >
   </alias>
   <alias
+   match="wo"
+   enabled="y"
+   script="do_who"
+   name="omiq"
+   sequence="100"
+  >
+  </alias>
+  <alias
    match="wm"
    enabled="y"
    script="do_who"
@@ -2312,7 +2320,7 @@ function on_who(nombre,l,wc)
 	end -- agregar_pj
 	
 	if nombre == "terminar_who" then
-		if var.lista == "matar" or var.lista == "hostil" then
+		if var.lista == "matar" or var.lista == "hostil" or var.lista == "omiq" then
 			var.objetivos = var[var.lista]
 			
 			if var.extras then
