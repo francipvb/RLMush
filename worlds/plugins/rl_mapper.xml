@@ -697,7 +697,7 @@ end -- function
 
 function OnGMCP(mensaje)
 	if mensaje ~= "Room.Movimiento" then return end
-	play_sound("std/pasos_"..math.random(1,10)..".ogg")
+	play_sound("pasos/generico/"..math.random(1,10)..".ogg")
 	
 	local dir = PedirGMCP("Room.Movimiento")[1]
 	

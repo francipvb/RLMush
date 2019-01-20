@@ -37,7 +37,7 @@ function play_sound(sound,pan,loop,vol)
 	if not snd then
 		return
 	end -- if
-	return snd.play(GetInfo(67).."sounds/"..sound,loop or 0,pan,vol)
+	return snd.play(GetInfo(66).."sounds/"..sound,loop or 0,pan,vol)
 end -- PlaySound
 
 function playDelay(sound,time,pan,vol)

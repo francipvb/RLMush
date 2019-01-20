@@ -1,0 +1,11 @@
+*
+!.gitignore
+!GMCP_handler.xml
+!LuaAudio.xml
+!rl_channel_history.xml
+!rl_fichas.xml
+!rl_gmcp_charstatus.xml
+!rl_mapper.xml
+!rl_mushReader.xml
+!rl_output_functions.xml
+states/.keep

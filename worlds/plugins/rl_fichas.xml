@@ -194,7 +194,7 @@ local function cargar_objeto(nombre)
 	assert(type(nombre) == "string", "El nombre de archivo no es válido.")
 	
 	-- Abrimos el archivo, si es que existe. En caso contrario, cerramos.
-	local archivo, error = io.open(GetInfo(67)..nombre, "r")
+	local archivo, error = io.open(GetInfo(66)..nombre, "r")
 	assert(archivo, error)
 	
 	-- Leemos todo el archivo
@@ -220,7 +220,7 @@ local function guardar_objeto(objeto, nombre)
 	local resultado = serialize.save_simple(objeto)
 	
 	-- Abrimos el archivo
-	local archivo, mensaje = io.open(GetInfo(67)..nombre, "w+")
+	local archivo, mensaje = io.open(GetInfo(66)..nombre, "w+")
 	assert(archivo, mensaje)
 	
 	-- Escribimos los datos

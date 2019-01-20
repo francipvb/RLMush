@@ -1,0 +1,24 @@
+# Es imprescindible ignorar archivos de la distribución de MUSHClient
+docs/
+fonts/
+locale/
+# La carpeta LUA no necesitamos ignorarla
+mime/
+names/
+scripts/
+socket/
+spell/
+Dina.fon
+Example_filters.lua
+help.db
+license.txt
+lua5.1.dll
+lua5.1.lib
+mushclient.cnt
+MUSHclient.exe
+MUSHCLIENT.hlp
+mushclient.ico
+mushclient_prefs.sqlite
+names.txt
+spellchecker.lua
+tips.txt

@@ -439,17 +439,20 @@ function OnGMCPInit()
 end -- function
 
 function OnGMCP(mensaje)
-	if mensaje ~= "Comm.MensajeCanal" and mensaje ~= "Comm.MensajeCanalHistorico" then
+	if mensaje ~= "Comm.MensajeCanal"
+		and mensaje ~= "Comm.MensajeCanalHistorico"
+		and mensaje ~= "Comm.EnciendeCanal"
+		and mensaje ~= "Comm.ApagaCanal" then
 		return
 	end -- if
 	
 	-- Pedimos los datos, eso lo primero
 	local data = PedirGMCP(mensaje)
-	
-	-- Parseamos los datos, convirtiendo a utf-8 y reemplazando los caracteres html
-	data.mensaje = utf8convert(replace_html(data.mensaje))
 
 	if mensaje == "Comm.MensajeCanal" then
+		-- Parseamos los datos, convirtiendo a utf-8 y reemplazando los caracteres html
+		data.mensaje = utf8convert(replace_html(data.mensaje))
+
 		if data.canal == "bueno"
 				or data.canal == "malo"
 				or data.canal == "malvados"
@@ -477,10 +480,14 @@ function OnGMCP(mensaje)
 			play_sound("canales/"..data.canal..".ogg")
 		end -- data.canal
 		if mushreader then mushreader.say(StripANSI(data.mensaje)) end
-	else
+	elseif mensaje == "Comm.MensajeCanalHistorico" then
 		AnsiNote(data.mensaje)
+	elseif mensaje == "Comm.EnciendeCanal" then
+		play_sound("canales/on.ogg")
+	elseif mensaje == "Comm.ApagaCanal" then
+		play_sound("canales/off.ogg")
 	end -- text
-end -- OnPluginBroadcast
+end -- OnGMCP
 
 ]]>
 </script>
