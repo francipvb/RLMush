@@ -199,78 +199,6 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
 
   <!-- Habilidades -->
 
-  <!-- Carga -->
-  <trigger
-   enabled="y"
-   group="Habilidades-Cargar"
-   match="^&prefijo;Vociferas gritos de guerra\, demandando a (?P&lt;pjname&gt;.*?) un desafío y comienzas tu brutal carga\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("habilidades/carga/iniciar.ogg", "-50")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Habilidades-Cargar"
-   match="^&prefijo;\# ¡Maldición\!\, ¡(?P&lt;pjname&gt;.*?) consigue evitar vuestra carga\, dejándoos en muy mala posición\!$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_random_sound("combate/esquivar", 1, 15, ".ogg", "30")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Habilidades-Cargar"
-   match="¡* te bendice con una carga crítica!"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("habilidades/carga/impacto.ogg", "30")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Habilidades-Cargar"
-   match="^&prefijo;\# (Terminas tu carga|Con la decisión de los grandes caballeros|Avanzas zigzagueando hacia|Consumas tu devastador asalto contra|Enarbolas tu (.*?) para amedrentar a|Tus bramidos de guerra reverberan en el entorno|Lanzas rápidamente todo tu cuerpo como un poderoso latigazo|¡En el último instante\, (.*) logra eludirse de tu devastadora carga|Lanzas un amago de golpe con)"
-   send_to="12"
-   regexp="y"
-   sequence="100"
-  >
-  <send>play_sound("habilidades/carga/impacto.ogg", "50")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Habilidades-Cargar"
-   ignore_case="y"
-   match="^&prefijo;(?P&lt;pjname&gt;.*?) vocifera gritos de guerra\, demandando un desafío contra ti (?:.*?)$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("habilidades/carga/iniciar.ogg", "50")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Habilidades-Cargar"
-   match="^&prefijo;\* (?P&lt;pjname&gt;.*?) choca contra ti\, culminando su carga con un golpe de su (.*?) (.*?)$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("habilidades/carga/impacto.ogg", "-50")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Habilidades-Cargar"
-   match="^&prefijo;\* Logras evitar la carga de (?P&lt;pjname&gt;.*?)\, dejándole en muy mala posición\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_random_sound("combate/esquivar", 1, 15, ".ogg", "-50")</send>
-  </trigger>
-
 
   <!-- Golpe arcano -->
   <trigger
@@ -457,65 +385,6 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
    script="on_hechizo"
    sequence="100"
   >
-  </trigger>
-
-  <!-- Combate -->
-
-  <trigger
-   enabled="y"
-   group="Combate"
-   match="^&prefijo;Estás siendo atacad[a,o] por (.*?)\.$"
-   omit_from_output="y"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("luaaudio/error.ogg")</send>
-  </trigger>
-
-  <!-- Enemigo -->
-  <trigger
-   enabled="y"
-   group="Combate"
-   match="^&prefijo;\* Logras parar el ataque de (?:.*?)\."
-   regexp="y"
-   send_to="12"
-   sequence="100"
-   name="parar_enemigo"
-  >
-  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-50")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Combate"
-   match="^&prefijo;\* (?:.*?) intenta (?:.*?)\, pero logras parar su ataque\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-30")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Combate"
-   match="^&prefijo;\* Paras críticamente el ataque desarmado de (?P&lt;pjname&gt;.*?)\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-   name="parar_enemigo_critico"
-  >
-  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-30")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="Combate"
-   match="^&prefijo;\* (?:.*?) intenta (?:.*?)\, pero logras parar críticamente su ataque\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-   name="parar_enemigo_critico_2"
-  >
-  <send>play_random_sound("combate/parada", 1, 8, ".ogg", "-30")</send>
   </trigger>
 
   <!-- Eventos -->
@@ -1923,64 +1792,13 @@ end)</send>
   </trigger>
   <trigger
    enabled="y"
-   group="especiales"
-   match="^&prefijo;\# Â¡Alzas tu Martillo del Trueno y la tormenta retumba como respuesta (.*?)$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("combate/especiales/martillo del trueno/recargar.ogg")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="efectos"
-   match="^&prefijo;\# Â¡Tu ataque descarga una ráfaga de frio contra (.*?)\!$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("combate/efectos/matalagartos/".. math.random(1,3) ..".ogg", 50)</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="otros"
-   match="^&prefijo;Maestría de (.*?)\: (.*?) \(Impactos\: (.*?)\)"
-   regexp="y"
-   omit_from_output="n"
-   send_to="2"
-   sequence="100"
-  >
-  <send>%1, %2: %3</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="armas"
-   match="^&prefijo;\* (.*?) salta sobre ti descargando un brutal golpe en (.*?)$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("combate/armas/cortantes/critico.ogg", -50)</send>
-  </trigger>
-  <trigger
-   enabled="y"
    match="^&prefijo;Mejoras tu maestría en (.*?) gracias a (.*?)$"
+   group="General"
    regexp="y"
    send_to="12"
    sequence="100"
   >
   <send>play_sound("notificaciones/maestria.ogg")</send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="armas"
-   match="^&prefijo;\* (.*?) te (?:aplasta|golpea) &intens;en (.*?)\.$"
-   omit_from_output="n"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>play_sound("combate/armas/aplastantes/"..math.random(1,9)..".ogg", -40)</send>
   </trigger>
   <trigger
    enabled="y"
@@ -2072,33 +1890,6 @@ local pjs = {
 	omiq = {},
 }
 
-armas = {
-	aplastante = {
-		type = "aplastantes",
-		min = 1,
-		max = 8,
-		ext = ".ogg",
-	},
-	cortante = {
-		type = "cortantes",
-		min = 1,
-		max = 8,
-		ext = ".ogg",
-	},
-	penetrante = {
-		type = "penetrantes",
-		min = 1,
-		max = 8,
-		ext = ".ogg",
-	},
-	diamante = {
-		type = "penetrantes",
-		min = 1,
-		max = 8,
-		ext = ".ogg",
-	},
-}
-
 function on_look(name, line, wildcards,style)
 	-- TODO: Funcionalidad general
 end -- on_look
@@ -2108,53 +1899,6 @@ function play_random_sound(folder, startrange, endrange, ext, pan)
 
 	play_sound(folder.."/"..number..ext, pan)
 end -- play_random_sound
-
-function on_attack(weapon, enemy, critic)
-	local pan = ""
-	local number = 0
-	local soundfile = ""
-
-	if enemy == 1 then
-		pan = "40"
-	else
-		pan = "-40"
-	end -- if
-
-	if type(weapon) == "table" then
-		if critic == 0 then
-			number = math.random(weapon.min, weapon.max)
-			soundfile = "combate/armas/"..weapon.type.."/"..number..weapon.ext
-		else
-			soundfile = "combate/armas/"..weapon.type.."/critico"..weapon.ext
-		end -- if
-
-		play_sound(soundfile, pan)
-	else
-		soundfile = "combate/armas/"..weapon
-		play_sound(soundfile, pan)
-	end -- if
-
-end -- on_attack
-
-function on_impactar(name, line, wildcards)
-	local t = utils.split(name, "_")
-
-	local arma = armas[t[1]]
-	local enemigo = 0
-	local critico = 1
-
-	if t[2] == "enemigo" then
-		enemigo = 1
-	end -- if
-
-	if t[3] ~= "critico" then
-		critico = 0
-	end -- if
-
-	on_attack(arma, enemigo, critico)
-
-		-- TODO: Do more processing of wildcards
-end -- on_impactar
 
 function on_formular(name, line, wildcards)
 		play_sound("hechizos/alguien formula un hechizo.ogg")

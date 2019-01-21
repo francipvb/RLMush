@@ -8,4 +8,5 @@
 !rl_mapper.xml
 !rl_mushReader.xml
 !rl_output_functions.xml
-states/.keep
+!rl_combate.xml
+!states/.keep

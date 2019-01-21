@@ -17,6 +17,7 @@
    date_written="2018-07-08 02:50:38"
    requires="4.94"
    version="1.0"
+   save_state="y"
    >
 <description trim="y">
 <![CDATA[
@@ -181,6 +182,34 @@
 <script>
 <![CDATA[
 require "rl_stuff"
+
+-- Macros a comandos predefinidos:
+local macros_predef = {
+	["ALT+q"] = "c1",
+	["ALT+w"] = "c2",
+	["ALT+e"] = "c3",
+	["ALT+r"] = "c4",
+	["ALT+a"] = "s1",
+	["ALT+s"] = "s2",
+	["ALT+d"] = "s3",
+	["ALT+f"] = "s4",
+	["ALT+b"] = "buscar",
+	["ALT+z"] = "estado -i todos",
+	["ALT+x"] = "perder todo",
+	["ALT+c"] = "estado -i x",
+	["ALT+v"] = "parar",
+	["ALT+i"] = "norte",
+	["ALT+k"] = "sur",
+	["ALT+j"] = "oeste",
+	["ALT+l"] = "este",
+	["ALT+u"] = "no",
+	["ALT+o"] = "ne",
+	["ALT+m"] = "so",
+	["ALT+."] = "se",
+	["ALT+,"] = "ojear",
+	["ALT+`"] = "abajo",
+	["ALT+p"] = "arriba",
+}
 
 local clases = {}
 local esferas = {}
@@ -804,10 +833,25 @@ function OnPluginInstall()
 	if IsConnected() then
 		recargar_todo()
 	end -- if
+	
+	OnPluginEnable()
 end -- function
 
 function OnPluginClose()
 	DeleteTemporaryAliases()
+	OnPluginDisable()
+end -- function
+
+function OnPluginEnable()
+	for k, v in pairs(macros_predef) do
+		Accelerator(k, v)
+	end
+end -- function
+
+function OnPluginDisable()
+	for k, v in pairs(macros_predef) do
+		Accelerator(k, "")
+	end -- for
 end -- function
 
 ]]>

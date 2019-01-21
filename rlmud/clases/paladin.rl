@@ -11,29 +11,53 @@
     proteccion = 1,
     },
   comandos = {
-    h = {
-      comando = "heroismo",
-      variables = false,
-      regexp = false,
+    s4 = {
+      comando = "sanar @nomgre",
       ignorar = false,
-      },
-    f2 = {
-      comando = "cargar x",
-      variables = false,
       regexp = false,
-      ignorar = false,
+      variables = true,
       },
-    f3 = {
-      comando = "golperedentor x",
-      variables = false,
+    c2 = {
+      comando = "cargar x , xp",
+      ignorar = false,
       regexp = false,
-      ignorar = false,
+      variables = false,
       },
-    f4 = {
+    s3 = {
+      comando = "formular curar heridas serias: @nombre",
+      ignorar = false,
+      regexp = false,
+      variables = true,
+      },
+    c3 = {
+      comando = "golperedentor x , xp",
+      ignorar = false,
+      regexp = false,
+      variables = false,
+      },
+    c1 = {
+      comando = "matar x , xp",
+      ignorar = false,
+      regexp = false,
+      variables = false,
+      },
+    s1 = {
+      comando = "formular curar heridas ligeras: @nombre",
+      ignorar = false,
+      regexp = false,
+      variables = true,
+      },
+    c4 = {
       comando = "golperedentor area",
       variables = false,
       regexp = false,
       ignorar = false,
+      },
+    s2 = {
+      comando = "formular curar heridas moderadas: @nombre",
+      ignorar = false,
+      regexp = false,
+      variables = true,
       },
     },
   }

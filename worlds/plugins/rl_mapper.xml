@@ -902,19 +902,19 @@ end -- if
 function OnPluginEnable()
 	if IsConnected() and not var.oculto then
 		mapper.show()
-		EnableTrigger("mirar", true)
-		EnableTrigger("mirar_arbol", true)
 	end -- if
+	EnableTrigger("mirar", true)
+	EnableTrigger("mirar_arbol", true)
 	
-	AcceleratorTo("ALT+s", "mostrar_salidas()", sendto.script)
-	AcceleratorTo("ALT+SHIFT+s", "modo_rapido()", sendto.script)
+	AcceleratorTo("CTRL+ALT+s", "mostrar_salidas()", sendto.script)
+	AcceleratorTo("CTRL+ALT+SHIFT+s", "modo_rapido()", sendto.script)
 end -- function
 
 function OnPluginDisable()
 	mapper.hide()
 	
-	Accelerator("ALT+s", "")
-	Accelerator("ALT+SHIFT+s", "")
+	Accelerator("CTRL+ALT+s", "")
+	Accelerator("CTRL+ALT+SHIFT+s", "")
 end -- function
 
 function OnPluginDisconnect()
@@ -939,7 +939,7 @@ function on_mirar(name, line, wildcards, style)
 		
 		nombre = salidaValida(nombre) or nombre
 		
-		if tipo == "|" then
+		if tipo:find("|") then
 			salidas[nombre] = "c"
 			if not aviso_puertas then
 				play_sound("puertas/puertas_aqui.ogg")

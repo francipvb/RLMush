@@ -16,7 +16,7 @@ Para evitar que el lector lea cosas muy extrañas es recomendable poner el MXP e
 
 Puede que la última línea no se lea correctamente. Para arreglarlo, ir a Game -> Configure -> Output y marcar la casilla _Convert IAC EOR/GA to new line_.
 
-## Uso del mapa (fase alpha)
+## Uso del mapa (experimental)
 
 De momento, el plugin no es capaz de generar datos de mapa, pero sí de importarlos y leerlos. Para configurar el mapa, se necesita el archivo de mapa de zmud.
 
@@ -34,4 +34,30 @@ Para algunos comandos básicos, teclear mapa ayuda.
 
 Hay un problema con la funcionalidad nativa de listas en mushclient por lo que no es posible utilizar la lista para seleccionar un destino al navegar. El único modo es usar los enlaces que el mapper genera en la ventana de salida, al menos de momento. Cuando pueda ponerme en contacto con el autor de MUSHClient para agregar esta funcionalidad voy a cambiar esta parte del plugin.
 
-Por cualquier inconveniente, reportar generando una issue.
+## Macros predefinidas
+
+Estas macros se agregan mediante scripting desde el plugin _rl_fichas.xml_, por lo que no es posible modificalras sin tocar el archivo del plugin.
+
+* `ALT+(q|w|e|r|a|s|d|f)`: Comandos de clase/ficha principales.
+* `ALT+SHIFT+(q|w|e|r|a|s|d|f)`: Comandos de clase o ficha secundarios (ideal para lanzar hechizos defensivos o llamar invocaciones rápidamente). Estas macros no están implementadas.
+* `ALT+z`: Envía "estado -i todos" al MUD.
+* `ALT+x`: Envía "perder todo" al MUD.
+* `ALT+c`: Envía "estado -i x" al MUD.
+* Direcciones: Estas macros son para moverse por el mapa del MUD.
+  - Norte: `ALT+i`.
+  - Sur: `ALT+k` (definido experimentalmente).
+  - Oeste: `ALT+j`.
+  - Este: `ALT+l`
+  - Noroeste: `ALT+u`.
+  - Noreste: `ALT+o`.
+  - Suroeste: `ALT+m`.
+  - Sureste: `ALT+.` (tecla punto).
+  - Arriba: `ALT+p`.
+  - Abajo: `ALT+ñ`.
+  - Ojear: `ALT+,` (Tecla coma).
+
+## Contacto
+
+Por cualquier consulta respecto a la config, se me puede encontrar en el MUD como Dainnil, o bien se me puede enviar un correo a [francipvb@hotmail.com](mailto:francipvb@hotmail.com).
+
+Otras maneras de reportar problemas o solicitar cambios son a través de github, reportando una issue o a través del foro de Reinos de Leyenda.

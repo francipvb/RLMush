@@ -1,0 +1,56 @@
+{
+  nombre_completo = "Dainnil",
+  nombre = "Dainnil",
+  comandos = {
+    cmd = {
+      comando = "coger monedas de cuerpos",
+      ignorar = false,
+      regexp = false,
+      variables = false,
+      },
+    x = {
+      comando = "nickear x matar",
+      variables = false,
+      regexp = false,
+      ignorar = false,
+      },
+    m1 = {
+      comando = "enterrar",
+      ignorar = false,
+      regexp = false,
+      variables = false,
+      },
+    ["^pom (.*?)$"] = {
+      comando = "poner %1 en mochila",
+      ignorar = false,
+      regexp = true,
+      variables = false,
+      },
+    xx = {
+      comando = "nickear x omiq",
+      variables = false,
+      regexp = false,
+      ignorar = false,
+      },
+    ["^d(\\d+) (.*?)$"] = {
+      comando = "tell t%1 %^BOLD%^YELLOW%^%2",
+      ignorar = false,
+      regexp = true,
+      variables = false,
+      },
+    pcm = {
+      comando = "poner cargando en mochila",
+      ignorar = false,
+      regexp = false,
+      variables = false,
+      },
+    gra = {
+      comando = "envainar todo\r\
+empuñar granito\r\
+mano granito a 2 manos",
+      ignorar = false,
+      regexp = false,
+      variables = false,
+      },
+    },
+  }

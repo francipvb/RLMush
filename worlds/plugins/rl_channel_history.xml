@@ -11,7 +11,7 @@
    author="Francisco R. Del Roio"
    id="f6153a4ac099403418c11711"
    language="Lua"
-   purpose="Allows reading of messages sorted into categories with hotkeys"
+   purpose="Organiza un histórico de mensajes en categorías según los canales."
    date_written="2010-04-09 15:14:12"
    requires="4.84"
    version="1.01"
