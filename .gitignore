@@ -20,6 +20,7 @@ MUSHCLIENT.hlp
 mushclient.ico
 mushclient.ini
 mushclient_prefs.sqlite
+readme.txt
 names.txt
 spellchecker.lua
 tips.txt
