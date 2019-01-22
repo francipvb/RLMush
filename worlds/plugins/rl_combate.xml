@@ -2,7 +2,7 @@
 <!DOCTYPE muclient [
   <!ENTITY prefijo "(?:(?:.*?)(?:\&gt; |\] |\} )|)" >
   <!ENTITY intens "(?:(con (poca fuerza|fuerza|mucha fuerza|increíble potencia|fuerza sobrehumana|fuerza divina|cólera titánica)|débilmente|violentamente) |)" >
-  <!ENTITY parte "(el|la|una|un) ([a-záéíóú]+)" >
+  <!ENTITY parte "(el|la|una|un|las|los) ([a-záéíóú]+)" >
 ]>
 <!-- Saved on domingo, enero 20, 2019, 9:39 p. m. -->
 <!-- MuClient version 5.05 -->
@@ -29,6 +29,28 @@
 <include name="constants.lua"/>
 
 <triggers>
+  <!-- Generales -->
+
+  <trigger
+   enabled="y"
+   group="Combate"
+   match="^&prefijo;Propinas el golpe mortal a (.*?)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("combate/propinar.ogg")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Combate"
+   match="^&prefijo;(.*?) cae al suelo sin vida\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_delay("combate/muertes/caer/"..math.random(1,30)..".ogg", 1000)</send>
+  </trigger>
   <trigger
    enabled="y"
    match="^&prefijo;\* (.*?) te golpea en &parte; sin producir ningún daño\.$"
@@ -37,6 +59,17 @@
    sequence="100"
    script="on_fallar"
   >
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="Combate"
+   match="^&prefijo;Estás siendo atacad[a,o] por (.*?)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>play_sound("generales/matar.wav")</send>
   </trigger>
 </triggers>
 
@@ -66,12 +99,12 @@
   <trigger
    enabled="y"
    group="Cortantes"
-   match="^¡Tu golpe causa una profunda herida a (.*?) en (.*?)\!$"
+   match="^\# Intentas rajar en un brazo a (.*?)\, pero éste consigue parar críticamente tu ataque\.$"
+   name="cortante_propio_parado_critico"
    regexp="y"
-   send_to="12"
    sequence="100"
+   script="on_fallar"
   >
-  <send>play_sound("combate/armas/cortantes/sangra.ogg", 50)</send>
   </trigger>
   <trigger
    enabled="y"
@@ -126,12 +159,12 @@
   <trigger
    enabled="y"
    group="Cortantes"
-   match="^¡Te desangras a causa de tu herida en &parte;\!$"
+   match="^&prefijo;¡Te desangras a causa de tu herida en &parte;\!$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>play_sound("combate/armas/cortantes/sangra.ogg", -50)</send>
+  <send>play_sound("combate/armas/cortantes/sangra.ogg")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -160,7 +193,7 @@
 
   <trigger
    enabled="y"
-   group="Penetrante"
+   group="Penetrantes"
    match="^&prefijo;\# (Perforas|Pinchas) &intens;en (&parte; |)a (.*?)\.$"
    name="penetrante_propio"
    regexp="y"
@@ -191,6 +224,16 @@
   <trigger
    enabled="y"
    group="Penetrantes"
+   match="^&prefijo;\* (.*?) te intenta (?:perforar|pinchar) en &parte;\, pero logras esquivar su ataque\.$"
+   name="penetrante_enemigo_esquivado"
+   regexp="y"
+   sequence="100"
+   script="on_fallar"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Penetrantes"
    match="^&prefijo;\* (.*?) te intenta (perforar|pinchar) en &parte;\, pero logras parar críticamente su ataque\.$"
    name="penetrante_enemigo_parado_critico"
    regexp="y"
@@ -201,7 +244,7 @@
   <trigger
    enabled="y"
    group="Penetrantes"
-   match="^&prefijo;\* (.*?) perfora en &parte; cuando se lanza sobre ti clavándote críticamente su (.*?)\.$"
+   match="^&prefijo;\* (.*?) perfora en &parte; cuando se lanza sobre ti clavï¿½ndote críticamente su (.*?)\.$"
    name="penetrante_enemigo_critico"
    regexp="y"
    sequence="100"
@@ -211,17 +254,100 @@
 </triggers>
 
 <triggers>
-  <!-- Otros -->
+  <!-- Armas aplastantes -->
 
   <trigger
    enabled="y"
-   group="Combate"
-   match="^&prefijo;Estás siendo atacad[a,o] por (.*?)\.$"
+   group="Aplastantes"
+   match="^&prefijo;\# (Golpeas|Aplastas) &intens;en &parte; a (.*?)\.$"
+   name="aplastante_propio"
    regexp="y"
-   send_to="12"
+   sequence="100"
+   script="on_golpear"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Aplastantes"
+   match="^&prefijo;\# Arremetes contra (.*?) asestándole un temible golpe crítico en &parte;\.$"
+   name="aplastante_propio_critico"
+   regexp="y"
+   sequence="100"
+   script="on_golpear"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Aplastantes"
+   match="^&prefijo;\# Intentas (golpear|aplastar) en &parte; a (.*?)\, pero éste consigue parar críticamente tu ataque\.$"
+   name="aplastante_propio_parado_critico"
+   regexp="y"
+   sequence="100"
+   script="on_fallar"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Aplastantes"
+   match="^&prefijo;\* (.*?) te (golpea|aplasta) &intens;en &parte;\.$"
+   name="aplastante_enemigo"
+   regexp="y"
+   sequence="100"
+   script="on_golpear"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Aplastantes"
+   match="^\* (.*?) te intenta (golpear|aplastar) en el pecho\, pero logras esquivar su ataque\.$"
+   name="aplastante_enemigo_esquivado"
+   regexp="y"
    sequence="100"
   >
-  <send>play_sound("generales/matarwav")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Aplastantes"
+   match="^&prefijo;\* (.*?) te intenta (golpear|aplastar) en &parte;\, pero logras parar su ataque\.$"
+   name="aplastante_enemigo_parado"
+   regexp="y"
+   sequence="100"
+   script="on_fallar"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Aplastantes"
+   match="^&prefijo;\* (.*?) te intenta (aplastar|golpear) en &parte;\, pero logras parar críticamente su ataque\.$"
+   name="aplastante_enemigo_parado_critico"
+   regexp="y"
+   sequence="100"
+   script="on_fallar"
+  >
+  </trigger>
+</triggers>
+
+<triggers>
+  <!-- Efectos -->
+
+  <trigger
+   enabled="y"
+   group="Efectos"
+   match="¡El alcance de tu arma te permite barrer a tus enemigos!"
+   name="barrido_propio"
+   sequence="100"
+   script="on_efecto"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Cortantes"
+   match="^ï¿½Tu golpe causa una profunda herida a (.*?) en &parte;\!$"
+   name="sangrado_propio"
+   regexp="y"
+   sequence="100"
+   script="on_efecto"
+  >
   </trigger>
 </triggers>
 
@@ -282,7 +408,7 @@ function on_golpear(name, line, wc)
 	local t_arma = armas_predef[arma]
 	local ruta_sonido = ""
 	
-	-- Solo para golpes que no son críticos
+	-- Solo para golpes que no son crï¿½ticos
 	if not critico then
 		ruta_sonido = t_arma.ruta.."/"..math.random(t_arma.min, t_arma.max) .. "." .. t_arma.ext
 	else
@@ -319,6 +445,9 @@ function on_fallar(name,line,wildcards)
 	end -- if
 	
 	play_sound(ruta_sonido, pan_sonido)
+end -- function
+
+function on_efecto(name, line, wc)
 end -- function
 ]]>
 </script>

@@ -40,8 +40,8 @@ function play_sound(sound,pan,loop,vol)
 	return snd.play(GetInfo(66).."sounds/"..sound,loop or 0,pan,vol)
 end -- PlaySound
 
-function playDelay(sound,time,pan,vol)
-	snd.playDelay(GetInfo(67).."sounds/"..sound,time,pan,vol)
+function play_delay(sound,time,pan,vol)
+	snd.playDelay(GetInfo(66).."sounds/"..sound,time,pan,vol)
 end -- PlayDelay
 
 function playListOfSounds(list, time, pan, vol)

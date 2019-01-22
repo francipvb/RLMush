@@ -12,7 +12,7 @@
     },
   comandos = {
     s4 = {
-      comando = "sanar @nomgre",
+      comando = "sanar @nombre",
       ignorar = false,
       regexp = false,
       variables = true,
