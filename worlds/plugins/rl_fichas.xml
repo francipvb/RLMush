@@ -31,6 +31,9 @@
 		- enviar: El comando, por ejemplo, f1 o ^1(\d*?)$ si se agrega una expresión regular.
 		- comando: El comando que se envía al MUD. Se pueden usar substituciones como %1, %2, etc.
 
+	$salias [<opciones> ]<enviar> <comando>
+		Añade un alias para la especialización del personaje.
+
 	$palias [<opciones> ]<enviar> <comando>
 		Añade un alias de cliente  al perfil del personaje conectado.
 		
@@ -38,8 +41,11 @@
 
 	$ oalias [<opciones> ]<enviar> <comando>
 		Añade un alias al perfil de oficio.
+
+	$ralias [opciones] <alias> <enviar>
+		Añade un alias para una raza concreta.
 		
-		Este comando no está implementado.
+		Esto es útil sobre todo para los cambiaformas.
 
 	$falias <esfera> <acceso> [<opts> ]<enviar> <comando>
 		Agrega un alias de cliente al perfil de la esfera.
@@ -60,10 +66,12 @@
 
 	Las opciones incluyen especificadores de acceso y nombre de escuelas.
 
-	Por último, para eliminar un alias se puede utilizar la formasiguiente:
+	Por último, para eliminar un alias se puede utilizar la forma siguiente:
 	  $xalias [<nombre> <acceso> ]-r <alias>
 
-	Esto elimina el alias y guarda el objeto.
+		Esto elimina el alias y guarda el objeto.
+
+		Nótese que la 'x' se reemplaza por cualquiera de las letras (p|c|r|o|e|f|s).
 
 	$ead <escuela> <acceso>
 		Añade una escuela a la clase del personaje.
@@ -77,20 +85,13 @@
 	$fadd <esfera> <acceso>
 		Ver $eadd, aplicale a esferas.
 
-	$guardar <tipo>[ <nombre>]
-		Escribe los datos para un objeto en el disco.
-		
-		- Tipo: El tipo de objeto que se va a escribir al disco.
-			- clase: Se guarda el archivo de clase actualmente usado, con sus alias, nombre y esferas/escuelas.
-			- personaje: Se guarda el archivo de personaje con sus propios alias.
-			- oficio: Se guarda el archivo para el oficio.
-			- esfera: Se guarda la esfera indicada al disco.
-			- escuela: Se guarda la escuela indicada al disco.
-			- todo: Se guardan todos los objetos relacionados con el personaje al disco (no implementado).
-		
-		- escuela/esfera: Indica la esfera o escuela que se guarda al disco.
-	
-	Decidí separar las escuelas y las esferas para mayor flexibilidad, aunque no se si sea del todo necesario.
+	$s{e|f}add <esfera/scuela> <acceso>
+		Agrega una escuela o esfera para una especialización.
+
+	$[s]{e|f}del <escuela/esfera>
+		Elimina una escuela o esfera de una clase.
+
+		Si se antepone el prefijo 's', se quita de la especialización.
 ]]>
 </description>
 
@@ -98,7 +99,7 @@
 
 <aliases>
   <alias
-   match="^&prefijo;(?P&lt;tipo&gt;p|c|r|o)alias (?P&lt;opts&gt;\-[xvi]+ |)(?P&lt;alias&gt;\w+|\^.*?\$) (?P&lt;comando&gt;.*?)$"
+   match="^&prefijo;(?P&lt;tipo&gt;p|c|r|o|s)alias (?P&lt;opts&gt;\-[xvi]+ |)(?P&lt;alias&gt;\w+|\^.*?\$) (?P&lt;comando&gt;.*?)$"
    script="on_alias"
    regexp="y"
    sequence="100"
@@ -107,7 +108,7 @@
   </alias>
 
   <alias
-   match="^&prefijo;(?P&lt;tipo&gt;p|c|r|o)alias (?P&lt;opts&gt;\-[xvi]+ |)(?P&lt;alias&gt;\w+|\^.*?\$)$"
+   match="^&prefijo;(?P&lt;tipo&gt;p|c|r|o|s)alias (?P&lt;opts&gt;\-[xvi]+ |)(?P&lt;alias&gt;\w+|\^.*?\$)$"
    script="on_alias_multilinea"
    regexp="y"
    sequence="100"
@@ -116,7 +117,7 @@
   </alias>
 
   <alias
-   match="^&prefijo;(?P&lt;tipo&gt;p|c|r|o)alias -r (?P&lt;alias&gt;\w+|\^.*?\$)$"
+   match="^&prefijo;(?P&lt;tipo&gt;p|c|r|o|s)alias -r (?P&lt;alias&gt;\w+|\^.*?\$)$"
    script="on_alias_eliminar"
    regexp="y"
    sequence="100"
@@ -161,13 +162,38 @@
 
   <alias
    enabled="y"
-   match="^&prefijo;(?P&lt;tipo&gt;e|f)add (?P&lt;nombre&gt;\w+) (?P&lt;acceso&gt;1|2|3)$"
-   script="on_agregar"
+   match="^&prefijo;(?P&lt;tipo&gt;e|f|se|sf)add (?P&lt;nombre&gt;\w+) (?P&lt;acceso&gt;1|2|3)$"
+   script="on_agregar_magia"
+   regexp="y"
+   sequence="100"
+  >
+  </alias>
+  <alias
+   enabled="y"
+   match="^&prefijo;(?P&lt;tipo&gt;e|f|se|sf)del (?P&lt;nombre&gt;\w+)$"
+   script="on_eliminar_magia"
    regexp="y"
    sequence="100"
   >
   </alias>
 </aliases>
+
+<triggers>
+  <!-- Arreglo para los cambiaformas -->
+
+  <trigger
+   enabled="y"
+   match="^Tras tu dolorosa conversión\, te levantas y miras extrañado a tu alrededor desde tu nuevo punto de vista\, atónito\, te das cuenta de que ahora eres un (\w+)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+	on_raza(string.lower("%1"))
+	recargar_todo()
+  </send>
+  </trigger>
+</triggers>
 
 <!--  Get our standard constants -->
 
@@ -282,12 +308,13 @@ local function cargar(tipo, clase)
 	assert(clase, "No se pasó ningún argumento.")
 	assert(type(clase) == "string", "El nombre no es una cadena válida.")
 	assert(#clase > 0, "El nombre no puede ser una cadena vacía.")
-	assert(tipo > 0 and tipo <= 6, "El tipo no es válido.")
+	assert(tipo >= 0 and tipo <= 5, "El tipo no es válido.")
 	
 	-- Variables
 	local carpeta
-	
-	if tipo == 1 then
+	if tipo == 0 then
+		carpeta = "perfiles"
+	elseif tipo == 1 then
 		carpeta = "clases"
 	elseif tipo == 2 then
 		carpeta = "razas"
@@ -295,10 +322,8 @@ local function cargar(tipo, clase)
 		carpeta = "oficios"
 	elseif tipo == 4 then
 		carpeta = "escuelas"
-	elseif tipo == 5 then
-		carpeta = "esferas"
 	else
-		carpeta = "perfiles"
+		carpeta = "esferas"
 	end -- if
 	
 	-- Construimos el nombre del objeto basados en la información que tenemos
@@ -327,8 +352,6 @@ local function get_clase(nombre)
 				-- Estas listas no se definen en los demás contenedores
 				esferas = {},
 				escuelas = {},
-
-				-- Podría incluir mas información, pero no se me ocurre nada de momento y tampoco es necesario.
 			}
 		else
 			clases[nombre] = clase
@@ -387,7 +410,7 @@ end -- function
 
 local function get_personaje(nombre)
 	if not personajes[nombre] then
-		local resultado, ficha, mensaje = pcall(cargar, 6, nombre)
+		local resultado, ficha, mensaje = pcall(cargar, 0, nombre)
 		
 		if not resultado then
 			personajes[nombre] = {
@@ -420,16 +443,36 @@ local function get_raza(nombre)
 	return razas[nombre]
 end -- function
 
+local function get_oficio(nombre)
+	if not oficios[nombre] then
+		local resultado, oficio, mensaje = pcall(cargar, 3, nombre)
+		
+		if not resultado then
+			oficios[nombre] = {
+				nombre = nombre,
+				comandos = {}
+			}
+		else
+			oficios[nombre] = oficio
+		end -- if
+	end -- if
+
+	return oficios[nombre]
+end -- function
+
 local function guardar(tipo, clase)
 	assert(clase, "No se pasó ningún argumento.")
 	assert(type(clase) == "string", "El nombre no es una cadena válida.")
 	assert(#clase > 0, "El nombre no puede ser una cadena vacía.")
-	assert(tipo > 0 and tipo <= 6, "El tipo no es válido.")
+	assert(tipo >= 0 and tipo <= 5, "El tipo no es válido.")
 	
 	-- Variables
 	local carpeta, obj, stipo
-	
-	if tipo == 1 then
+	if tipo == 0 then
+		carpeta = "perfiles"
+		obj = get_personaje(clase)
+		stipo = string.format("el perfil para %s", obj.nombre_completo)
+	elseif tipo == 1 then
 		carpeta = "clases"
 		obj = get_clase(clase)
 		stipo = string.format("la clase \"%s\"", obj.nombre_completo)
@@ -440,6 +483,7 @@ local function guardar(tipo, clase)
 	elseif tipo == 3 then
 		carpeta = "oficios"
 		stipo = "el oficio"
+		obj = get_oficio(clase)
 	elseif tipo == 4 then
 		obj = get_escuela(clase)
 		carpeta = "escuelas"
@@ -448,15 +492,10 @@ local function guardar(tipo, clase)
 		obj = get_esfera(clase)
 		carpeta = "esferas"
 		stipo = string.format("la esfera \"%s\"", obj.nombre_completo)
-	elseif tipo == 6 then
-		obj = get_personaje(clase)
-		carpeta = "perfiles"
-		stipo = string.format("el perfil para %s", obj.nombre_completo)
 	end -- if
 	
 	-- Construimos el nombre del objeto basados en la información que tenemos
 	local archivo = string.format("rlmud\\%s\\%s.rl", carpeta, clase)
-	print(string.format("Se va a guardar %s en el disco duro.", stipo))
 	return guardar_objeto(obj, archivo)
 end -- function
 
@@ -490,7 +529,7 @@ local function cargar_escuela(nombre, acceso)
 	cargar_magia(escuela, acceso)
 end -- cargar_esfera
 
-local function recargar_todo()
+function recargar_todo()
 	require "var"
 	require "check"
 	
@@ -507,20 +546,49 @@ local function recargar_todo()
 			-- Sencillamente añadimos el alias
 			agregar_alias(k, v)
 		end -- clase.comandos
+
+		-- Y para la especialización
+		if clase[var.especializacion] then
+			for k, v in pairs(clase[var.especializacion].comandos) do
+				agregar_alias(k, v)
+			end -- for
+		end -- if
 		
 		-- Ahora las escuelas y esferas
+		for k, v in pairs(clase.escuelas) do
+			cargar_escuela(k, v)
+		end -- escuelas
+		
 		for k, v in pairs(clase.esferas) do
 			cargar_esfera(k, v)
 		end -- esferas
 		
-		for k, v in pairs(clase.escuelas) do
-			cargar_escuela(k, v)
-		end -- esferas
+		if clase[var.especializacion] then
+			-- Importante para clases cuya especialización hace diferir las escuelas/esferas, como los magos
+			for k, v in pairs(clase[var.especializacion].escuelas) do
+				cargar_escuela(k, v)
+			end -- for
+
+			for k, v in pairs(clase[var.especializacion].esferas) do
+				cargar_esfera(k, v)
+			end -- for
+		end -- if
+		
 	end -- if
 	
 	if var.raza then
+		local raza = get_raza(var.raza)
+		
+		for k, v in pairs(raza.comandos) do
+			agregar_alias(k, v)
+		end
 	end -- if
 	if var.oficio then
+		local oficio = get_oficio(var.oficio)
+		
+		for k, v in pairs(oficio.comandos) do
+			agregar_alias(k, v)
+		end
 	end -- if
 	
 	if var.nombre then
@@ -563,80 +631,98 @@ function on_alias(nombre,linea,wc)
 		ignorar = not not ignorar
 	}
 
-	if wc.tipo == "c" then
-		-- Sencillamente agregamos el alias a la tabla de la clase
-		if not clase.comandos[wc.alias] then
-			print(string.format("El alias se agregó a la clase %s.", clase.nombre_completo))
+	if wc.tipo == "p" then
+		local personaje = get_personaje(var.nombre)
+		if not personaje.comandos[wc.alias] then
+			print(string.format("Agregando el alias \"%s\" para \"%s\".", wc.alias, personaje.nombre))
 		else
-			print(string.format("Se modificó el alias %s para la clase %s.", wc.alias, clase.nombre_completo))
+			print(string.format("Editando el alias \"%s\" para \"%s\".", wc.alias, personaje.nombre))
+		end -- if
+		personaje.comandos[wc.alias] = alias
+		guardar(0, personaje.nombre)
+	elseif wc.tipo == "c" then
+		local clase = get_clase(var.clase)
+		if not clase.comandos[wc.alias] then
+			print(string.format("Agregando el alias \"%s\" para la clase \"%s\".", wc.alias, clase.nombre))
+		else
+			print(string.format("Editando el alias \"%s\" en la clase \"%s\".", wc.alias, clase.nombre))
 		end -- if
 		clase.comandos[wc.alias] = alias
 		guardar(1, clase.nombre)
-	elseif wc.tipo == "p" then
-		local ficha = get_personaje(var.nombre)
-		if not ficha.comandos[wc.alias] then
-			print(string.format("El alias %s se agregó al perfil %s.", wc.alias, ficha.nombre_completo))
-		else
-			print(string.format("Se modificó el alias %s para el perfil de %s.", wc.alias, ficha.nombre_completo))
-		end -- if
-		ficha.comandos[wc.alias] = alias
-		guardar(6, ficha.nombre)
 	elseif wc.tipo == "r" then
 		local raza = get_raza(var.raza)
 		if not raza.comandos[wc.alias] then
-			print(string.format("El alias %s se agregó al perfil de raza %s.", wc.alias, raza.nombre))
+			print(string.format("Se agregó el alias \"%s\" a la raza \"%s\".", wc.alias, raza.nombre))
 		else
-			print(string.format("Se modificó el alias %s para el perfil de raza %s.", wc.alias, raza.nombre))
+			print(string.format("Se cambió el alias \"%s\" a la raza \"%s\".", wc.alias, raza.nombre))
 		end -- if
 		raza.comandos[wc.alias] = alias
 		guardar(2, raza.nombre)
+	elseif wc.tipo == "o" then
+		local oficio = get_oficio(var.oficio)
+		if not oficio.comandos[wc.alias] then
+			print(string.format("Se agregó el alias \"%s\" para el oficio \"%s\".", wc.alias, oficio.nombre))
+		else
+			print(string.format("Se cambió el alias \"%s\" para el oficio \"%s\".", wc.alias, oficio.nombre))
+		end -- if
+		oficio.comandos[wc.alias] = alias
+		guardar(3, oficio.nombre)
+	elseif wc.tipo == "s" then
+		local clase = get_clase(var.clase)
+		
+		-- Trato especial: primero necesitamos generar la tabla para la especialización
+		if not clase[var.especializacion] then
+			clase[var.especializacion] = {
+				comandos = {},
+				esferas = {},
+				escuelas = {}
+			}
+		end -- if
+
+		if not clase[var.especializacion].comandos[wc.alias] then
+			print(string.format("Se agregó el alias \"%s\" para la clase \"%s %s\".", wc.alias, clase.nombre, var.especializacion))
+		else
+			print(string.format("Se agregó el alias \"%s\" para la clase \"%s %s\".", wc.alias, clase.nombre, var.especializacion))
+		end -- if
+
+		clase[var.especializacion].comandos[wc.alias] = alias
+		guardar(1, clase.nombre)
 	elseif wc.tipo == "e" or wc.tipo == "f" then
-		-- Este es el caso de las escuelas/esferas
-		local obj, tipo
+		local obj, s_obj, l_obj
 		
-		if wc.tipo == "f" then
-			obj = get_esfera(wc.nombre)
-			tipo = "esfera"
-		else
+		if wc.tipo == "e" then
 			obj = get_escuela(wc.nombre)
-			tipo = "escuela"
-		end -- tipo
-		
-		-- Ahora comprobamos el acceso
-		local acceso = tonumber(wc.acceso)
-		
-		if acceso == 1 then -- menor
-			if not obj.comandos_menor[wc.alias] then
-				print(string.format("El alias %s se agregó a la %s %s con nivel de acceso menor.", wc.alias, tipo, obj.nombre_completo))
-			else
-				print(string.format("Se modificó el alias %s con acceso a menor para la %s %s.", wc.alias, tipo, clase.nombre_completo))
-			end -- if
-			obj.comandos_menor[wc.alias] = alias
-		elseif acceso == 2 then
-			if not obj.comandos_neutral[wc.alias] then
-				print(string.format("El alias %s se agregó a la %s %s con nivel de acceso neutral.", wc.alias, tipo, obj.nombre_completo))
-			else
-				print(string.format("Se modificó el alias %s con acceso a neutral para la %s %s.", wc.alias, tipo, clase.nombre_completo))
-			end -- if
-			obj.comandos_neutral[wc.alias] = alias
+			s_obj = string.format("la escuela \"%s\"", obj.nombre)
+			l_obj = 4
 		else
-			if not obj.comandos_mayor[wc.alias] then
-				print(string.format("El alias %s se agregó a la %s %s con nivel de acceso mayor.", wc.alias, tipo, obj.nombre_completo))
-			else
-				print(string.format("Se modificó el alias %s con acceso a mayor para la %s %s.", wc.alias, tipo, clase.nombre_completo))
-			end -- if
-			obj.comandos_mayor[wc.alias] = alias
+			obj = get_esfera(wc.nombre)
+			s_obj = string.format("la esfera \"%s\"", obj.nombre)
+			l_obj = 5
+		end -- if
+		
+		local acceso = tonumber(wc.acceso)
+		local s_acceso, listacomandos
+		
+		if acceso == 1 then
+			s_acceso = "acceso menor"
+			listacomandos = obj.comandos_menor
+		elseif acceso == 2 then
+			s_acceso = "acceso a neutral"
+			listacomandos = obj.comandos_neutral
+		elseif acceso == 3 then
+			s_acceso = "acceso a mayor"
+			listacomandos = obj.comandos_mayor
 		end -- acceso
 		
-		-- Guardamos todo
-		if wc.tipo == "f" then
-			guardar(5, obj.nombre)
+		if not listacomandos[wc.alias] then
+			print(string.format("Se agregó el alias \"%s\" a %s con %s", wc.alias, s_obj, s_acceso))
 		else
-			guardar(4, obj.nombre)
+			print(string.format("Se cambió el alias \"%s\" a %s con %s", wc.alias, s_obj, s_acceso))
 		end -- if
+		listacomandos[wc.alias] = alias
+		guardar(l_obj, obj.nombre)
 	end -- if
 	
-	-- Ahora recargamos todo para poder comprobar que todo fue bien
 	recargar_todo()
 end -- function
 
@@ -661,119 +747,231 @@ function on_alias_multilinea(name,line,wc)
 end -- function
 
 function on_alias_eliminar(n,l,wc)
-	-- Definiciones
-	local obj, objtipo, listacomandos
-	
 	-- Primero comprobamos si está todo correcto
 	if not IsConnected() or not var.nombre then
 		print("No hay ningún personaje conectado todavía.")
 		return
 	end -- if
 	
-	if wc.tipo == "c" then
-		objtipo = 1
-		obj = get_clase(var.clase)
+	if wc.tipo == "p" then
+		local personaje = get_personaje(var.nombre)
+		if personaje.comandos[wc.alias] then
+			personaje.comandos[wc.alias] = nil
+			guardar(0, personaje.nombre)
+			print(string.format("Se eliminó el alias \"%s\" de \"%s\".", wc.alias, personaje.nombre))
+		else
+			print(string.format("No existe el alias \"%s\" en \"%s\".", wc.alias, personaje.nombre))
+		end -- if
+	elseif wc.tipo == "c" then
+		local clase = get_clase(var.clase)
+		if clase.comandos[wc.alias] then
+			clase.comandos[wc.alias] = nil
+			guardar(1, clase.nombre)
+			print(string.format("Se eliminó el alias \"%s\" para la clase \"%s\".", wc.alias, clase.nombre))
+		else
+			print(string.format("La clase \"%s\" no tiene ese alias.", clase.nombre))
+		end -- if
 	elseif wc.tipo == "r" then
+		local raza = get_raza(var.raza)
+		if raza.comandos[wc.alias] then
+			raza.comandos[wc.alias] = nil
+			guardar(2, raza.nombre)
+			print(string.format("Se agregó el alias \"%s\" a la raza \"%s\".", wc.alias, raza.nombre))
+		else
+			print(string.format("La raza \"%s\" no tiene ese comando.", raza.nombre))
+			return
+		end -- if
 	elseif wc.tipo == "o" then
-	elseif wc.tipo == "e" then
-		objtipo = 4
-		obj = get_escuela(wc.nombre)
-	elseif wc.tipo == "f" then
-		objtipo = 5
-		obj = get_esfera(wc.nombre)
-	elseif wc.tipo == "p" then
-		objtipo = 6
-		obj = get_personaje(var.nombre)
-	end -- wc.tipo
-	
-	-- Ya que las tablas siempre son las mismas, incluso si se asignan a otra variable, sencillamente vemos que objeto nos interesa
-	if objtipo == 4 or objtipo == 5 then
+		local oficio = get_oficio(var.oficio)
+		
+		if oficio.comandos[wc.alias] then
+			oficio.comandos[wc.alias] = nil
+			guardar(3, oficio.nombre)
+			print(string.format("Se quitó el alias \"%s\" del oficio \"%s\".", wc.alias, oficio.nombre))
+		else
+			print(string.format("El oficio \"%s\" no tiene definido ese alias.", oficio.nombre))
+			return
+		end -- if
+	elseif wc.tipo == "s" then
+		local clase = get_clase(var.clase)
+		
+		if not clase[var.especializacion] then
+			print(string.format("La clase \"%s\" no define la especialización \"%s\".", clase.nombre, var.especializacion))
+			return
+		end -- if
+
+		if clase[var.especializacion].comandos[wc.alias] then
+			clase[var.especializacion].comandos[wc.alias] = nil
+			guardar(1, clase.nomre)
+			print(string.format("Se quitó el alias para la clase \"%s %s\".", clase.nombre, var.especializacion))
+		else
+			print(string.format("No existe ese alias en la clase \"%s %s\".", clase.nombre, var.especializacion))
+			return
+		end -- if
+	elseif wc.tipo == "e" or wc.tipo == "f" then
+		local obj, s_obj, l_obj
+		
+		if wc.tipo == "e" then
+			obj = get_escuela(wc.nombre)
+			s_obj = string.format("la escuela \"%s\"", obj.nombre)
+			l_obj = 4
+		else
+			obj = get_esfera(wc.nombre)
+			s_obj = string.format("la esfera \"%s\"", obj.nombre)
+			l_obj = 5
+		end -- if
+		
 		local acceso = tonumber(wc.acceso)
+		local s_acceso, listacomandos
+		
 		if acceso == 1 then
+			s_acceso = "acceso menor"
 			listacomandos = obj.comandos_menor
 		elseif acceso == 2 then
+			s_acceso = "acceso a neutral"
 			listacomandos = obj.comandos_neutral
-		else
+		elseif acceso == 3 then
+			s_acceso = "acceso a mayor"
 			listacomandos = obj.comandos_mayor
+		end -- acceso
+		
+		if not listacomandos[wc.alias] then
+			print(string.format("El alias no está definido en %s con %s.", s_obj, s_acceso))
+			return
+		else
+			listacomandos[wc.alias] = nil
+			guardar(l_obj, obj.nombre)
+			print(string.format("Se eliminó el alias de %s con %s.", s_obj, s_acceso))
 		end -- if
-	else
-		listacomandos = obj.comandos
 	end -- if
 	
-	if not listacomandos[wc.alias] then
-		print(string.format("El alias \"%s\" no existe en %s.", wc.alias, obj.nombre_completo))
-		return
-	end -- if
-	
-	listacomandos[wc.alias] = nil
-	guardar(objtipo, obj.nombre)
-	print(string.format("Se quitó correctamente el alias \"%s\" del objeto %s.", wc.alias, obj.nombre_completo))
 	recargar_todo()
 end -- on_alias_eliminar
 
-function on_agregar(name,line,wc)
-	require "var"
+function on_agregar_magia(name,line,wc)
+	local acceso = tonumber(wc.acceso)
+	local clase = get_clase(var.clase)
+
+	local function get_acceso(acceso)
+		if acceso == 1 then
+			return "acceso a menor"
+		elseif acceso == 2 then
+			return "acceso a neutral"
+		else
+			return "acceso a mayor"
+		end -- if
+	end -- get_acceso
 	
-	if not var.nombre then
-		print("No hay ningún personaje conectado.")
-		return
+	if wc.tipo == "e" then
+		if not clase.escuelas[wc.nombre] then
+			print(string.format("Se agregó la escuela \"%s\" a la clase \"%s\" con %s", wc.nombre, clase.nombre, get_acceso(acceso)))
+		else
+			print(string.format("Se cambió el acceso de la escuela \"%s\" de %s a %s", wc.nombre, get_acceso(clase.escuelas[wc.nombre]), get_acceso(acceso)))
+		end -- if
+		
+		clase.escuelas[wc.nombre] = acceso
+	elseif wc.tipo == "f" then
+		if not clase.esferas[wc.nombre] then
+			print(string.format("Se agregó la esfera \"%s\" a la clase \"%s\" con %s", wc.nombre, clase.nombre, get_acceso(acceso)))
+		else
+			print(string.format("Se cambió el acceso de la esfera \"%s\" de %s a %s", wc.nombre, get_acceso(clase.escuelas[wc.nombre]), get_acceso(acceso)))
+		end -- if
+		
+		clase.esferas[wc.nombre] = acceso
+	elseif wc.tipo == "se" then
+		if not clase[var.especializacion] then
+			clase[var.especializacion] = {
+				comandos = {},
+				esferas = {},
+				escuelas = {},
+			}
+		end -- if
+		
+		if not clase[var.especializacion].escuelas[wc.nombre] then
+			print(string.format("Se agregó la escuela \"%s\" a la clase \"%s %s\" con nivel de %s.", wc.nombre, clase.nombre, var.especializacion, get_acceso(acceso)))
+		else
+			print(string.format("Se cambió el nivel de acceso de \"%s\" para \"%s %s\" de %s a %s.", wc.nombre, clase.nombre, var.especializacion, get_acceso(clase[var.especializacion].escuelas[wc.nombre]), get_acceso(acceso)))
+		end -- if
+		
+		clase[var.especializacion].escuelas[wc.nombre] = acceso
+	elseif wc.tipo == "sf" then
+		if not clase[var.especializacion] then
+			clase[var.especializacion] = {
+				comandos = {},
+				esferas = {},
+				escuelas = {},
+			}
+		end -- if
+		
+		if not clase[var.especializacion].esferas[wc.nombre] then
+			print(string.format("Se agregó la esfera \"%s\" a la clase \"%s %s\" con nivel de %s.", wc.nombre, clase.nombre, var.especializacion, get_acceso(acceso)))
+		else
+			print(string.format("Se cambió el nivel de acceso de la esfera \"%s\" para \"%s %s\" de %s a %s.", wc.nombre, clase.nombre, var.especializacion, get_acceso(clase[var.especializacion].escuelas[wc.nombre]), get_acceso(acceso)))
+		end -- if
+		
+		clase[var.especializacion].esferas[wc.nombre] = acceso
 	end -- if
 	
+	guardar(1, clase.nombre)
+	recargar_todo()
+end -- function
+
+function on_eliminar_magia(n,l,wc)
 	local clase = get_clase(var.clase)
 	
-	-- La forma en string de los niveles de acceso
-	local acceso = tonumber(wc.acceso)
-	
-	if acceso == 1 then
-		acceso = "menor"
-	elseif acceso == 2 then
-		acceso = "neutral"
-	else
-		acceso = "mayor"
-	end -- if
-	
-	if wc.tipo == "f" then
-		if not clase.esferas[wc.nombre] then
-			print(string.format("Añadiendo la esfera %s a la clase %s con nivel de acceso %s.", wc.nombre, clase.nombre_completo, acceso))
-		else
-			print(string.format("Cambiando el nivel de acceso de la esfera %s para la clase %s a %s", wc.nombre, clase.nombre_completo, acceso))
-		end -- if
-		clase.esferas[wc.nombre] = tonumber(wc.acceso)
-		
-		guardar(1, clase.nombre)
-	else
+	if wc.tipo == "e" then
 		if not clase.escuelas[wc.nombre] then
-			print(string.format("Añadiendo la esfera %s a la clase %s con nivel de acceso %s.", wc.nombre, clase.nombre_completo, acceso))
-		else
-			print(string.format("Cambiando el nivel de acceso de la escuela %s para la clase %s a %s.", wc.nombre, clase.nombre_completo, acceso))
+			print(string.format("La clase \"%s\" no tiene esa escuela asignada.", clase.nombre))
+			return
 		end -- if
-		clase.escuelas[wc.nombre] = tonumber(wc.acceso)
 		
-		guardar(4, wc.nombre)
+		clase.escuelas[wc.nombre] = nil
+		print(string.format("Se quitó la escuela \"%s\" de la clase \"%s\".", wc.nombre, clase.nombre))
+	elseif wc.tipo == "f" then
+		if not clase.esferas[wc.nombre] then
+			print(string.format("La clase \"%s\" no tiene esa esfera asignada.", clase.nombre))
+			return
+		end -- if
+		
+		clase.esferas[wc.nombre] = nil
+		print(string.format("Se quitó la esfera \"%s\" de la clase \"%s\".", wc.nombre, clase.nombre))
+	elseif wc.tipo == "se" then
+		if not clase[var.especializacion] then
+			print(string.format("La especialización \"%s\" no está definida en la clase \"%s\".", var.especializacion, clase.nombre))
+			return
+		end -- if
+		
+		local esp = clase[var.especializacion]
+		
+		if not esp.escuelas[wc.nombre] then
+			print(string.format("Esa escuela no está definida en la clase \"%s %s\".", clase.nombre, var.especializacion))
+			return
+		end -- if
+		
+		esp.escuelas[wc.nombre] = nil
+		print(string.format("Se quitó la escuela \"%s\" de la clase \"%s %s\".", wc.nombre, clase.nombre, var.especializacion))
+	elseif wc.tipo == "sf" then
+		if not clase[var.especializacion] then
+			print(string.format("La especialización \"%s\" no está definida en la clase \"%s\".", var.especializacion, clase.nombre))
+			return
+		end -- if
+		
+		local esp = clase[var.especializacion]
+		
+		if not esp.escuelas[wc.nombre] then
+			print(string.format("Esa esfera no está definida en la clase \"%s %s\".", clase.nombre, var.especializacion))
+			return
+		end -- if
+		
+		esp.esferas[wc.nombre] = nil
+		print(string.format("Se quitó la esfera \"%s\" de la clase \"%s %s\".", wc.nombre, clase.nombre, var.especializacion))
 	end -- if
 	
+	guardar(1, clase.nombre)
 	recargar_todo()
 end -- function
 
 function on_guardar(name,line,wildcards)
-	require "var"
-	local args = wildcards[1]
-	
-	if args == "clase" then
-		guardar(1, var.clase)
-	elseif args == "oficio" then
-		guardar(2, var.oficio)
-	elseif args == "raza" then
-		guardar(3, var.raza)
-	elseif args == "personaje" then
-		guardar(6, var.nombre)
-	else
-		if wildcards.etipo == "escuela" then
-			guardar(4, wildcards.nombre)
-		else
-			guardar(5, wildcards.nombre)
-		end -- if
-	end -- if
 end -- function
 
 function OnPluginListChanged()
@@ -798,6 +996,26 @@ function OnPluginDisconnect()
 	var.nombre = nil
 end -- function
 
+local function on_clase(nombre)
+	var.clase = nombre
+end -- function
+
+local function on_oficio(nombre)
+	var.oficio = nombre
+end -- function
+
+function on_raza(nombre)
+	var.raza = nombre
+end -- function
+
+local function on_perfil(nombre)
+	var.nombre = nombre
+end -- function
+
+local function on_especializacion(nombre)
+	var.especializacion = nombre
+end -- function
+
 function OnGMCP(mensaje)
 	require "var"
 	
@@ -806,24 +1024,24 @@ function OnGMCP(mensaje)
 	-- Parseamos los datos mediante json
 	local ficha = PedirGMCP("Char.Ficha")
 	
-	-- Si se define la clase, reemplazamos la variable con el valor nuevo
 	if ficha.clase then
-		var.clase = ficha.clase
+		on_clase(ficha.clase)
 	end -- if
 	
-	-- Igual el oficio
 	if ficha.oficio then
-		var.oficio = ficha.oficio
+		on_oficio(ficha.oficio)
 	end -- if
 	
-	-- Igual con la raza, aunque es poco probable que tengan comandos propios.
-	-- Se aplica mas a druidas cambiaformas y quizás orgos/orcos
 	if ficha.raza then
-		var.raza = ficha.raza
+		on_raza(ficha.raza)
 	end -- if
 	
 	if ficha.nombre then
-		var.nombre = ficha.nombre
+		on_perfil(ficha.nombre)
+	end -- if
+	
+	if ficha.especializacion then
+		on_especializacion(ficha.especializacion)
 	end -- if
 	
 	recargar_todo()

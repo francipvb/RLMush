@@ -99,7 +99,7 @@
   <trigger
    enabled="y"
    group="Cortantes"
-   match="^\# Intentas rajar en un brazo a (.*?)\, pero éste consigue parar críticamente tu ataque\.$"
+   match="^&prefijo;\# Intentas (rajar|sesgar|cortar) en &parte; a (.*?)\, pero ést[ea] consigue parar críticamente tu ataque\.$"
    name="cortante_propio_parado_critico"
    regexp="y"
    sequence="100"
@@ -139,7 +139,7 @@
   <trigger
    enabled="y"
    group="Cortantes"
-   match="^\* (.*?) te intenta (rajar|sesgar|cortar) en &parte;\, pero logras parar su ataque\.$"
+   match="^&prefijo;\* (.*?) te intenta (rajar|sesgar|cortar) en &parte;\, pero logras parar su ataque\.$"
    name="cortante_enemigo_parado"
    regexp="y"
    sequence="100"
@@ -179,7 +179,7 @@
   <trigger
    enabled="y"
    group="Cortantes"
-   match="^\# Deslizas tu sable sobre &parte; de (.*?) dejándole un corte sanguinolento\.$"
+   match="^&prefijo;\# Deslizas tu sable sobre &parte; de (.*?) dejándole un corte sanguinolento\.$"
    regexp="y"
    name="sable_propio"
    sequence="100"
@@ -204,6 +204,26 @@
   <trigger
    enabled="y"
    group="Penetrantes"
+   match="^&prefijo;\# Te lanzas sobre (.*?) clavándole tu (.*?) en &parte; críticamente\.$"
+   name="penetrante_propio_critico"
+   regexp="y"
+   sequence="100"
+   script="on_golpear"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Penetrantes"
+   match="^&prefijo;\# Intentas (pinchar|perforar) en &parte; a (.*?)\, pero ést(e|a) consigue parar críticamente tu ataque\.$"
+   name="penetrante_propio_parado_critico"
+   regexp="y"
+   sequence="100"
+   script="on_fallar"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Penetrantes"
    match="^&prefijo;\* (.*?) te (perfora|pincha) &intens;en &parte;\.$"
    name="penetrante_enemigo"
    regexp="y"
@@ -214,7 +234,7 @@
   <trigger
    enabled="y"
    group="Penetrantes"
-   match="^\* (.*?) te intenta (perforar|pinchar) en &parte;\, pero logras parar su ataque\.$"
+   match="^&prefijo;\* (.*?) te intenta (perforar|pinchar) en &parte;\, pero logras parar su ataque\.$"
    name="penetrante_enemigo_parado"
    regexp="y"
    sequence="100"
@@ -244,7 +264,7 @@
   <trigger
    enabled="y"
    group="Penetrantes"
-   match="^&prefijo;\* (.*?) perfora en &parte; cuando se lanza sobre ti clavï¿½ndote críticamente su (.*?)\.$"
+   match="^&prefijo;\* (.*?) perfora en &parte; cuando se lanza sobre ti clavándote críticamente su (.*?)\.$"
    name="penetrante_enemigo_critico"
    regexp="y"
    sequence="100"
@@ -299,10 +319,11 @@
   <trigger
    enabled="y"
    group="Aplastantes"
-   match="^\* (.*?) te intenta (golpear|aplastar) en el pecho\, pero logras esquivar su ataque\.$"
+   match="^&prefijo;\* (.*?) te intenta (golpear|aplastar) en &parte;\, pero logras esquivar su ataque\.$"
    name="aplastante_enemigo_esquivado"
    regexp="y"
    sequence="100"
+   script="on_fallar"
   >
   </trigger>
   <trigger
