@@ -10,35 +10,59 @@
     escuelas = {
       },
     comandos = {
+      s6 = {
+        comando = "formular sutileza del metamorfo",
+        ignorar = false,
+        regexp = false,
+        variables = false,
+        },
+      s7 = {
+        comando = "formular regeneracion animal",
+        ignorar = false,
+        regexp = false,
+        variables = false,
+        },
       c4 = {
         comando = "polimorfarse acabar",
+        variables = false,
+        regexp = false,
+        ignorar = false,
+        },
+      s5 = {
+        comando = "formular armas naturales",
+        ignorar = false,
+        regexp = false,
+        variables = false,
+        },
+      s8 = {
+        comando = "formular vigor natural",
         ignorar = false,
         regexp = false,
         variables = false,
         },
       s1 = {
         comando = "polimorfarse pantera",
-        variables = false,
-        regexp = false,
         ignorar = false,
+        regexp = false,
+        variables = false,
         },
       s4 = {
         comando = "polimorfarse hiena",
-        ignorar = false,
-        regexp = false,
         variables = false,
+        regexp = false,
+        ignorar = false,
         },
       s3 = {
         comando = "polimorfarse cocodrilo",
-        ignorar = false,
-        regexp = false,
         variables = false,
+        regexp = false,
+        ignorar = false,
         },
       s2 = {
         comando = "polimorfarse oso",
-        ignorar = false,
-        regexp = false,
         variables = false,
+        regexp = false,
+        ignorar = false,
         },
       },
     },
@@ -55,5 +79,17 @@
     adivinacion = 1,
     },
   comandos = {
+    c5 = {
+      comando = "formular naturalizar",
+      ignorar = false,
+      regexp = false,
+      variables = false,
+      },
+    c8 = {
+      comando = "formular piel de corteza",
+      ignorar = false,
+      regexp = false,
+      variables = false,
+      },
     },
   }

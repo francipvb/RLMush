@@ -215,26 +215,45 @@ local macros_predef = {
 	["ALT+w"] = "c2",
 	["ALT+e"] = "c3",
 	["ALT+r"] = "c4",
+	["ALT+SHIFT+q"] = "c5",
+	["ALT+SHIFT+w"] = "c6",
+	["ALT+SHIFT+e"] = "c7",
+	["ALT+SHIFT+r"] = "c8",
 	["ALT+a"] = "s1",
 	["ALT+s"] = "s2",
 	["ALT+d"] = "s3",
 	["ALT+f"] = "s4",
+	["ALT+SHIFT+a"] = "s5",
+	["ALT+SHIFT+s"] = "s6",
+	["ALT+SHIFT+d"] = "s7",
+	["ALT+SHIFT+f"] = "s8",
 	["ALT+b"] = "buscar",
 	["ALT+z"] = "estado -i todos",
 	["ALT+x"] = "perder todo",
 	["ALT+c"] = "estado -i x",
 	["ALT+v"] = "parar",
 	["ALT+i"] = "norte",
+	["ALT+SHIFT+i"] = "mv norte",
 	["ALT+k"] = "sur",
+	["ALT+SHIFT+k"] = "mv sur",
 	["ALT+j"] = "oeste",
+	["ALT+SHIFT+j"] = "mv oeste",
 	["ALT+l"] = "este",
+	["ALT+SHIFT+l"] = "mv este",
 	["ALT+u"] = "no",
+	["ALT+SHIFT+u"] = "mv no",
 	["ALT+o"] = "ne",
+	["ALT+SHIFT+o"] = "mv ne",
 	["ALT+m"] = "so",
+	["ALT+SHIFT+m"] = "mv so",
 	["ALT+."] = "se",
+	["ALT+SHIFT+."] = "mv se",
 	["ALT+,"] = "ojear",
 	["ALT+`"] = "abajo",
+	["ALT+SHIFT+,"] = "mvc",
+	["ALT+SHIFT+`"] = "mv abajo",
 	["ALT+p"] = "arriba",
+	["ALT+SHIFT+p"] = "mv arriba",
 }
 
 local clases = {}
@@ -389,8 +408,8 @@ local function get_esfera(nombre)
 end -- function
 
 local function get_escuela(nombre)
-	if not esferas[nombre] then
-		local resultado, esfera = pcall(cargar, 4, nombre)
+	if not escuelas[nombre] then
+		local resultado, escuela = pcall(cargar, 4, nombre)
 		
 		if not resultado then
 			escuelas[nombre] = {
@@ -401,7 +420,7 @@ local function get_escuela(nombre)
 				comandos_mayor = {}
 			}
 		else
-			escuelas[nombre] = esfera
+			escuelas[nombre] = escuela
 		end -- if
 	end -- if
 	
@@ -687,40 +706,62 @@ function on_alias(nombre,linea,wc)
 
 		clase[var.especializacion].comandos[wc.alias] = alias
 		guardar(1, clase.nombre)
-	elseif wc.tipo == "e" or wc.tipo == "f" then
-		local obj, s_obj, l_obj
-		
-		if wc.tipo == "e" then
-			obj = get_escuela(wc.nombre)
-			s_obj = string.format("la escuela \"%s\"", obj.nombre)
-			l_obj = 4
-		else
-			obj = get_esfera(wc.nombre)
-			s_obj = string.format("la esfera \"%s\"", obj.nombre)
-			l_obj = 5
-		end -- if
-		
+	elseif wc.tipo == "e" then
+		local escuela = get_escuela(wc.nombre)
 		local acceso = tonumber(wc.acceso)
-		local s_acceso, listacomandos
 		
 		if acceso == 1 then
-			s_acceso = "acceso menor"
-			listacomandos = obj.comandos_menor
+			if not escuela.comandos_menor[wc.alias] then
+				print(string.format("Se agregó el alias \"%s\" a la escuela \"%s\" con acceso menor.", wc.alias, escuela.nombre))
+			else
+				print(string.format("Se cambió el alias \"%s\" de la escuela \"%s\" con acceso menor.", wc.alias, escuela.nombre))
+			end -- if
+			escuela.comandos_menor[wc.alias] = alias
 		elseif acceso == 2 then
-			s_acceso = "acceso a neutral"
-			listacomandos = obj.comandos_neutral
+			if not escuela.comandos_neutral[wc.alias] then
+				print(string.format("Se agregó el alias \"%s\" a la escuela \"%s\" con acceso neutral.", wc.alias, escuela.nombre))
+			else
+				print(string.format("Se cambió el alias \"%s\" a la escuela \"%s\" con acceso menor.", wc.alias, escuela.nombre))
+			end -- if
+			escuela.comandos_neutral[wc.alias] = alias
 		elseif acceso == 3 then
-			s_acceso = "acceso a mayor"
-			listacomandos = obj.comandos_mayor
+			if not escuela.comandos_menor[wc.alias] then
+				print(string.format("Se agregó el alias \"%s\" a la escuela \"%s\" con acceso mayor.", wc.alias, escuela.nombre))
+			else
+				print(string.format("Se agregó el alias \"%s\" a la escuela \"%s\" con acceso mayor.", wc.alias, escuela.nombre))
+			end -- if
+			escuela.comandos_mayor[wc.alias] = alias
 		end -- acceso
 		
-		if not listacomandos[wc.alias] then
-			print(string.format("Se agregó el alias \"%s\" a %s con %s", wc.alias, s_obj, s_acceso))
-		else
-			print(string.format("Se cambió el alias \"%s\" a %s con %s", wc.alias, s_obj, s_acceso))
-		end -- if
-		listacomandos[wc.alias] = alias
-		guardar(l_obj, obj.nombre)
+		guardar(4, escuela.nombre)
+	elseif wc.tipo == "f" then
+		local escuela = get_esfera(wc.nombre)
+		local acceso = tonumber(wc.acceso)
+		
+		if acceso == 1 then
+			if not escuela.comandos_menor[wc.alias] then
+				print(string.format("Se agregó el alias \"%s\" a la esfera \"%s\" con acceso menor.", wc.alias, escuela.nombre))
+			else
+				print(string.format("Se cambió el alias \"%s\" de la esfera \"%s\" con acceso menor.", wc.alias, escuela.nombre))
+			end -- if
+			escuela.comandos_menor[wc.alias] = alias
+		elseif acceso == 2 then
+			if not escuela.comandos_neutral[wc.alias] then
+				print(string.format("Se agregó el alias \"%s\" a la esfera \"%s\" con acceso neutral.", wc.alias, escuela.nombre))
+			else
+				print(string.format("Se cambió el alias \"%s\" a la esfera \"%s\" con acceso menor.", wc.alias, escuela.nombre))
+			end -- if
+			escuela.comandos_neutral[wc.alias] = alias
+		elseif acceso == 3 then
+			if not escuela.comandos_menor[wc.alias] then
+				print(string.format("Se agregó el alias \"%s\" a la esfera \"%s\" con acceso mayor.", wc.alias, escuela.nombre))
+			else
+				print(string.format("Se agregó el alias \"%s\" a la esfera \"%s\" con acceso mayor.", wc.alias, escuela.nombre))
+			end -- if
+			escuela.comandos_mayor[wc.alias] = alias
+		end -- acceso
+		
+		guardar(5, escuela.nombre)
 	end -- if
 	
 	recargar_todo()
@@ -802,7 +843,7 @@ function on_alias_eliminar(n,l,wc)
 
 		if clase[var.especializacion].comandos[wc.alias] then
 			clase[var.especializacion].comandos[wc.alias] = nil
-			guardar(1, clase.nomre)
+			guardar(1, clase.nombre)
 			print(string.format("Se quitó el alias para la clase \"%s %s\".", clase.nombre, var.especializacion))
 		else
 			print(string.format("No existe ese alias en la clase \"%s %s\".", clase.nombre, var.especializacion))
