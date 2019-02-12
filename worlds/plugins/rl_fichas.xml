@@ -22,76 +22,6 @@
 <description trim="y">
 <![CDATA[
 	Este plugin se encarga de gestionar todo lo relativo a los alias del cliente para personajes, clases, razas, escuelas y esferas.
-
-	Comandos disponibles:
-	$calias [<opciones> ]<enviar> <comando>
-		Añade un alias de cliente al perfil de clase para el personaje conectado actualmente.
-		
-		- opciones: Ver abajo.
-		- enviar: El comando, por ejemplo, f1 o ^1(\d*?)$ si se agrega una expresión regular.
-		- comando: El comando que se envía al MUD. Se pueden usar substituciones como %1, %2, etc.
-
-	$salias [<opciones> ]<enviar> <comando>
-		Añade un alias para la especialización del personaje.
-
-	$palias [<opciones> ]<enviar> <comando>
-		Añade un alias de cliente  al perfil del personaje conectado.
-		
-		La entrada es igual que para el comando $calias.
-
-	$ oalias [<opciones> ]<enviar> <comando>
-		Añade un alias al perfil de oficio.
-
-	$ralias [opciones] <alias> <enviar>
-		Añade un alias para una raza concreta.
-		
-		Esto es útil sobre todo para los cambiaformas.
-
-	$falias <esfera> <acceso> [<opts> ]<enviar> <comando>
-		Agrega un alias de cliente al perfil de la esfera.
-		
-		- esfera: Nombre de la esfera a la que se añade el comando.
-		- acceso: Nivel de acceso
-			1. Acceso a menor, se añade siempre que la clase tenga dicha esfera.
-			2. El comando se añade solo si el personaje tiene acceso a neutral o mayor.
-			3. Se añade solo si el personaje tiene acceso a mayor en la esfera.
-
-		ver mas arriba para el resto de opciones.
-
-	$ealias <escuela> <acceso> <enviar> <comando>
-		Ver $falias, aplicado a escuelas.
-
-	Si se utiliza cualquiera de los comandos anteriores con la forma siguiente se despliega un cuadro de texto para añadir alias multilineales.
-	  $xalias <opciones> <enviar>
-
-	Las opciones incluyen especificadores de acceso y nombre de escuelas.
-
-	Por último, para eliminar un alias se puede utilizar la forma siguiente:
-	  $xalias [<nombre> <acceso> ]-r <alias>
-
-		Esto elimina el alias y guarda el objeto.
-
-		Nótese que la 'x' se reemplaza por cualquiera de las letras (p|c|r|o|e|f|s).
-
-	$ead <escuela> <acceso>
-		Añade una escuela a la clase del personaje.
-		
-		- escuela: Nombre de la escuela que se agrega. De no existir, se carga una plantilla vacía en la memoria.
-		- acceso: El nivel de acceso a la escuela.
-			1. Acceso a menor.
-			2. Acceso a neutral.
-			3. Acceso a mayor.
-
-	$fadd <esfera> <acceso>
-		Ver $eadd, aplicale a esferas.
-
-	$s{e|f}add <esfera/scuela> <acceso>
-		Agrega una escuela o esfera para una especialización.
-
-	$[s]{e|f}del <escuela/esfera>
-		Elimina una escuela o esfera de una clase.
-
-		Si se antepone el prefijo 's', se quita de la especialización.
 ]]>
 </description>
 
@@ -99,115 +29,47 @@
 
 <aliases>
   <alias
-   match="^&prefijo;(?P&lt;tipo&gt;p|c|r|o|s)alias (?P&lt;opts&gt;\-[xvi]+ |)(?P&lt;alias&gt;\w+|\^.*?\$) (?P&lt;comando&gt;.*?)$"
-   script="on_alias"
-   regexp="y"
-   sequence="100"
    enabled="y"
-  >
-  </alias>
-
-  <alias
-   match="^&prefijo;(?P&lt;tipo&gt;p|c|r|o|s)alias (?P&lt;opts&gt;\-[xvi]+ |)(?P&lt;alias&gt;\w+|\^.*?\$)$"
-   script="on_alias_multilinea"
+   match="^&prefijo;depinfo$"
    regexp="y"
-   sequence="100"
-   enabled="y"
-  >
+   script="on_depinfo">
   </alias>
-
-  <alias
-   match="^&prefijo;(?P&lt;tipo&gt;p|c|r|o|s)alias -r (?P&lt;alias&gt;\w+|\^.*?\$)$"
-   script="on_alias_eliminar"
-   regexp="y"
-   sequence="100"
-   enabled="y"
-  >
-  </alias>
-
   <alias
    enabled="y"
-   match="^&prefijo;(?P&lt;tipo&gt;f|e)alias (?P&lt;nombre&gt;[a-z]+) (?P&lt;acceso&gt;1|2|3) (?P&lt;opts&gt;\-[xvi]+ |)(?P&lt;alias&gt;[a-zA-Z0-9]+|\^.*?\$) (?P&lt;comando&gt;.*?)$"
-   script="on_alias"
+   match="^&prefijo;test$"
    regexp="y"
-   sequence="100"
-  >
+   script="on_test">
   </alias>
-
   <alias
+   script="on_cinit"
+   match="^&prefijo;cinit$"
    enabled="y"
-   match="^&prefijo;(?P&lt;tipo&gt;f|e)alias (?P&lt;nombre&gt;[a-z]+) (?P&lt;acceso&gt;1|2|3) (?P&lt;opts&gt;\-[xvi]+ |)(?P&lt;alias&gt;[a-zA-Z0-9]+|\^.*?\$)$"
-   script="on_alias_multilinea"
-   regexp="y"
-   sequence="100"
-  >
-  </alias>
-
-  <alias
-   enabled="y"
-   match="^&prefijo;(?P&lt;tipo&gt;f|e)alias (?P&lt;nombre&gt;[a-z]+) (?P&lt;acceso&gt;1|2|3) -r (?P&lt;alias&gt;[a-zA-Z0-9]+|\^.*?\$)$"
-   script="on_alias_eliminar"
    regexp="y"
    sequence="100"
   >
   </alias>
   <alias
+   script="on_sinit"
+   match="^&prefijo;sinit$"
    enabled="y"
-   match="^&prefijo;guardar (clase|personaje|raza|oficio|(?P&lt;etipo&gt;escuela|esfera) (?P&lt;nombre&gt;[a-z]+))$"
-   script="on_guardar"
-   regexp="y"
-   sequence="100"
-  >
-  </alias>
-
-  <alias
-   enabled="y"
-   match="^&prefijo;(?P&lt;tipo&gt;e|f|se|sf)add (?P&lt;nombre&gt;\w+) (?P&lt;acceso&gt;1|2|3)$"
-   script="on_agregar_magia"
-   regexp="y"
-   sequence="100"
-  >
-  </alias>
-  <alias
-   enabled="y"
-   match="^&prefijo;(?P&lt;tipo&gt;e|f|se|sf)del (?P&lt;nombre&gt;\w+)$"
-   script="on_eliminar_magia"
    regexp="y"
    sequence="100"
   >
   </alias>
 </aliases>
 
-<triggers>
-  <!-- Arreglo para los cambiaformas -->
-
-  <trigger
-   enabled="y"
-   match="^Tras tu dolorosa conversión\, te levantas y miras extrañado a tu alrededor desde tu nuevo punto de vista\, atónito\, te das cuenta de que ahora eres un (\w+)\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>
-	on_raza(string.lower("%1"))
-	recargar_todo()
-  </send>
-  </trigger>
-</triggers>
-
 <!--  Get our standard constants -->
 
 <!-- <include name="constants.lua"/> -->
 
+
+
+
 <!--  Script  -->
-
-
-
-
-
 <script>
 <![CDATA[
 require "rl_stuff"
+require "var"
 
 -- Macros a comandos predefinidos:
 local macros_predef = {
@@ -256,763 +118,356 @@ local macros_predef = {
 	["ALT+SHIFT+p"] = "mv arriba",
 }
 
-local clases = {}
-local esferas = {}
-local escuelas = {}
-local oficios = {}
-local razas = {}
-local personajes = {}
+-- Niveles de acceso
+local niveles_acceso = {
+	menor = 1,
+	neutral = 2,
+	mayor = 3,
+}
 
-local function cargar_objeto(nombre)
-	-- Validamos el nombre primero.
-	assert(type(nombre) == "string", "El nombre de archivo no es válido.")
-	
-	-- Abrimos el archivo, si es que existe. En caso contrario, cerramos.
-	local archivo, error = io.open(GetInfo(66)..nombre, "r")
-	assert(archivo, error)
-	
-	-- Leemos todo el archivo
-	local cadena = archivo:read("*a")
-	
-	-- Cerramos el archivo
-	archivo:close()
+-- Estos datos se recargan cada vez que se recibe un mensaje GMCP 'Char.Ficha'
+local personaje, clase, especializacion, esferas, escuelas, oficio, raza
 
-	return assert(loadstring("return "..cadena)(), "El contenido del archivo no es válido.")
-end -- function
+local function ruta_valida(nombre, actual, raiz)
+	local ruta
+	
+	-- Validamos primero
+	assert(nombre, "No se proporcionó 'nombre'.")
+	assert(type(nombre) == "string", "'nombre' no es una cadena válida.")
+	assert(nombre ~= "", "'nombre' no puede ser una cadena vacía.")
 
-local function guardar_objeto(objeto, nombre)
-	require "serialize"
-	
-	-- Validamos el nombre de archivo y el objeto
-	assert(objeto, "No se pasó ningún objeto válido.")
-	assert(nombre, "No se pasó ningún nombre de archivo.")
-	assert(type(objeto) == "table", "Solo se admiten objetos de tipo table para guardar.")
-	assert(type(nombre) == "string", "No se admiten otro tipo de formatos a no ser cadenas en el nombre de archivo.")
-	
-	-- El primer paso es obtener la representación json del objeto.
-	-- Para evitar poner asserts innecesarios los errores no se controlarán.
-	local resultado = serialize.save_simple(objeto)
-	
-	-- Abrimos el archivo
-	local archivo, mensaje = io.open(GetInfo(66)..nombre, "w+")
-	assert(archivo, mensaje)
-	
-	-- Escribimos los datos
-	archivo:write(resultado)
-	archivo:close()
-end -- function
+	-- Restringimos la capacidad de búsqueda de archivos
+	assert(not nombre:find("..", 1, true), "No se admite la secuencia '..' en 'nombre'.")
 
-local function agregar_alias(alias, objeto)
-	check(AddAlias("", alias, objeto.comando, (function()
-		-- Esta función devuelve los flags para el alias trducidos a mushclient
-		local flags = alias_flag.Enabled + alias_flag.Temporary
-		
-		if objeto.ignorar then
-			flags = flags + alias_flag.IgnoreAliasCase
-		end -- v.ignorar
-		
-		if objeto.variables then
-			flags = flags + alias_flag.ExpandVariables
-		end -- v.variables
-		
-		if objeto.regexp then
-			flags = flags + alias_flag.RegularExpression
-		end -- v.regexp
-		
-		return flags
-	end)(), ""))
-end -- function
-
-local function cargar(tipo, clase)
-	assert(clase, "No se pasó ningún argumento.")
-	assert(type(clase) == "string", "El nombre no es una cadena válida.")
-	assert(#clase > 0, "El nombre no puede ser una cadena vacía.")
-	assert(tipo >= 0 and tipo <= 5, "El tipo no es válido.")
+	if not raiz then
+		raiz = GetInfo(66).."rlmud"
+	end -- if
 	
-	-- Variables
-	local carpeta
-	if tipo == 0 then
-		carpeta = "perfiles"
-	elseif tipo == 1 then
-		carpeta = "clases"
-	elseif tipo == 2 then
-		carpeta = "razas"
-	elseif tipo == 3 then
-		carpeta = "oficios"
-	elseif tipo == 4 then
-		carpeta = "escuelas"
+	if not actual then
+		actual = raiz
 	else
-		carpeta = "esferas"
+		actual = raiz.."/"..actual
+	end -- if
+
+	-- Rutas absolutas desde la raíz
+	if nombre:sub(1, 1) == "~" then
+		ruta = string.format("%s%s", raiz, nombre:sub(2, -1))
+	else
+		ruta = string.format("%s/%s", actual, nombre)
 	end -- if
 	
-	-- Construimos el nombre del objeto basados en la información que tenemos
-	local archivo = string.format("rlmud\\%s\\%s.rl", carpeta, clase)
-	
-	return cargar_objeto(archivo)
+	return ruta
 end -- function
 
-local function get_clase(nombre)
-	if not clases[nombre] then
-		local resultado, clase, mensaje = pcall(cargar, 1, nombre)
-
-		if not resultado then
-			print(string.format("No existe un archivo para la clase \"%s\". Se generará uno nuevo.", var.clase))
-			
-			-- Aprobecho para definir el formato de referencia del objeto clase
-			clases[nombre] = {
-				nombre = nombre,
-				-- Por defecto es el nombre de clase a secas, pero se podrá cambiar proximamente.
-				nombre_completo = nombre,
-
-				-- Esta es una lista de los alias que se añaden temporalmente cuando se carga la clase.
-				comandos = {},
-
-				-- Esto es para definir otros perfiles de alias que puedan cargarse, usado para clases mágicas principalmente
-				-- Estas listas no se definen en los demás contenedores
-				esferas = {},
-				escuelas = {},
-			}
-		else
-			clases[nombre] = clase
-		end -- if
+local function cargar_archivo(nombre, actual, raiz)
+	-- Falla si se intenta abrir una carpeta o un archivo no existente.
+	local archivo, mensaje = io.open(ruta_valida(nombre, actual, raiz), "r")
+	if not archivo then
+		return nil, mensaje
 	end -- if
-	
-	return clases[nombre]
-end -- clase
 
-local function get_esfera(nombre)
-	if not esferas[nombre] then
-		local resultado, esfera = pcall(cargar, 5, nombre)
-		
-		if not resultado then
-			esferas[nombre] = {
-				-- Defino el formato de las esferas aquí, serán similares las escuelas y las esferas
-				nombre = nombre,
-				nombre_completo = nombre,
-				
-				-- Estos alias se cargan para las clases que tengan la esfera en cualquier acceso
-				comandos_menor = {},
-				
-				-- Estos se cargan cuando el comando es válido para un acceso a neutral
-				comandos_neutral = {},
-				
-				-- Estos cuando la clase es experta en una escuela/esfera
-				comandos_mayor = {}
-			}
-		else
-			esferas[nombre] = esfera
-		end -- if
-	end -- if
-	
-	return esferas[nombre]
+	-- Llegados a este punto, tenemos un archivo abierto listo para leer
+	local cadena = archivo:read("*a")
+
+	-- Ya no necesitamos el archivo, así que lo cerramos
+	archivo:close()
+
+	return cadena
 end -- function
 
-local function get_escuela(nombre)
-	if not escuelas[nombre] then
-		local resultado, escuela = pcall(cargar, 4, nombre)
-		
-		if not resultado then
-			escuelas[nombre] = {
-				nombre = nombre,
-				nombre_completo = nombre,
-				comandos_menor = {},
-				comandos_neutral = {},
-				comandos_mayor = {}
-			}
-		else
-			escuelas[nombre] = escuela
-		end -- if
+local function cargar_xml(nombre, actual, raiz)
+	local cadena, mensaje = cargar_archivo(nombre, actual, raiz)
+	if not cadena then
+		return nil, mensaje
+	end -- if
+
+	local xml, mensaje, linea = utils.xmlread(cadena)
+	if not xml then
+		error(string.format("%s %s: %s", nombre, linea, mensaje))
 	end -- if
 	
-	return escuelas[nombre]
+	return xml, nombre
 end -- function
 
-local function get_personaje(nombre)
-	if not personajes[nombre] then
-		local resultado, ficha, mensaje = pcall(cargar, 0, nombre)
-		
-		if not resultado then
-			personajes[nombre] = {
-				nombre = nombre,
-				nombre_completo = nombre,
-				comandos = {}
-			}
-		else
-			personajes[nombre] = ficha
-		end -- if
-	end -- fichas
-	
-	return personajes[nombre]
-end -- get_ficha
-
-local function get_raza(nombre)
-	if not razas[nombre] then
-		local resultado, raza, mensaje = pcall(cargar, 2, nombre)
-		
-		if not resultado then
-			razas[nombre] = {
-				nombre = nombre,
-				comandos = {}
-			}
-		else
-			razas[nombre] = raza
-		end -- if
-	end -- if
-
-	return razas[nombre]
-end -- function
-
-local function get_oficio(nombre)
-	if not oficios[nombre] then
-		local resultado, oficio, mensaje = pcall(cargar, 3, nombre)
-		
-		if not resultado then
-			oficios[nombre] = {
-				nombre = nombre,
-				comandos = {}
-			}
-		else
-			oficios[nombre] = oficio
-		end -- if
-	end -- if
-
-	return oficios[nombre]
-end -- function
-
-local function guardar(tipo, clase)
-	assert(clase, "No se pasó ningún argumento.")
-	assert(type(clase) == "string", "El nombre no es una cadena válida.")
-	assert(#clase > 0, "El nombre no puede ser una cadena vacía.")
-	assert(tipo >= 0 and tipo <= 5, "El tipo no es válido.")
-	
-	-- Variables
-	local carpeta, obj, stipo
-	if tipo == 0 then
-		carpeta = "perfiles"
-		obj = get_personaje(clase)
-		stipo = string.format("el perfil para %s", obj.nombre_completo)
-	elseif tipo == 1 then
-		carpeta = "clases"
-		obj = get_clase(clase)
-		stipo = string.format("la clase \"%s\"", obj.nombre_completo)
-	elseif tipo == 2 then
-		carpeta = "razas"
-		stipo = "la raza \"%s\""
-		obj = get_raza(clase)
-	elseif tipo == 3 then
-		carpeta = "oficios"
-		stipo = "el oficio"
-		obj = get_oficio(clase)
-	elseif tipo == 4 then
-		obj = get_escuela(clase)
-		carpeta = "escuelas"
-		stipo = string.format("la escuela \"%s\"", obj.nombre_completo)
-	elseif tipo == 5 then
-		obj = get_esfera(clase)
-		carpeta = "esferas"
-		stipo = string.format("la esfera \"%s\"", obj.nombre_completo)
+local function procesar_clase(nodo)
+	if not nodo.attributes.nombre then
+		return nil, "No se definió el nombre de la clase.", nodo.line
 	end -- if
 	
-	-- Construimos el nombre del objeto basados en la información que tenemos
-	local archivo = string.format("rlmud\\%s\\%s.rl", carpeta, clase)
-	return guardar_objeto(obj, archivo)
-end -- function
-
-local function cargar_magia(obj, acceso)
-	if acceso >= 1 then
-		for ki, vi in pairs(obj.comandos_menor) do
-			agregar_alias(ki, vi)
-		end -- comandos a menor
-	end -- acceso menor
-	
-	if acceso >= 2 then
-		for ki, vi in pairs(obj.comandos_neutral) do
-			agregar_alias(ki, vi)
-		end -- comandos a neutral
-	end -- acceso a neutral
-
-	if acceso >= 3 then
-		for ki, vi in pairs(obj.comandos_mayor) do
-			agregar_alias(ki, vi)
-		end -- comandos a mayor
-	end -- acceso a mayor
-end -- cargar_magia
-
-local function cargar_esfera(nombre, acceso)
-	local esfera = get_esfera(nombre)
-	cargar_magia(esfera, acceso)
-end -- cargar_esfera
-
-local function cargar_escuela(nombre, acceso)
-	local escuela = get_escuela(nombre)
-	cargar_magia(escuela, acceso)
-end -- cargar_esfera
-
-function recargar_todo()
-	require "var"
-	require "check"
-	
-	-- Primero que nada eliminamos todos los alias temporales
-	DeleteTemporaryAliases()
-	
-	-- Primero que nada cargamos la clase
-	if var.clase then
-		-- Si la clase no está cargada, la carga. En caso de que no exista, generará una clase vacía.
-		local clase = get_clase(var.clase)
-		
-		-- Cargamos los comandos para la clase
-		for k, v in pairs(clase.comandos) do
-			-- Sencillamente añadimos el alias
-			agregar_alias(k, v)
-		end -- clase.comandos
-
-		-- Y para la especialización
-		if clase[var.especializacion] then
-			for k, v in pairs(clase[var.especializacion].comandos) do
-				agregar_alias(k, v)
-			end -- for
-		end -- if
-		
-		-- Ahora las escuelas y esferas
-		for k, v in pairs(clase.escuelas) do
-			cargar_escuela(k, v)
-		end -- escuelas
-		
-		for k, v in pairs(clase.esferas) do
-			cargar_esfera(k, v)
-		end -- esferas
-		
-		if clase[var.especializacion] then
-			-- Importante para clases cuya especialización hace diferir las escuelas/esferas, como los magos
-			for k, v in pairs(clase[var.especializacion].escuelas) do
-				cargar_escuela(k, v)
-			end -- for
-
-			for k, v in pairs(clase[var.especializacion].esferas) do
-				cargar_esfera(k, v)
-			end -- for
-		end -- if
-		
-	end -- if
-	
-	if var.raza then
-		local raza = get_raza(var.raza)
-		
-		for k, v in pairs(raza.comandos) do
-			agregar_alias(k, v)
-		end
-	end -- if
-	if var.oficio then
-		local oficio = get_oficio(var.oficio)
-		
-		for k, v in pairs(oficio.comandos) do
-			agregar_alias(k, v)
-		end
-	end -- if
-	
-	if var.nombre then
-		local ficha = get_personaje(var.nombre)
-		
-		-- cargamos los comandos agregados a la ficha
-		for k, v in pairs(ficha.comandos) do
-			agregar_alias(k, v)
-		end -- for
-	end -- if
-end -- function
-
-function on_alias(nombre,linea,wc)
-	require "check"
-	require "var"
-	
-	if not var.clase then
-		print("No hay una clase definida.")
-		return
-	end -- if
-	
-	-- Obtenemos la clase por conveniencia
-	local clase = get_clase(var.clase)
-	
-	local regexp = wc.opts:find("x")
-	local variables = wc.opts:find("v")
-	local ignorar = wc.opts:find("i")
-
-	-- Generamos el alias
-	local alias = {
-		comando = wc.comando,
-
-		-- Este flag define si se usan las variables definidas en mushclient
-		variables = not not variables,
-
-		-- Este flag indica si el comando es una expresión regular.
-		regexp = not not regexp,
-
-		-- Si es true, las mayúsculas y minúsculas no se respetan.
-		ignorar = not not ignorar
+	local clase = {
+		nombre = nodo.attributes.nombre,
+		nombre_completo = nodo.attributes.nombre_completo,
+		magia = {},
+		archivos = {},
 	}
 
-	if wc.tipo == "p" then
-		local personaje = get_personaje(var.nombre)
-		if not personaje.comandos[wc.alias] then
-			print(string.format("Agregando el alias \"%s\" para \"%s\".", wc.alias, personaje.nombre))
-		else
-			print(string.format("Editando el alias \"%s\" para \"%s\".", wc.alias, personaje.nombre))
-		end -- if
-		personaje.comandos[wc.alias] = alias
-		guardar(0, personaje.nombre)
-	elseif wc.tipo == "c" then
-		local clase = get_clase(var.clase)
-		if not clase.comandos[wc.alias] then
-			print(string.format("Agregando el alias \"%s\" para la clase \"%s\".", wc.alias, clase.nombre))
-		else
-			print(string.format("Editando el alias \"%s\" en la clase \"%s\".", wc.alias, clase.nombre))
-		end -- if
-		clase.comandos[wc.alias] = alias
-		guardar(1, clase.nombre)
-	elseif wc.tipo == "r" then
-		local raza = get_raza(var.raza)
-		if not raza.comandos[wc.alias] then
-			print(string.format("Se agregó el alias \"%s\" a la raza \"%s\".", wc.alias, raza.nombre))
-		else
-			print(string.format("Se cambió el alias \"%s\" a la raza \"%s\".", wc.alias, raza.nombre))
-		end -- if
-		raza.comandos[wc.alias] = alias
-		guardar(2, raza.nombre)
-	elseif wc.tipo == "o" then
-		local oficio = get_oficio(var.oficio)
-		if not oficio.comandos[wc.alias] then
-			print(string.format("Se agregó el alias \"%s\" para el oficio \"%s\".", wc.alias, oficio.nombre))
-		else
-			print(string.format("Se cambió el alias \"%s\" para el oficio \"%s\".", wc.alias, oficio.nombre))
-		end -- if
-		oficio.comandos[wc.alias] = alias
-		guardar(3, oficio.nombre)
-	elseif wc.tipo == "s" then
-		local clase = get_clase(var.clase)
-		
-		-- Trato especial: primero necesitamos generar la tabla para la especialización
-		if not clase[var.especializacion] then
-			clase[var.especializacion] = {
-				comandos = {},
-				esferas = {},
-				escuelas = {}
-			}
-		end -- if
+	for i, node in ipairs(nodo.nodes) do
+		-- Primero lo mas sencillo de cargar, la lista de archivos
+		-- Solo se aceptan archivos enlistados en un nodo vacío del estilo <archivo ruta="ruta" />
+		if node.name == "archivo" then
+			if not node.attributes.ruta or node.ruta == "" then
+				return nil, "No se definió la ruta del archivo a cargar.", node.line
+			end -- if
 
-		if not clase[var.especializacion].comandos[wc.alias] then
-			print(string.format("Se agregó el alias \"%s\" para la clase \"%s %s\".", wc.alias, clase.nombre, var.especializacion))
-		else
-			print(string.format("Se agregó el alias \"%s\" para la clase \"%s %s\".", wc.alias, clase.nombre, var.especializacion))
+			table.insert(clase.archivos, node.attributes.ruta)
+		elseif node.name == "magia" then
+			if node.nodes then
+				for j, subnode in ipairs(node.nodes) do
+					if not subnode.attributes.nombre then
+						return nil, "No se definió el nombre del elemento.", node.line
+					end -- if
+					
+					if not subnode.attributes.acceso then
+						return nil, "No se definió el acceso del elemento.", subnode.line
+					end -- if
+					
+					if not niveles_acceso[subnode.attributes.acceso] then
+						return nil, string.format("%s no es un acceso válido.", subnode.attributes.acceso), subnode.line
+					end -- if
+					local magia = {
+						nombre = subnode.attributes.nombre,
+						
+						-- Es mucho mas sencillo si tratamos el acceso en una manera numérica
+						acceso = niveles_acceso[subnode.attributes .acceso],
+						
+						tipo = subnode.name
+					}
+					
+					if subnode.name == "escuela" or subnode.name == "esfera" then
+						table.insert(clase.magia, magia)
+					else
+						return nil, "El elemento no es válido.", subnode.line
+					end -- if
+				end -- for
+			end -- if
+		elseif node.name == "mushclient" then
+			-- Parseamos el contenido XML de este nodo y lo reconvertimos a una string
+			local cadena_mushclient = ""
+			
+			if node.nodes then
+				for k, subnode in ipairs(node.nodes) do
+					cadena_mushclient = cadena_mushclient..denuevo_xml(subnode, "  ") .. "\n"
+				end -- for
+			end -- if
+			
+			clase.mushclient = cadena_mushclient
 		end -- if
-
-		clase[var.especializacion].comandos[wc.alias] = alias
-		guardar(1, clase.nombre)
-	elseif wc.tipo == "e" then
-		local escuela = get_escuela(wc.nombre)
-		local acceso = tonumber(wc.acceso)
-		
-		if acceso == 1 then
-			if not escuela.comandos_menor[wc.alias] then
-				print(string.format("Se agregó el alias \"%s\" a la escuela \"%s\" con acceso menor.", wc.alias, escuela.nombre))
-			else
-				print(string.format("Se cambió el alias \"%s\" de la escuela \"%s\" con acceso menor.", wc.alias, escuela.nombre))
-			end -- if
-			escuela.comandos_menor[wc.alias] = alias
-		elseif acceso == 2 then
-			if not escuela.comandos_neutral[wc.alias] then
-				print(string.format("Se agregó el alias \"%s\" a la escuela \"%s\" con acceso neutral.", wc.alias, escuela.nombre))
-			else
-				print(string.format("Se cambió el alias \"%s\" a la escuela \"%s\" con acceso menor.", wc.alias, escuela.nombre))
-			end -- if
-			escuela.comandos_neutral[wc.alias] = alias
-		elseif acceso == 3 then
-			if not escuela.comandos_menor[wc.alias] then
-				print(string.format("Se agregó el alias \"%s\" a la escuela \"%s\" con acceso mayor.", wc.alias, escuela.nombre))
-			else
-				print(string.format("Se agregó el alias \"%s\" a la escuela \"%s\" con acceso mayor.", wc.alias, escuela.nombre))
-			end -- if
-			escuela.comandos_mayor[wc.alias] = alias
-		end -- acceso
-		
-		guardar(4, escuela.nombre)
-	elseif wc.tipo == "f" then
-		local escuela = get_esfera(wc.nombre)
-		local acceso = tonumber(wc.acceso)
-		
-		if acceso == 1 then
-			if not escuela.comandos_menor[wc.alias] then
-				print(string.format("Se agregó el alias \"%s\" a la esfera \"%s\" con acceso menor.", wc.alias, escuela.nombre))
-			else
-				print(string.format("Se cambió el alias \"%s\" de la esfera \"%s\" con acceso menor.", wc.alias, escuela.nombre))
-			end -- if
-			escuela.comandos_menor[wc.alias] = alias
-		elseif acceso == 2 then
-			if not escuela.comandos_neutral[wc.alias] then
-				print(string.format("Se agregó el alias \"%s\" a la esfera \"%s\" con acceso neutral.", wc.alias, escuela.nombre))
-			else
-				print(string.format("Se cambió el alias \"%s\" a la esfera \"%s\" con acceso menor.", wc.alias, escuela.nombre))
-			end -- if
-			escuela.comandos_neutral[wc.alias] = alias
-		elseif acceso == 3 then
-			if not escuela.comandos_menor[wc.alias] then
-				print(string.format("Se agregó el alias \"%s\" a la esfera \"%s\" con acceso mayor.", wc.alias, escuela.nombre))
-			else
-				print(string.format("Se agregó el alias \"%s\" a la esfera \"%s\" con acceso mayor.", wc.alias, escuela.nombre))
-			end -- if
-			escuela.comandos_mayor[wc.alias] = alias
-		end -- acceso
-		
-		guardar(5, escuela.nombre)
-	end -- if
+	end -- for
 	
-	recargar_todo()
+	return clase
 end -- function
 
-function on_alias_multilinea(name,line,wc)
-	local wc_pasados, alias_pasado
+local function cargar_personaje(nombre)
+	assert(nombre, "No se proporcionó el parámetro 'nombre'.")
+	assert(type(nombre) == "string", "El parámetro 'nombre' no es una cadena válida.")
+	assert(nombre ~= "", "El parámetro 'nombre' no puede ser una cadena vacía.")
 	
-	if not var.nombre then
-		print("No hay ninguna ficha conectada.")
+	local ruta_personaje = string.format("personajes/%s.xml", nombre:lower())
+	
+	local cadena, mensaje = cargar_archivo(ruta_personaje)
+	
+	-- Si no existe el perfil, se generará uno desde cero a partir de una plantilla
+	if not cadena then
+		local archivo = assert(io.open(ruta_valida(ruta_personaje), "w"))
+		
+		-- Indentación removida, contenido plano
+		local escribir = string.format([[
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE personaje>
+
+<personaje nombre="%s" nombre_completo="%s">
+    <!-- Agregue archivos en esta sección
+         Para listar un archivo a cargar se usa la forma siguiente:
+
+         <archivo ruta="<rutarelativa>" />
+    -->
+
+    <!-- Triggers y alias en bruto de MUSHclient -->
+    <mushclient>
+        <!-- Pegar dentro de este elemento los alias y triggers de MUSHclient -->
+
+    </mushclient>
+</personaje>]], nombre, nombre)
+		
+		archivo:write(escribir)
+		archivo:close()
+		return cargar_personaje(nombre)
+	end -- if
+	
+	local xml, ruta = cargar_xml(string.format("personajes/%s.xml", nombre:lower()))
+	
+	for k, nodo in ipairs(xml.nodes) do
+		if nodo.name == "personaje" then
+			xml = nodo
+			break
+		end -- if
+	end -- for
+	
+	assert(xml.name == "personaje", "La configuración de personaje no es válida.")
+	
+	local pj, mensaje, linea = procesar_clase(xml)
+	
+	if not pj then
+		error(string.format("%s %s: %s", ruta, linea, mensaje))
+	end -- if
+	
+	-- Quitamos la información de esferas/escuelas del perfil
+	pj.magia = nil
+	
+	return pj
+end -- cargar_personaje
+
+local function cargar_clase(nombre)
+	assert(nombre, "No se proporcionó el parámetro 'nombre'.")
+	assert(type(nombre) == "string", "El parámetro 'nombre' no es una cadena válida.")
+	assert(nombre ~= "", "El parámetro 'nombre' no puede ser una cadena vacía.")
+	
+	-- Cargamos el archivo
+	local xml, ruta = cargar_xml(string.format("clases/%s/config.xml", nombre:lower()))
+	
+	for id, node in pairs(xml.nodes) do
+		if node.name == "clase" then
+			xml = node
+			
+			-- Terminamos con el archivo
+			break
+		end -- if
+	end -- for
+	
+	assert(xml.name == "clase", string.format("El archivo \"%s\" no contiene una configuración de clase válida.", ruta))
+	assert(xml.attributes.nombre == nombre, string.format("%s %s: El nombre de la clase no coinside.", ruta, xml.line))
+	
+	-- Generamos una estructura de clase plana
+	local clase, mensaje, linea = procesar_clase(xml)
+	
+	-- Reporte de error estándar
+	if not clase then
+		error(string.format("%s %s: %s", ruta, linea, mensaje))
+	end -- if
+	
+	return clase
+end -- cargar_clase
+
+local function cargar_especializacion(nombre)
+	assert(nombre, "No se proporcionó el parámetro 'nombre'.")
+	assert(type(nombre) == "string", "El parámetro 'nombre' no es una cadena válida.")
+	assert(nombre ~= "", "El parámetro 'nombre' no puede ser una cadena vacía.")
+	
+	-- Cargamos el archivo
+	local xml, ruta = cargar_xml(string.format("clases/%s/%s.xml", var.clase, nombre:lower()))
+	
+	for id, node in pairs(xml.nodes) do
+		if node.name == "clase" then
+			xml = node
+			
+			-- Terminamos con el archivo
+			break
+		end -- if
+	end -- for
+	
+	assert(xml.name == "clase", string.format("El archivo \"%s\" no contiene una configuración de clase válida.", ruta))
+	assert(xml.attributes.nombre == nombre, string.format("%s %s: El nombre de la clase no coinside.", ruta, xml.line))
+	
+	-- Generamos una estructura de clase plana
+	local clase, mensaje, linea = procesar_clase(xml)
+	
+	-- Reporte de error estándar
+	if not clase then
+		error(string.format("%s %s: %s", ruta, linea, mensaje))
+	end -- if
+	
+	return clase
+end -- function
+
+local function cargar_magia(elem)
+	local xml, mensaje, obj
+	
+	-- Aquí hay que ser selectivo
+	if elem.tipo == "escuela" then
+		xml, mensaje = cargar_xml(string.format("escuelas/%s.xml", elem.nombre))
+	else
+		xml, mensaje = cargar_xml(string.format("esferas/%s.xml", elem.nombre))
+	end -- if
+	
+	if not xml then
+		-- Terminar silenciosamente
 		return
 	end -- if
 	
-	wc_pasados = wc
+	for k, nodo in ipairs(xml.nodes) do	
+		
+		if nodo.name == elem.tipo then
+			xml = nodo
+			break
+		end -- if
+	end -- for
 	
-	comando_pasado = utils.editbox("Puedes escribir un alias en el cuadro de texto y este se enviará tal cual al juego.", "Comando multilinear")
+	assert(xml.name == elem.tipo, string.format("El archivo \"%s\" no contiene una configuración válida.", mensaje))
+	assert(xml.attributes.nombre == elem.nombre, string.format("%s %s: Los nombres no coinsiden.", mensaje, xml.line))
 	
-	if not comando_pasado then
-		return
-	end -- if
+	obj = {
+		nombre = xml.attributes.nombre,
+		nombre_completo = xml.attributes.nombre_completo,
+		archivos = {},
+	}
 	
-	wc_pasados.comando = comando_pasado
-	on_alias(name, line, wc_pasados)
+	for k, nodo in ipairs(xml.nodes) do
+		if nodo.name == "archivo" then
+			if not nodo.attributes.ruta or nodo.attributes.ruta == "" then
+				error(string.format("%s %s: No se especificó una ruta de archivo válida.", ruta, nodo.line))
+			end -- if
+			
+			-- Forzamos a que se especifique el nivel de acceso de cada archivo
+			if not nodo.attributes.acceso then
+				error(string.format("%s %s: No se especificó el nivel de aceso.", ruta, nodo.line))
+			end -- if
+			
+			if not niveles_acceso[nodo.attributes.acceso] then
+				error(string.format("%s %s: El nivel de acceso \"%s\" no es válido.", ruta, nodo.line, nodo.attributes.acceso))
+			end -- if
+			
+			table.insert(obj.archivos, {
+				ruta = nodo.attributes.ruta,
+				acceso = niveles_acceso[nodo.attributes.acceso],
+			})
+		elseif nodo.name == "mushclient" then
+			local mushclient_cadena = ""
+			
+			if nodo.nodes then
+				for k, subnodo in ipairs(nodo.nodes) do
+					mushclient_cadena = mushclient_cadena .. denuevo_xml(subnodo) .. "\n\n"
+				end -- for
+			end -- if
+			
+			obj.mushclient = mushclient_cadena
+		end -- if
+	end -- for
+	
+	return obj, elem.nombre
 end -- function
 
-function on_alias_eliminar(n,l,wc)
-	-- Primero comprobamos si está todo correcto
-	if not IsConnected() or not var.nombre then
-		print("No hay ningún personaje conectado todavía.")
-		return
+function on_depinfo()
+	require "tprint"
+	
+	if personaje then
+		tprint(personaje)
 	end -- if
 	
-	if wc.tipo == "p" then
-		local personaje = get_personaje(var.nombre)
-		if personaje.comandos[wc.alias] then
-			personaje.comandos[wc.alias] = nil
-			guardar(0, personaje.nombre)
-			print(string.format("Se eliminó el alias \"%s\" de \"%s\".", wc.alias, personaje.nombre))
-		else
-			print(string.format("No existe el alias \"%s\" en \"%s\".", wc.alias, personaje.nombre))
-		end -- if
-	elseif wc.tipo == "c" then
-		local clase = get_clase(var.clase)
-		if clase.comandos[wc.alias] then
-			clase.comandos[wc.alias] = nil
-			guardar(1, clase.nombre)
-			print(string.format("Se eliminó el alias \"%s\" para la clase \"%s\".", wc.alias, clase.nombre))
-		else
-			print(string.format("La clase \"%s\" no tiene ese alias.", clase.nombre))
-		end -- if
-	elseif wc.tipo == "r" then
-		local raza = get_raza(var.raza)
-		if raza.comandos[wc.alias] then
-			raza.comandos[wc.alias] = nil
-			guardar(2, raza.nombre)
-			print(string.format("Se agregó el alias \"%s\" a la raza \"%s\".", wc.alias, raza.nombre))
-		else
-			print(string.format("La raza \"%s\" no tiene ese comando.", raza.nombre))
-			return
-		end -- if
-	elseif wc.tipo == "o" then
-		local oficio = get_oficio(var.oficio)
-		
-		if oficio.comandos[wc.alias] then
-			oficio.comandos[wc.alias] = nil
-			guardar(3, oficio.nombre)
-			print(string.format("Se quitó el alias \"%s\" del oficio \"%s\".", wc.alias, oficio.nombre))
-		else
-			print(string.format("El oficio \"%s\" no tiene definido ese alias.", oficio.nombre))
-			return
-		end -- if
-	elseif wc.tipo == "s" then
-		local clase = get_clase(var.clase)
-		
-		if not clase[var.especializacion] then
-			print(string.format("La clase \"%s\" no define la especialización \"%s\".", clase.nombre, var.especializacion))
-			return
-		end -- if
-
-		if clase[var.especializacion].comandos[wc.alias] then
-			clase[var.especializacion].comandos[wc.alias] = nil
-			guardar(1, clase.nombre)
-			print(string.format("Se quitó el alias para la clase \"%s %s\".", clase.nombre, var.especializacion))
-		else
-			print(string.format("No existe ese alias en la clase \"%s %s\".", clase.nombre, var.especializacion))
-			return
-		end -- if
-	elseif wc.tipo == "e" or wc.tipo == "f" then
-		local obj, s_obj, l_obj
-		
-		if wc.tipo == "e" then
-			obj = get_escuela(wc.nombre)
-			s_obj = string.format("la escuela \"%s\"", obj.nombre)
-			l_obj = 4
-		else
-			obj = get_esfera(wc.nombre)
-			s_obj = string.format("la esfera \"%s\"", obj.nombre)
-			l_obj = 5
-		end -- if
-		
-		local acceso = tonumber(wc.acceso)
-		local s_acceso, listacomandos
-		
-		if acceso == 1 then
-			s_acceso = "acceso menor"
-			listacomandos = obj.comandos_menor
-		elseif acceso == 2 then
-			s_acceso = "acceso a neutral"
-			listacomandos = obj.comandos_neutral
-		elseif acceso == 3 then
-			s_acceso = "acceso a mayor"
-			listacomandos = obj.comandos_mayor
-		end -- acceso
-		
-		if not listacomandos[wc.alias] then
-			print(string.format("El alias no está definido en %s con %s.", s_obj, s_acceso))
-			return
-		else
-			listacomandos[wc.alias] = nil
-			guardar(l_obj, obj.nombre)
-			print(string.format("Se eliminó el alias de %s con %s.", s_obj, s_acceso))
-		end -- if
+	if clase then
+		tprint(clase)
 	end -- if
 	
-	recargar_todo()
-end -- on_alias_eliminar
-
-function on_agregar_magia(name,line,wc)
-	local acceso = tonumber(wc.acceso)
-	local clase = get_clase(var.clase)
-
-	local function get_acceso(acceso)
-		if acceso == 1 then
-			return "acceso a menor"
-		elseif acceso == 2 then
-			return "acceso a neutral"
-		else
-			return "acceso a mayor"
-		end -- if
-	end -- get_acceso
-	
-	if wc.tipo == "e" then
-		if not clase.escuelas[wc.nombre] then
-			print(string.format("Se agregó la escuela \"%s\" a la clase \"%s\" con %s", wc.nombre, clase.nombre, get_acceso(acceso)))
-		else
-			print(string.format("Se cambió el acceso de la escuela \"%s\" de %s a %s", wc.nombre, get_acceso(clase.escuelas[wc.nombre]), get_acceso(acceso)))
-		end -- if
-		
-		clase.escuelas[wc.nombre] = acceso
-	elseif wc.tipo == "f" then
-		if not clase.esferas[wc.nombre] then
-			print(string.format("Se agregó la esfera \"%s\" a la clase \"%s\" con %s", wc.nombre, clase.nombre, get_acceso(acceso)))
-		else
-			print(string.format("Se cambió el acceso de la esfera \"%s\" de %s a %s", wc.nombre, get_acceso(clase.escuelas[wc.nombre]), get_acceso(acceso)))
-		end -- if
-		
-		clase.esferas[wc.nombre] = acceso
-	elseif wc.tipo == "se" then
-		if not clase[var.especializacion] then
-			clase[var.especializacion] = {
-				comandos = {},
-				esferas = {},
-				escuelas = {},
-			}
-		end -- if
-		
-		if not clase[var.especializacion].escuelas[wc.nombre] then
-			print(string.format("Se agregó la escuela \"%s\" a la clase \"%s %s\" con nivel de %s.", wc.nombre, clase.nombre, var.especializacion, get_acceso(acceso)))
-		else
-			print(string.format("Se cambió el nivel de acceso de \"%s\" para \"%s %s\" de %s a %s.", wc.nombre, clase.nombre, var.especializacion, get_acceso(clase[var.especializacion].escuelas[wc.nombre]), get_acceso(acceso)))
-		end -- if
-		
-		clase[var.especializacion].escuelas[wc.nombre] = acceso
-	elseif wc.tipo == "sf" then
-		if not clase[var.especializacion] then
-			clase[var.especializacion] = {
-				comandos = {},
-				esferas = {},
-				escuelas = {},
-			}
-		end -- if
-		
-		if not clase[var.especializacion].esferas[wc.nombre] then
-			print(string.format("Se agregó la esfera \"%s\" a la clase \"%s %s\" con nivel de %s.", wc.nombre, clase.nombre, var.especializacion, get_acceso(acceso)))
-		else
-			print(string.format("Se cambió el nivel de acceso de la esfera \"%s\" para \"%s %s\" de %s a %s.", wc.nombre, clase.nombre, var.especializacion, get_acceso(clase[var.especializacion].escuelas[wc.nombre]), get_acceso(acceso)))
-		end -- if
-		
-		clase[var.especializacion].esferas[wc.nombre] = acceso
+	if especializacion then
+		tprint(especializacion)
 	end -- if
 	
-	guardar(1, clase.nombre)
-	recargar_todo()
+	if esferas then
+		tprint(esferas)
+	end -- if
 end -- function
 
-function on_eliminar_magia(n,l,wc)
-	local clase = get_clase(var.clase)
-	
-	if wc.tipo == "e" then
-		if not clase.escuelas[wc.nombre] then
-			print(string.format("La clase \"%s\" no tiene esa escuela asignada.", clase.nombre))
-			return
-		end -- if
-		
-		clase.escuelas[wc.nombre] = nil
-		print(string.format("Se quitó la escuela \"%s\" de la clase \"%s\".", wc.nombre, clase.nombre))
-	elseif wc.tipo == "f" then
-		if not clase.esferas[wc.nombre] then
-			print(string.format("La clase \"%s\" no tiene esa esfera asignada.", clase.nombre))
-			return
-		end -- if
-		
-		clase.esferas[wc.nombre] = nil
-		print(string.format("Se quitó la esfera \"%s\" de la clase \"%s\".", wc.nombre, clase.nombre))
-	elseif wc.tipo == "se" then
-		if not clase[var.especializacion] then
-			print(string.format("La especialización \"%s\" no está definida en la clase \"%s\".", var.especializacion, clase.nombre))
-			return
-		end -- if
-		
-		local esp = clase[var.especializacion]
-		
-		if not esp.escuelas[wc.nombre] then
-			print(string.format("Esa escuela no está definida en la clase \"%s %s\".", clase.nombre, var.especializacion))
-			return
-		end -- if
-		
-		esp.escuelas[wc.nombre] = nil
-		print(string.format("Se quitó la escuela \"%s\" de la clase \"%s %s\".", wc.nombre, clase.nombre, var.especializacion))
-	elseif wc.tipo == "sf" then
-		if not clase[var.especializacion] then
-			print(string.format("La especialización \"%s\" no está definida en la clase \"%s\".", var.especializacion, clase.nombre))
-			return
-		end -- if
-		
-		local esp = clase[var.especializacion]
-		
-		if not esp.escuelas[wc.nombre] then
-			print(string.format("Esa esfera no está definida en la clase \"%s %s\".", clase.nombre, var.especializacion))
-			return
-		end -- if
-		
-		esp.esferas[wc.nombre] = nil
-		print(string.format("Se quitó la esfera \"%s\" de la clase \"%s %s\".", wc.nombre, clase.nombre, var.especializacion))
-	end -- if
-	
-	guardar(1, clase.nombre)
-	recargar_todo()
-end -- function
-
-function on_guardar(name,line,wildcards)
+function on_test()
+	print(ruta_valida("fran.xml", "personajes"))
 end -- function
 
 function OnPluginListChanged()
@@ -1026,19 +481,86 @@ function OnGMCPInit()
 	var.oficio = nil
 	var.raza = nil
 	var.nombre = nil
+	var.nombre_completo = nil
+	personaje, clase, especializacion, esferas, escuelas, oficio, raza = nil
 end -- function
 
 function OnPluginDisconnect()
 	require "var"
 	
-	var.clase = nil
-	var.oficio = nil
-	var.raza = nil
-	var.nombre = nil
+	OnGMCPInit()
+	personaje, clase, especializacion = nil, nil, nil
+end -- function
+
+local function on_personaje(nombre, nombre_completo)
+	var.nombre = nombre
+	var.nombre_completo = nombre_completo
+	
+	local result, personaje_cargado = cargar_personaje(var.nombre)
+	
+	personaje = personaje_cargado
 end -- function
 
 local function on_clase(nombre)
 	var.clase = nombre
+	
+	local result, clase_cargada = pcall(cargar_clase, var.clase)
+	
+	if not result then
+		return
+	end -- if
+	
+	clase = clase_cargada
+	
+	for k, elem in ipairs(clase_cargada.magia) do
+		local magia, nombre = cargar_magia(elem)
+		if magia then
+			if elem.tipo == "esfera" then
+				if not esferas then
+					esferas = {}
+				end -- if
+				
+				esferas[elem.nombre] = magia
+			else
+				if not escuelas then
+					escuelas = {}
+				end -- if
+				
+				escuelas[elem.nombre] = magia
+			end -- if
+		end -- if
+	end -- for
+end -- function
+
+local function on_especializacion(nombre)
+	var.especializacion = nombre
+	
+	local result, esp_cargada = pcall(cargar_especializacion, nombre)
+	
+	if not result then
+		return
+	end -- if
+	
+	especializacion = esp_cargada
+	
+	for k, elem in ipairs(esp_cargada.magia) do
+		local magia, nombre = cargar_magia(elem)
+		if magia then
+			if elem.tipo == "esfera" then
+				if not esferas then
+					esferas = {}
+				end -- if
+				
+				esferas[elem.nombre] = magia
+			else
+				if not escuelas then
+					escuelas = {}
+				end -- if
+				
+				escuelas[elem.nombre] = magia
+			end -- if
+		end -- if
+	end -- for
 end -- function
 
 local function on_oficio(nombre)
@@ -1049,24 +571,128 @@ function on_raza(nombre)
 	var.raza = nombre
 end -- function
 
-local function on_perfil(nombre)
-	var.nombre = nombre
-end -- function
+local function recargar_todo()
+	-- Necesitamos llevar la cuenta para evitar que un archivo se cargue dos o mas veces
+	local archivos_cargados = {}
+	DeleteTemporaryAliases()
+	DeleteTemporaryTriggers()
 
-local function on_especializacion(nombre)
-	var.especializacion = nombre
+	local function ejecutar_archivo(archivo, carpeta)
+		local ruta_archivo = ruta_valida(archivo, carpeta)
+		if archivos_cargados[ruta_archivo] == nil then
+			local cadena, mensaje = cargar_archivo(archivo, carpeta)
+			
+			if cadena then
+				if ImportXML(cadena) >= 0 then
+					archivos_cargados[ruta_archivo] = true
+				else
+					archivos_cargados[ruta_archivo] = false
+				end -- if
+			else
+				archivos_cargados[ruta_archivo] = false
+				print(string.format("Error: %s", mensaje))
+			end -- if
+		end -- if
+	end -- function
+	
+	-- Cargamos un personaje
+	if personaje then
+		-- Lo lógico es cargar los archivos en primer lugar
+		for k, archivo in ipairs(personaje.archivos) do
+			ejecutar_archivo(archivo, "personajes")
+		end -- for
+		ImportXML(personaje.mushclient)
+	end -- if
+	
+	-- Cargamos la clase
+	if clase then
+		for k, archivo in ipairs(clase.archivos) do
+			ejecutar_archivo(archivo)
+		end -- for
+		ImportXML(clase.mushclient)
+		
+		-- Escuelas y esferas
+		for k, elem in ipairs(clase.magia) do
+			if elem.tipo == "esfera" and esferas[elem.nombre] then
+				magia = esferas[elem.nombre]
+				
+				for j, archivo in ipairs(magia.archivos) do
+					if elem.acceso >= archivo.acceso then
+						ejecutar_archivo(archivo.ruta, "esferas")
+					end -- if
+				end -- for
+				
+				ImportXML(magia.mushclient)
+			elseif elem.tipo == "escuela" and escuelas[elem.nombre] then
+				magia = escuelas[elem.nombre]
+				
+				for j, archivo in ipairs(magia.archivos) do
+					if elem.acceso >= archivo.acceso then
+						ejecutar_archivo(archivo.ruta, "escuelas")
+					end -- if
+				end -- for
+				
+				ImportXML(magia.mushclient)
+			end -- if
+		end -- for
+	end -- if
+	
+	-- Y la especialización
+	if especializacion then
+		for k, archivo in ipairs(especializacion.archivos) do
+			ejecutar_archivo(archivo)
+		end -- for
+		ImportXML(especializacion.mushclient)
+		
+		
+		-- Escuelas y esferas
+		for k, elem in ipairs(especializacion.magia) do
+			if elem.tipo == "esfera" and esferas[elem.nombre] then
+				magia = esferas[elem.nombre]
+				
+				for j, archivo in ipairs(magia.archivos) do
+					if elem.acceso >= archivo.acceso then
+						ejecutar_archivo(archivo.ruta, "esferas")
+					end -- if
+				end -- for
+				
+				ImportXML(magia.mushclient)
+			elseif elem.tipo == "escuela" and escuelas[elem.nombre] then
+				magia = escuelas[elem.nombre]
+				
+				for j, archivo in ipairs(magia.archivos) do
+					if elem.acceso >= archivo.acceso then
+						ejecutar_archivo(archivo.ruta, "escuelas")
+					end -- if
+				end -- for
+				
+				ImportXML(magia.mushclient)
+			end -- if
+		end -- for
+	end -- if
+	
+	-- Raza y oficio también
+	if raza then
+		ImportXML(raza.mushclient)
+	end -- if
 end -- function
 
 function OnGMCP(mensaje)
-	require "var"
-	
 	if mensaje ~= "Char.Ficha" then return end
 	
 	-- Parseamos los datos mediante json
 	local ficha = PedirGMCP("Char.Ficha")
 	
+	if ficha.nombre then
+		on_personaje(ficha.nombre, ficha.nombre_completo)
+	end -- if
+	
 	if ficha.clase then
 		on_clase(ficha.clase)
+	end -- if
+	
+	if ficha.especializacion then
+		on_especializacion(ficha.especializacion)
 	end -- if
 	
 	if ficha.oficio then
@@ -1077,23 +703,15 @@ function OnGMCP(mensaje)
 		on_raza(ficha.raza)
 	end -- if
 	
-	if ficha.nombre then
-		on_perfil(ficha.nombre)
-	end -- if
-	
-	if ficha.especializacion then
-		on_especializacion(ficha.especializacion)
-	end -- if
-	
 	recargar_todo()
 end -- function
 
 function OnPluginInstall()
-	if IsConnected() then
-		recargar_todo()
-	end -- if
-	
 	OnPluginEnable()
+
+	if IsConnected() then
+		OnGMCP("Char.Ficha")
+	end -- if
 end -- function
 
 function OnPluginClose()
@@ -1111,6 +729,117 @@ function OnPluginDisable()
 	for k, v in pairs(macros_predef) do
 		Accelerator(k, "")
 	end -- for
+end -- function
+
+function on_cinit(name,line,wc)
+	if not var.clase then
+		print("No estás conectado con ningún personaje.")
+		return
+	end -- if
+	
+	if clase then
+		print("Ya existe esa clase.")
+		return
+	end -- if
+	
+	print(string.format("Generando el archivo para la clase %s ...", var.clase))
+	local ruta_clase = ruta_valida("clases/"..var.clase)
+	
+	local iter, dir_obj = lfs.dir(ruta_clase)
+	
+	if not pcall(iter) then
+		lfs.mkdir(ruta_clase)
+	end -- if
+	
+	local archivo, mensaje = io.open(ruta_clase.."/config.xml", "w")
+	if not archivo then
+		print(mensaje)
+		return
+	end -- if
+	
+	archivo:write(string.format([[
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE clase>
+
+<clase nombre="%s">
+    <!-- Archivo de clase autogenerado -->
+
+    <!-- Ver el README para obtener información sobre como usar este archivo -->
+
+    <magia>
+        <!-- Lista de esferas/escuelas -->
+
+    </magia>
+
+    <mushclient>
+        <!-- Alias y triggers en bruto de mushclient -->
+
+    </mushclient>
+</clase>
+]], var.clase))
+	archivo:close()
+	
+	-- Forzamos la carga de la clase
+	on_clase(var.clase)
+	
+	-- Si es llamado desde el alias se recarga todo
+	if wc then
+		recargar_todo()
+	end -- if
+end -- function
+
+function on_sinit()
+	if not IsConnected() or not var.especializacion then
+		print("No estás conectado.")
+		return
+	end -- if
+
+	if especializacion then
+		print("Ya hay una configuración para esta especialización.")
+		return
+	end -- if
+
+	-- Si no hay configuración para la clase, se genera una
+	if not clase then
+		on_cinit()
+	end -- if
+	
+	local ruta_esp = ruta_valida("clases/"..clase.nombre.."/"..var.especializacion..".xml")
+
+	print(string.format("Generando el archivo para la especialización %s ...", var.especializacion))
+
+	local archivo, mensaje = io.open(ruta_esp, "w")
+	
+	if not archivo then
+		print(string.format("Error: %s", mensaje))
+		return
+	end -- if
+
+	-- Contenido del archivo, no indentado
+	archivo:write(string.format([[
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE clase>
+
+<clase nombre="%s">
+    <!-- Archivo de clase autogenerado -->
+
+    <!-- Ver el README para obtener información sobre como usar este archivo -->
+
+    <magia>
+        <!-- Lista de esferas/escuelas -->
+
+    </magia>
+
+    <mushclient>
+        <!-- Alias y triggers en bruto de mushclient -->
+
+    </mushclient>
+</clase>
+]], var.especializacion))
+	archivo:close()
+	
+	on_especializacion(var.especializacion)
+	recargar_todo()
 end -- function
 
 ]]>

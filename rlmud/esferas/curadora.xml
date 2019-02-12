@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE esfera>
+
+<esfera nombre="curadora" nombre_completo="Curadora">
+    
+    <archivo ruta="curar_menor.xml" acceso="menor" />
+
+    <!-- Este es el único caso de un hechizo suelto entre esferas -->
+    <archivo ruta="curar_ligeras.xml" acceso="menor" />
+
+    <mushclient>
+        <!-- Alias y triggers en bruto de mushclient -->
+
+    </mushclient>
+</esfera>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE clase>
+
+<clase nombre="tirador">
+    <!-- Alias de cazadores -->
+    <archivo ruta="~/clases/cazador.xml" />
+
+    <mushclient>
+        <!-- Alias y triggers en bruto de mushclient -->
+
+    </mushclient>
+</clase>

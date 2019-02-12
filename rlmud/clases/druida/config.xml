@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE clase>
+
+<clase nombre="druida" nombre_completo="Druida">
+	<!-- Archivos para cargar alias y triggers
+		 Usar la siguiente forma:
+		 <archivo ruta="<ruta>" />
+	-->
+
+	<magia>
+		<!-- Aquí se definen las escuelas/esferas de la clase -->
+
+		<!-- Esferas menores -->
+		<esfera nombre="hechizo" acceso="menor" />
+		<esfera nombre="proteccion" acceso="menor" />
+		<esfera nombre="combate" acceso="menor" />
+		<esfera nombre="adivinacion" acceso="menor" />
+
+		<!-- Esferas con acceso a neutral -->
+		<esfera nombre="curadora" acceso="neutral" />
+		<esfera nombre="elemental" acceso="neutral" />
+
+		<!-- Esferas con acceso mayor -->
+		<esfera nombre="total" acceso="mayor" />
+		<esfera nombre="natural" acceso="mayor" />
+		<esfera nombre="cambiaformas" acceso="mayor" />
+		<esfera nombre="guardiana" acceso="mayor" />
+	</magia>
+	
+	<!-- Dentro de este elemento van los alias y/o triggers copiados de mushclient -->
+	<mushclient>
+		<aliases>
+		  <alias
+		   match="c1"
+		   enabled="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>formular retener persona: x</send>
+		  </alias>
+		  <alias
+		   match="c5"
+		   enabled="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>formular fuerza de toro</send>
+		  </alias>
+		  <alias
+		   match="c8"
+		   enabled="y"
+		   expand_variables="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>formular canto: @nombre</send>
+		  </alias>
+		</aliases>
+	</mushclient>
+</clase>

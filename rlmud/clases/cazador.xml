@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="^mv (\w+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>sigilar %1</send>
+  </alias>
+</aliases>

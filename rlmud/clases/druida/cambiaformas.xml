@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<clase nombre="cambiaformas" nombre_completo="Druida Cambiaformas">
+
+	<mushclient>
+		<triggers>
+		  <trigger
+		   enabled="y"
+		   match="^Tras tu dolorosa conversión\, te levantas y miras extrañado a tu alrededor desde tu nuevo punto de vista\, atónito\, te das cuenta de que ahora eres un (\w+)\.$"
+		   regexp="y"
+		   send_to="12"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>on_raza(string.lower("%1"))</send>
+		  </trigger>
+		</triggers>
+
+		<aliases>
+		  <alias
+		   match="c4"
+		   enabled="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>polimorfarse acabar</send>
+		  </alias>
+		  <alias
+		   match="s1"
+		   enabled="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>polimorfarse pantera</send>
+		  </alias>
+		  <alias
+		   match="s2"
+		   enabled="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>polimorfarse oso</send>
+		  </alias>
+		  <alias
+		   match="s3"
+		   enabled="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>polimorfarse hiena</send>
+		  </alias>
+		  <alias
+		   match="s4"
+		   enabled="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>polimorfarse cocodrilo</send>
+		  </alias>
+		  <alias
+		   match="s5"
+		   enabled="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>formular armas naturales</send>
+		  </alias>
+		  <alias
+		   match="s6"
+		   enabled="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>formular empatia metamorfica</send>
+		  </alias>
+		  <alias
+		   match="s7"
+		   enabled="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>formular sutileza del metamorfo</send>
+		  </alias>
+		  <alias
+		   match="s8"
+		   enabled="y"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>formular regeneracion animal</send>
+		  </alias>
+		</aliases>
+	</mushclient>
+</clase>

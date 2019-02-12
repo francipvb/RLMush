@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="^cl (\w+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar heridas ligeras: %1</send>
+  </alias>
+  <alias
+   match="^cl(\w+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar heridas ligeras: y%1</send>
+  </alias>
+  <alias
+   match="cl"
+   enabled="y"
+   expand_variables="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar heridas ligeras: @nombre</send>
+  </alias>
+</aliases>

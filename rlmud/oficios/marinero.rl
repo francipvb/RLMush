@@ -1,5 +1,0 @@
-{
-  comandos = {
-    },
-  nombre = "marinero",
-  }

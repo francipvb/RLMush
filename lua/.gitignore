@@ -1,4 +1,4 @@
 *
 !.gitignore
-rl_stuff.lua
-gmcphelper.lua
+!rl_stuff.lua
+!gmcphelper.lua

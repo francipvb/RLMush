@@ -56,6 +56,92 @@ Estas macros se agregan mediante scripting desde el plugin _rl_fichas.xml_, por 
   - Abajo: `ALT+ñ`.
   - Ojear: `ALT+,` (Tecla coma).
 
+
+## Sistemas de clases, especializaciones, oficios, razas y personajes
+
+Me tomé el trabajo de implementar un sistema que intenta simular lo que hacen otros clientes que permiten mucha flexibilidad a la hora de definir alias y triggers.
+
+El formato es XML, pero no es muy complejo. Editarlo es bastante sencillo.
+
+### Personajes
+
+El archivo de personaje es un archivo XML como el siguiente:
+
+```xml
+
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE personaje>
+
+<personaje nombre="Dainnil" nombre_completo="Dainnil">
+    <!-- Agregue archivos en esta sección
+         Para listar un archivo a cargar se usa la forma siguiente:
+
+         <archivo ruta="<rutarelativa>" />
+    -->
+
+    <!-- Triggers y alias en bruto de MUSHclient -->
+    <mushclient>
+        <!-- Pegar dentro de este elemento los alias y triggers de MUSHclient -->
+
+    </mushclient>
+</personaje>
+
+```
+
+Los alias y triggers que se agreguen de este modo se ejecutarán en el contexto del plugin ~rl_fichas~, por lo que tendrán acceso a las funciones de sonido y del lector de pantallas.
+
+Con la etiqueta &lt;archivo&gt; se pueden listar archivos que se cargan antes de los alias en la etiqueta &lt;mushclient&gt;. Estos archivos solo pueden contener datos en bruto de MUSHclient, como alias y triggers copiados directamente del diálogo de configuración.
+
+### Clases y especializaciones
+
+A diferencia de los personajes, los archivos de clase (~rlmud/clases/&lt;clase&gt;/config.xml~) son un poco mas complejos.
+
+Además de archivos y de su etiqueta _&lt;mushclient&gt;_, define una etiqueta _&lt;magia&gt;_.
+Esta etiqueta contiene etiquetas _&lt;escuela&gt;_ y _&lt;esfera;_ que definen el nombre de la escuela/esfera así como su nivel de acceso.
+
+Estas se cargan después de que se haya cargado todo lo demás (en el contexto de la clase).
+
+### Esferas y escuelas
+
+Las esferas y las escuelas tienen un formato similar al formato del personaje.
+
+Son algo así:
+
+```xml
+
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE esfera>
+
+<esfera nombre="curadora" nombre_completo="Curadora">
+    
+    <archivo ruta="curar_menor.xml" acceso="menor" />
+
+    <!-- Este es el único caso de un hechizo suelto entre esferas -->
+    <archivo ruta="curar_ligeras.xml" acceso="menor" />
+
+    <mushclient>
+        <!-- Alias y triggers en bruto de mushclient -->
+
+    </mushclient>
+</esfera>
+
+```
+
+En este caso, cada archivo tiene definido su nivel de acceso, lo que indicará si se carga o nó el archivo.
+
+El contenido de la etiqueta _&lt;mushclient&gt;_ se carga siempre, por lo que es una buena idea añadir alias y triggers comunes para esa escuela/esfera.
+
+### Generando archivos
+
+Por momento, los únicos archivos que pueden generarse son los de clase, especialización y personaje.
+
+* Personaje: El archivo de personaje se genera la primera vez que el cliente se conecta.
+* Clase: Para generar un archivo de clase, ejecutar el comando `$cinit`.
+* Especialización: Para generar un archivo de especialización, ejecutar el comando `$sinit`.
+        Se puede escribir directamente `$sinit` si la clase en cuestión incluye una especialización, para generar ambos archivos rápidamente.
+
+Estos comandos deben introducirse en la ventana de comandos de MUSHclient.
+
 ## Contacto
 
 Por cualquier consulta respecto a la config, se me puede encontrar en el MUD como Dainnil, o bien se me puede enviar un correo a [francipvb@hotmail.com](mailto:francipvb@hotmail.com).

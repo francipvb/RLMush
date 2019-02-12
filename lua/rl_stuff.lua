@@ -1,6 +1,9 @@
 require "ppi"
 require "gmcphelper"
 
+-- Lua filesystem
+package.loadlib("lfs.dll", "luaopen_lfs")()
+
 local snd = nil
 
 mushreader = nil
@@ -118,4 +121,108 @@ function PedirGMCP(valor)
 	assert(datos, "No se pudieron conseguir los datos")
 	
 	return (loadstring("return "..datos))()
+end -- function
+
+function denuevo_xml(nodo, indent, nivel)
+	-- Validación
+	assert(nodo, "El valor de 'nodo' no puede ser nulo.")
+	assert(type(nodo) == "table", "El nodo tiene que ser una tabla XML válida.")
+	
+	-- Prefijo y búfer
+	local prefijo, cadena, linea
+	
+	-- Establecemos el valor de indent en tabulación
+	if not indent then
+		indent = "\t"
+	end -- if
+	
+	if not nivel then
+		nivel = 0
+	end -- if
+	
+	if nivel > 0 then
+		prefijo = string.rep(indent, nivel)
+	else
+		prefijo = ""
+	end -- if
+	
+	local function escribir(linea)
+		if not cadena or cadena == "" then
+			cadena = linea
+		else
+			cadena = cadena .. linea
+		end -- if
+	end -- function
+	
+	local function escribir_linea(linea)
+		if not linea then
+			linea = ""
+		end -- if
+		escribir(linea .. "\n")
+	end -- function
+
+	-- Empezamos a escribir el nodo
+	
+	if nodo.name ~= "" then
+		local cadena_atributos = ""
+		
+		if nodo.attributes then
+			for k, v in pairs(nodo.attributes) do
+				if type(v) ~= "string" then
+					v = tostring(v)
+				end -- if
+				
+				if cadena_atributos ~= "" then
+					cadena_atributos = cadena_atributos .. " "
+				end -- if
+				
+				cadena_atributos = cadena_atributos .. string.format("%s=\"%s\"", k, v)
+			end -- for
+		end -- if
+		
+		if cadena_atributos ~= "" then
+			if not nodo.empty then
+				escribir(prefijo..string.format("<%s %s>", nodo.name, cadena_atributos))
+			else
+				escribir_linea(prefijo..string.format("<%s %s />", nodo.name, cadena_atributos))
+				return cadena
+			end -- if
+		else
+			if not nodo.empty then
+				escribir(prefijo..string.format("<%s>", nodo.name))
+			else
+				escribir_linea(prefijo..string.format("<%s/>", nodo.name))
+				return cadena
+			end -- if
+		end -- if
+		
+		-- Muy importante, escribir el contenido del nodo (si tiene)
+		if nodo.content then
+			escribir(nodo.content)
+		end -- if
+	else -- Documento completo
+		escribir_linea(prefijo.."<?xml version=\"1.0\" encoding=\"iso8859-15\"?>")
+	end -- if
+	
+	if nodo.nodes then
+		escribir_linea()
+		for k, v in ipairs(nodo.nodes) do
+			if nodo.name ~= "" then
+				escribir(denuevo_xml(v, indent, nivel + 1))
+			else
+				escribir(denuevo_xml(v, indent, nivel))
+			end -- if
+		end -- for
+	end -- if
+	
+	-- Cierre
+	if nodo.name ~= "" then
+		if not nodo.nodes then
+			escribir_linea(string.format("</%s>", nodo.name))
+		else
+			escribir_linea(prefijo..string.format("</%s>", nodo.name))
+		end -- if
+	end -- if
+	
+	return cadena
 end -- function

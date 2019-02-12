@@ -26,4 +26,4 @@ spellchecker.lua
 tips.txt
 
 # Ignoramos los perfiles generados por el script
-rlmud/perfiles/*.rl
+rlmud/personajes/*.xml

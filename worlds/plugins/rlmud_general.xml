@@ -61,7 +61,7 @@ Este es un plugin que contiene triggers y alias para Reinos de leyenda.
   <trigger
    enabled="y"
    group="General"
-   match="^\[(?P&lt;pjname&gt;\w*)(?: .*?|) orbita a Eirea( \((Jugador Novel|Nuevo Jugador)\)|)\]$"
+   match="^\[(?P&lt;pjname&gt;\w*)(?: .*?|) orbita a Eirea( \((Jugador Novel|Nuevo jugador|Nuevo jugador novel)\)|)\]$"
    regexp="y"
    send_to="12"
    sequence="99"
