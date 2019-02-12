@@ -313,8 +313,8 @@ local function cargar_personaje(nombre)
 	
 	-- Quitamos la información de esferas/escuelas del perfil
 	pj.magia = nil
-	
-	return pj
+
+	return pj, mensaje, linea
 end -- cargar_personaje
 
 local function cargar_clase(nombre)
@@ -496,8 +496,8 @@ local function on_personaje(nombre, nombre_completo)
 	var.nombre = nombre
 	var.nombre_completo = nombre_completo
 	
-	local result, personaje_cargado = cargar_personaje(var.nombre)
-	
+	local personaje_cargado = cargar_personaje(var.nombre:lower())
+
 	personaje = personaje_cargado
 end -- function
 
@@ -587,6 +587,7 @@ local function recargar_todo()
 					archivos_cargados[ruta_archivo] = true
 				else
 					archivos_cargados[ruta_archivo] = false
+					print("Error en la importación del archivo \""..archivo.."\".")
 				end -- if
 			else
 				archivos_cargados[ruta_archivo] = false

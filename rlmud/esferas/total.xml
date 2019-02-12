@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="iso8859-15"?>
 <!DOCTYPE esfera>
 
-<esfera nombre="curadora" nombre_completo="Curadora">
-	<archivo ruta="curar_menor.xml" acceso="menor" />
-	<archivo ruta="curar_neutral.xml" acceso="neutral" />
-
+<esfera nombre="total" nombre_completo="Total">
 	<!-- Este es el único caso de un hechizo suelto entre esferas -->
 	<archivo ruta="curar_ligeras.xml" acceso="menor" />
 

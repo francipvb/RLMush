@@ -2,17 +2,23 @@
 <!DOCTYPE clase>
 
 <clase nombre="paladin">
-    <!-- Archivo de clase autogenerado -->
+	<!-- Archivo de clase autogenerado -->
 
-    <!-- Ver el README para obtener información sobre como usar este archivo -->
+	<!-- Ver el README para obtener información sobre como usar este archivo -->
 
-    <magia>
-        <!-- Lista de esferas/escuelas -->
+	<magia>
+		<!-- Lista de esferas/escuelas -->
+		
+		<esfera nombre="proteccion" acceso="menor" />
+		<esfera nombre="curadora" acceso="menor" />
+		<esfera nombre="guardiana" acceso="menor" />
 
-    </magia>
+		<esfera nombre="total" acceso="neutral" />
+		<esfera nombre="bien" acceso="neutral" />
+	</magia>
 
-    <mushclient>
-        <!-- Alias y triggers en bruto de mushclient -->
+	<mushclient>
+		<!-- Alias y triggers en bruto de mushclient -->
 
-    </mushclient>
+	</mushclient>
 </clase>

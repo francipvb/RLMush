@@ -2,6 +2,42 @@
 
 <aliases>
   <alias
+   match="^ce (\w+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar enfermedad: %1</send>
+  </alias>
+  <alias
+   match="^ce(\d+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar enfermedad: y%1</send>
+  </alias>
+  <alias
+   match="^ci (\w+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular cicatrizar: %1</send>
+  </alias>
+  <alias
+   match="^ci(\d+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular cicatrizar: y%1</send>
+  </alias>
+  <alias
    match="^cm (\w+)$"
    enabled="y"
    regexp="y"
@@ -11,13 +47,103 @@
   <send>formular curar heridas moderadas: %1</send>
   </alias>
   <alias
-   match="^cm(\w+)$"
+   match="^cm(\d+)$"
    enabled="y"
    regexp="y"
    sequence="100"
    temporary="y"
   >
   <send>formular curar heridas moderadas: y%1</send>
+  </alias>
+  <alias
+   match="^cs (\w+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar heridas serias: %1</send>
+  </alias>
+  <alias
+   match="^cs(\d+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar heridas serias: y%1</send>
+  </alias>
+  <alias
+   match="^csr (\w+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar sordera: %1</send>
+  </alias>
+  <alias
+   match="^csr(\d+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar sordera: y%1</send>
+  </alias>
+  <alias
+   match="^exm (\w+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular extirpar maldicion: %1</send>
+  </alias>
+  <alias
+   match="^exm(\d+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular extirpar maldicion: y%1</send>
+  </alias>
+  <alias
+   match="^nv (\w+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular neutralizar veneno: %1</send>
+  </alias>
+  <alias
+   match="^nv(\d+)$"
+   enabled="y"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular neutralizar veneno: y%1</send>
+  </alias>
+  <alias
+   match="ce"
+   enabled="y"
+   expand_variables="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar enfermedad: @nombre</send>
+  </alias>
+  <alias
+   match="ci"
+   enabled="y"
+   expand_variables="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular cicatrizar: @nombre</send>
   </alias>
   <alias
    match="cm"
@@ -27,5 +153,41 @@
    temporary="y"
   >
   <send>formular curar heridas moderadas: @nombre</send>
+  </alias>
+  <alias
+   match="cs"
+   enabled="y"
+   expand_variables="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar heridas serias: @nombre</send>
+  </alias>
+  <alias
+   match="csr"
+   enabled="y"
+   expand_variables="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular curar sordera: @nombre</send>
+  </alias>
+  <alias
+   match="exm"
+   enabled="y"
+   expand_variables="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular extirpar maldicion: @nombre</send>
+  </alias>
+  <alias
+   match="nv"
+   enabled="y"
+   expand_variables="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular neutralizar veneno: @nombre</send>
   </alias>
 </aliases>

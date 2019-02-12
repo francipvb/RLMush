@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE muclient[
+  <!ENTITY prefijo "(?:(&gt;|\]|\}) |)" >
+  ]>
+
+<muclient>
+	<triggers>
+	  <trigger
+	   enabled="y"
+	   match="^&prefijo;Desmontas de tu (.*?)\.$"
+	   regexp="y"
+	   send_to="12"
+	   sequence="100"
+	   temporary="y"
+	  >
+	  <send>EnableAlias("galopar", false)
+	EnableAlias("soo", false)</send>
+	  </trigger>
+	  <trigger
+	   enabled="y"
+	   match="^&prefijo;Montas en (.*?)\.$"
+	   regexp="y"
+	   send_to="12"
+	   sequence="100"
+	   temporary="y"
+	  >
+	  <send>EnableAlias("galopar", true)
+	EnableAlias("soo", true)</send>
+	  </trigger>
+	</triggers>
+
+	<aliases>
+	  <alias
+	   name="galopar"
+	   match="^mv (.*?)$"
+	   enabled="y"
+	   regexp="y"
+	   sequence="99"
+	   temporary="y"
+	  >
+	  <send>galopar %1</send>
+	  </alias>
+	  <alias
+	   name="soo"
+	   match="mvc"
+	   enabled="n"
+	   sequence="99"
+	   temporary="y"
+	  >
+	  <send>decir sooo</send>
+	  </alias>
+	</aliases>
+</muclient>
