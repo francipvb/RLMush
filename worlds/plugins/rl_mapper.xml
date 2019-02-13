@@ -99,7 +99,6 @@
    lowercase_wildcard="y"
   >
   </trigger>
-  
   <trigger
    match="LPmud version: *."
    enabled="y"
@@ -230,6 +229,7 @@
   >
   </alias>
 </aliases>
+
 
 
 

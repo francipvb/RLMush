@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="erfg"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular explocion rafaga: x</send>
+  </alias>
+  <alias
+   match="erfg *"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular explocion rafaga: %1</send>
+  </alias>
+</aliases>

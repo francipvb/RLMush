@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="cofr"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular cono de frio: x</send>
+  </alias>
+  <alias
+   match="cofr *"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular cono de frio: %1</send>
+  </alias>
+  <alias
+   match="dfr"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular defenestrar: x</send>
+  </alias>
+  <alias
+   match="dfr *"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular defenestrar: %1</send>
+  </alias>
+  <alias
+   match="prom"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular proyectil magico mayor: x</send>
+  </alias>
+  <alias
+   match="prom *"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular proyectil magico mayor: %1</send>
+  </alias>
+  <alias
+   match="trac"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular tormenta acida: x</send>
+  </alias>
+  <alias
+   match="trac *"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular tormenta acida: %1</send>
+  </alias>
+</aliases>
