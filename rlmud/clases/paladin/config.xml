@@ -2,9 +2,7 @@
 <!DOCTYPE clase>
 
 <clase nombre="paladin">
-	<!-- Archivo de clase autogenerado -->
-
-	<!-- Ver el README para obtener información sobre como usar este archivo -->
+	<archivo ruta="~/clases/caballero.xml" />
 
 	<magia>
 		<!-- Lista de esferas/escuelas -->

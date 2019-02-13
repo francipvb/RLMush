@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="s1"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>matar x , xp</send>
+  </alias>
+  <alias
+   match="s2"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>cargar x , xp</send>
+  </alias>
+  <alias
+   match="s3"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>golperedentor x , xp</send>
+  </alias>
+  <alias
+   match="s4"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>golperedentor area</send>
+  </alias>
+</aliases>
