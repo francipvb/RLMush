@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<aliases>
+  <alias
+   match="^dx(\d+)(e|a|p|g|)$"
+   enabled="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+   temporary="y"
+  >
+  <send>
+	if "%2" == "e" then
+		SendImmediate("formular disipar magia: x%1 espejismo")
+	elseif "%2" == "p" then
+		SendImmediate("formular disipar magia: x%1 piel de piedra")
+	elseif "%2" == "g" then
+		SendImmediate("formular disipar magia: x%1 globo")
+	elseif "%2" == "a" then
+		SendImmediate("formular disipar magia: x%1 escudo de almas")
+	else
+		SendImmediate("formular disipar magia: x%1")
+	end
+  </send>
+  </alias>
+</aliases>

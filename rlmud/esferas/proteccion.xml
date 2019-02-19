@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE esfera>
+
+<esfera nombre="proteccion" nombre_completo="Protección">
+	<archivo ruta="~/hechizos/resis_comunes.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/disipar_magia.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/prote_fuego.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/prote_mal.xml" acceso="neutral" />
+	<archivo ruta="piel_corteza.xml" acceso="menor" />
+
+	<mushclient>
+		<!-- Alias y triggers en bruto de mushclient -->
+
+	</mushclient>
+</esfera>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="^pm(\d+)$"
+   enabled="y"
+   group="Protección Mal"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>pm y%1</send>
+  </alias>
+  <alias
+   match="pm"
+   enabled="y"
+   expand_variables="y"
+   group="Protección Mal"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>pm @nombre</send>
+  </alias>
+  <alias
+   match="pm *"
+   enabled="y"
+   group="Protección Mal"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular proteccion mal: %1</send>
+  </alias>
+</aliases>

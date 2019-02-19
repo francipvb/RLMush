@@ -33,7 +33,7 @@
 	  <alias
 	   name="galopar"
 	   match="^mv (.*?)$"
-	   enabled="y"
+	   enabled="n"
 	   regexp="y"
 	   sequence="99"
 	   temporary="y"

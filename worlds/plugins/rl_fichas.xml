@@ -17,7 +17,6 @@
    date_written="2018-07-08 02:50:38"
    requires="4.94"
    version="1.0"
-   save_state="y"
    >
 <description trim="y">
 <![CDATA[
@@ -36,9 +35,9 @@
   </alias>
   <alias
    enabled="y"
-   match="^&prefijo;test$"
+   match="^&prefijo;recargar$"
    regexp="y"
-   script="on_test">
+   script="on_recargar">
   </alias>
   <alias
    script="on_cinit"
@@ -466,10 +465,6 @@ function on_depinfo()
 	end -- if
 end -- function
 
-function on_test()
-	print(ruta_valida("fran.xml", "personajes"))
-end -- function
-
 function OnPluginListChanged()
 	RLStuffListChanged()
 end -- function
@@ -608,7 +603,7 @@ local function recargar_todo()
 	-- Cargamos la clase
 	if clase then
 		for k, archivo in ipairs(clase.archivos) do
-			ejecutar_archivo(archivo)
+			ejecutar_archivo(archivo, "clases/"..clase.nombre)
 		end -- for
 		ImportXML(clase.mushclient)
 		
@@ -841,6 +836,17 @@ function on_sinit()
 	
 	on_especializacion(var.especializacion)
 	recargar_todo()
+end -- function
+
+function on_recargar()
+	if not IsConnected() then
+		print("No estás conectado.")
+		return
+	end -- if
+	
+	print("Recargando todo ...")
+	OnGMCPInit()
+	OnGMCP("Char.Ficha")
 end -- function
 
 ]]>

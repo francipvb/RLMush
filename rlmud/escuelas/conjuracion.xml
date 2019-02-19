@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE escuela>
+
+<escuela nombre="conjuracion" nombre_completo="Conjuración">
+	<archivo ruta="conju_menor.xml" acceso="menor" />
+
+	<mushclient>
+		<!-- Alias y triggers en bruto de mushclient -->
+
+	</mushclient>
+</escuela>

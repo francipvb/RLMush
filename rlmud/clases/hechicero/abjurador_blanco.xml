@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE clase>
+
+<clase nombre="abjurador_blanco" nombre_completo="Abjurador blanco">
+
+	<magia>
+		<escuela nombre="abjuracion" acceso="mayor" />
+		
+		<!-- Escuelas neutrales -->
+		<escuela nombre="evocacion" acceso="neutral" />
+		<escuela nombre="conjuracion" acceso="neutral" />
+		<escuela nombre="necromancia" acceso="neutral" />
+		<escuela nombre="universal" acceso="neutral" />
+		
+		<!-- Escuelas menores -->
+		<escuela nombre="adivinacion" acceso="menor" />
+		<escuela nombre="encantamiento" acceso="menor" />
+	</magia>
+
+	<mushclient>
+		<aliases>
+		  <alias
+		   match="s1"
+		   enabled="y"
+		   send_to="10"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>facida x , xp</send>
+		  </alias>
+		  <alias
+		   match="s2"
+		   enabled="y"
+		   send_to="10"
+		   sequence="100"
+		   temporary="y"
+		  >
+		  <send>estf x , xp</send>
+		  </alias>
+		</aliases>
+	</mushclient>
+</clase>

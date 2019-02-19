@@ -2,19 +2,19 @@
 
 <aliases>
   <alias
-   match="gr *"
+   match="facida *"
    enabled="y"
    sequence="100"
    temporary="y"
   >
-  <send>formular golpe de rayo: %1</send>
+  <send>formular flecha acida de dvneil: %1</send>
   </alias>
   <alias
-   match="estf *"
+   match="fllamas *"
    enabled="y"
    sequence="100"
    temporary="y"
   >
-  <send>formular estallido de fuego: %1</send>
+  <send>formular flecha de llamas: %1</send>
   </alias>
 </aliases>

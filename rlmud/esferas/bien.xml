@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE esfera>
+
+<esfera nombre="bien" nombre_completo="Bien">
+	<archivo ruta="~/hechizos/prote_mal.xml" acceso="menor" />
+
+	<mushclient>
+		<!-- Alias y triggers en bruto de mushclient -->
+
+	</mushclient>
+</esfera>

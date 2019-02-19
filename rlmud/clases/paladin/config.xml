@@ -3,6 +3,7 @@
 
 <clase nombre="paladin">
 	<archivo ruta="~/clases/caballero.xml" />
+	<archivo ruta="comandos.xml" />
 
 	<magia>
 		<!-- Lista de esferas/escuelas -->

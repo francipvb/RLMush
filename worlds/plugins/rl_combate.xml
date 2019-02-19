@@ -224,6 +224,26 @@
   <trigger
    enabled="y"
    group="Penetrantes"
+   match="^&prefijo;\# Intentas perforar en &parte; a (.*?)\, pero ést(?:e|a) consigue esquivar tu ataque\.$"
+   name="penetrante_propio_esquivado"
+   regexp="y"
+   script="on_fallar"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Penetrantes"
+   match="^&prefijo;\# Intentas perforar en &parte; a (.*?)\, pero ést(?:e|a) consigue esquivar críticamente tu ataque\.$"
+   name="penetrante_propio_esquivado_critico"
+   regexp="y"
+   script="on_fallar"
+   sequence="100"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Penetrantes"
    match="^&prefijo;\* (.*?) te (perfora|pincha) &intens;en &parte;\.$"
    name="penetrante_enemigo"
    regexp="y"
@@ -304,6 +324,16 @@
    regexp="y"
    sequence="100"
    script="on_fallar"
+  >
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Aplastantes"
+   match="^&prefijo;\# Intentas (golpear|aplastar) en &parte; a (.*?)\, pero ést(?:e|a) consigue esquivar tu ataque\.$"
+   name="aplastante_propio_esquivado"
+   regexp="y"
+   script="on_fallar"
+   sequence="100"
   >
   </trigger>
   <trigger

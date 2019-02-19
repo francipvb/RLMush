@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="c1"
+   enabled="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>cl</send>
+  </alias>
+  <alias
+   match="c2"
+   enabled="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>cm</send>
+  </alias>
+  <alias
+   match="c3"
+   enabled="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>cs</send>
+  </alias>
+  <alias
+   match="c4"
+   enabled="y"
+   expand_variables="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>sanar @nombre</send>
+  </alias>
+</aliases>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="^pf(\d+)$"
+   enabled="y"
+   group="Protección Fuego"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>pf y%1</send>
+  </alias>
+  <alias
+   match="pf"
+   enabled="y"
+   expand_variables="y"
+   group="Protección Fuego"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>pf @nombre</send>
+  </alias>
+  <alias
+   match="pf *"
+   enabled="y"
+   group="Protección Fuego"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular proteccion fuego: %1</send>
+  </alias>
+</aliases>

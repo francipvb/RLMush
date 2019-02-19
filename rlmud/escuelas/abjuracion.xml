@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE escuela>
+
+<escuela nombre="abjuracion" nombre_completo="Abjuración">
+	<archivo ruta="~/hechizos/resis_comunes.xml" acceso="menor" />
+
+	<mushclient>
+		<!-- Alias y triggers en bruto de mushclient -->
+
+	</mushclient>
+</escuela>

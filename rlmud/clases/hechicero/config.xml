@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE clase>
+
+<clase nombre="hechicero">
+    <!-- Archivo de clase autogenerado -->
+
+    <!-- Ver el README para obtener información sobre como usar este archivo -->
+
+    <magia>
+        <!-- Lista de esferas/escuelas -->
+
+    </magia>
+
+    <mushclient>
+        <!-- Alias y triggers en bruto de mushclient -->
+
+    </mushclient>
+</clase>

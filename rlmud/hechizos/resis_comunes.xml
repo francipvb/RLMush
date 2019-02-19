@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="^rg(\d+)$"
+   enabled="y"
+   group="Resistir Agua"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rg y%1</send>
+  </alias>
+  <alias
+   match="rg"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Agua"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rg @nombre</send>
+  </alias>
+  <alias
+   match="rg *"
+   enabled="y"
+   group="Resistir Agua"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir agua: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="^ra(\d+)$"
+   enabled="y"
+   group="Resistir Aire"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>ra y%1</send>
+  </alias>
+  <alias
+   match="ra"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Aire"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>ra @nombre</send>
+  </alias>
+  <alias
+   match="ra *"
+   enabled="y"
+   group="Resistir Aire"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir aire: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="^rb(\d+)$"
+   enabled="y"
+   group="Resistir Bien"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rb y%1</send>
+  </alias>
+  <alias
+   match="rb"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Bien"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rb @nombre</send>
+  </alias>
+  <alias
+   match="rb *"
+   enabled="y"
+   group="Resistir Bien"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir bien: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="^rl(\d+)$"
+   enabled="y"
+   group="Resistir Eléctrico"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rl y%1</send>
+  </alias>
+  <alias
+   match="rl"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Eléctrico"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rl @nombre</send>
+  </alias>
+  <alias
+   match="rl *"
+   enabled="y"
+   group="Resistir Eléctrico"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir electrico: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="^rn(\d+)$"
+   enabled="y"
+   group="Resistir Enfermedad"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rn y%1</send>
+  </alias>
+  <alias
+   match="rn"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Enfermedad"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rn @nombre</send>
+  </alias>
+  <alias
+   match="rn *"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Enfermedad"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir enfermedad: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="^rfr(\d+)$"
+   enabled="y"
+   group="Resistir Frío"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rfr y%1</send>
+  </alias>
+  <alias
+   match="rfr"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Frío"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rfr @nombre</send>
+  </alias>
+  <alias
+   match="rfr *"
+   enabled="y"
+   group="Resistir Frío"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir frio: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="^rf(\d+)$"
+   enabled="y"
+   group="Resistir Fuego"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rf y%1</send>
+  </alias>
+  <alias
+   match="rf"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Fuego"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rf @nombre</send>
+  </alias>
+  <alias
+   match="rf *"
+   enabled="y"
+   group="Resistir Fuego"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir fuego: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="^rm(\d+)$"
+   enabled="y"
+   group="Resistir Mal"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rm y%1</send>
+  </alias>
+  <alias
+   match="rm"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Mal"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rm @nombre</send>
+  </alias>
+  <alias
+   match="rm *"
+   enabled="y"
+   group="Resistir Mal"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir mal: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="^rt(\d+)$"
+   enabled="y"
+   group="Resistir Tierra"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rt y%1</send>
+  </alias>
+  <alias
+   match="rt"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Tierra"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rt @nombre</send>
+  </alias>
+  <alias
+   match="rt *"
+   enabled="y"
+   group="Resistir Tierra"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir tierra: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="^rv(\d+)$"
+   enabled="y"
+   group="Resistir Veneno"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rv y%1</send>
+  </alias>
+  <alias
+   match="rv"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Veneno"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rv @nombre</send>
+  </alias>
+  <alias
+   match="rv *"
+   enabled="y"
+   group="Resistir Veneno"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir veneno: %1</send>
+  </alias>
+</aliases>
