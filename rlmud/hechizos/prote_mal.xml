@@ -8,6 +8,7 @@
    regexp="y"
    sequence="100"
    temporary="y"
+   send_to="10"
   >
   <send>pm y%1</send>
   </alias>

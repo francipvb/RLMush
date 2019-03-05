@@ -18,3 +18,14 @@
   <send>formular estallido de fuego: %1</send>
   </alias>
 </aliases>
+
+<aliases>
+  <alias
+   match="pron *"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular proyectil magico menor: %1</send>
+  </alias>
+</aliases>

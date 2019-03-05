@@ -35,7 +35,7 @@
 		   sequence="100"
 		   temporary="y"
 		  >
-		  <send>estf x , xp</send>
+		  <send>gr x , xp</send>
 		  </alias>
 		</aliases>
 	</mushclient>
