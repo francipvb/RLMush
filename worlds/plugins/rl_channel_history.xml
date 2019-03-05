@@ -474,6 +474,9 @@ function OnGMCP(mensaje)
 			-- Canales de ciudadanía (faltan la mayoría)
 			history_add("Ciudad", StripANSI(data.mensaje))
 			play_sound("canales/ciu.ogg")
+		elseif data.canal:find("grupo%-(%a+)") then
+			history_add("Grupos", StripANSI(data.mensaje))
+			play_sound("canales/grupo.ogg")
 		else
 			-- Cualquier otro canal (info, chat, omiq...)
 			history_add(data.canal, StripANSI(data.mensaje))
