@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE muclient[
+  <!ENTITY prefijo "(?:(\&gt;|\}|\]) |)">
+  ]>
+
+<muclient>
+<aliases>
+  <alias
+   match="pdp"
+   enabled="y"
+   group="Piel de Piedra"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular piel de piedra</send>
+  </alias>
+  <alias
+   match="pl"
+   enabled="y"
+   expand_variables="y"
+   group="Piel de Piedra"
+   send_to="12"
+   sequence="100"
+   temporary="y"
+  >
+  <send>
+	local pieles = tonumber(GetVariable("pieles", "0"))
+
+	if pieles and pieles > 0 then
+	  Execute("tts_interrupt "..pieles.." pieles.")
+	else
+	  Execute("tts_interrupt No tienes pieles.")
+	end -- if
+  </send>
+  </alias>
+</aliases>
+
+<triggers>
+  <trigger
+   enabled="y"
+   group="Piel de Piedra"
+   match="^&prefijo;\* El ataque de (.*?) rebota en tu piel de piedra\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+   temporary="y"
+  >
+  <send>
+    local pieles = tonumber(GetVariable("pieles"))
+
+    pieles = pieles - 1
+    SetVariable("pieles", tostring(pieles))
+</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Piel de Piedra"
+   match="^Tu piel de piedra se endurece y fortalece mágicamente\, haciendo que tu total de capas de piedra suba a (\d+)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+   temporary="y"
+  >
+  <send>SetVariable("pieles", "%1")</send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Piel de Piedra"
+   match="^Tu piel queda cubierta por (\d+) finísimas\, pero resistentes\, capas de piedra\.$"
+   regexp="y"
+   send_to="12"
+   sequence="0"
+   temporary="y"
+  >
+  <send>
+	SetVariable("pieles", "%1")
+  </send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Piel de Piedra"
+   match="^Tu piel vuelve a su estado normal\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+   temporary="y"
+  >
+  <send>
+	SetVariable("pieles", "0")
+	play_sound("hechizos/piel off.ogg")
+  </send>
+  </trigger>
+</triggers>
+</muclient>
