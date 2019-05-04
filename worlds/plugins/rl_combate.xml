@@ -2,7 +2,7 @@
 <!DOCTYPE muclient [
   <!ENTITY prefijo "(?:(?:.*?)(?:\&gt; |\] |\} )|)" >
   <!ENTITY intens "(?:(con (poca fuerza|fuerza|mucha fuerza|increíble potencia|fuerza sobrehumana|fuerza divina|cólera titánica)|débilmente|violentamente) |)" >
-  <!ENTITY parte "(el|la|una|un|las|los) ([a-záéíóú]+)" >
+  <!ENTITY parte "(el|la|una|un|las|los) (.*?)" >
 ]>
 <!-- Saved on domingo, enero 20, 2019, 9:39 p. m. -->
 <!-- MuClient version 5.05 -->

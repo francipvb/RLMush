@@ -286,12 +286,8 @@ end
 
 -- helper function to say stuff
 function say(x, interrupt)
-	if mushreader then
-		if interrupt then
-			mushreader.stop()
-		end -- interrupt
-
-		mushreader.say(x)
+	if isLoaded() then
+		output(x, interrupt)
 	else
 		Note(x)
 	end
@@ -482,7 +478,7 @@ function OnGMCP(mensaje)
 			history_add(data.canal, StripANSI(data.mensaje))
 			play_sound("canales/"..data.canal..".ogg")
 		end -- data.canal
-		if mushreader then mushreader.say(StripANSI(data.mensaje)) end
+		output(StripANSI(data.mensaje))
 	elseif mensaje == "Comm.MensajeCanalHistorico" then
 		AnsiNote(data.mensaje)
 	elseif mensaje == "Comm.EnciendeCanal" then

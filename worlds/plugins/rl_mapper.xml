@@ -953,13 +953,12 @@ function on_mirar(name, line, wildcards, style)
 	end -- salidas
 
 	if var.rapido then
-		mushreader.stop()
-		mostrar_salidas()
+		output(mostrar_salidas(), true)
 	end -- if
 end -- on_mirar
 
 function mostrar_salidas()
-	if mushreader and salidas then
+	if salidas then
 		local str = ""
 		
 		for k in pairs(salidas) do
@@ -968,7 +967,7 @@ function mostrar_salidas()
 			end -- str
 			str = str..(enviar[k] or k)
 		end
-		mushreader.say(str)
+		return str
 	end -- if
 end -- function
 

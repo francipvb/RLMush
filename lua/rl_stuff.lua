@@ -2,12 +2,12 @@ require "ppi"
 require "gmcphelper"
 
 -- Lua filesystem
-package.loadlib("lfs.dll", "luaopen_lfs")()
+require "lfs"
+
 
 local snd = nil
 
-mushreader = nil
-
+local luatolk_plugin = "16ba6b7a227a9dab54f5c76e"
 local html_replacements = {
 	['&lt;'] = "<",
 	['&gt;'] = ">",
@@ -32,7 +32,6 @@ function replace_html(s)
 end -- function
 
 function RLStuffListChanged()
-	mushreader = ppi.Load("16ba6b7a227a9dab54f5c76e")
 	snd = ppi.Load("aedf0cb0be5bf045860d54b7")
 end -- OnPluginListChanged
 
@@ -225,4 +224,60 @@ function denuevo_xml(nodo, indent, nivel)
 	end -- if
 	
 	return cadena
+end -- function
+
+function output(str, interrumpir)
+	local rc, result = CallPlugin(luatolk_plugin, "output", str, interrumpir)
+	if (rc == 0) then
+		return result
+	end -- if
+end -- function
+
+function speak(str, interrumpir)
+	local rc, result = CallPlugin(luatolk_plugin, "speak", str, interrumpir)
+	if (rc == 0) then
+		return result
+	end -- if
+end
+
+function silence()
+	local rc, result = CallPlugin(luatolk_plugin, "silence")
+	if (rc == 0) then
+		return result
+	end -- if
+end -- function
+
+function braille(str)
+	local rc, result = CallPlugin(luatolk_plugin, "braille", str)
+	if (rc == 0) then
+		return result
+	end -- if
+end -- function
+
+function isLoaded()
+	local rc, result = CallPlugin(luatolk_plugin, "isLoaded")
+	if (rc == 0) then
+		return result
+	end -- if
+end -- function
+
+function hasBraille()
+	local rc, result = CallPlugin(luatolk_plugin, "hasBraille")
+	if (rc == 0) then
+		return result
+	end -- if
+end -- function
+
+function hasSpeech()
+	local rc, result = CallPlugin(luatolk_plugin, "hasSpeech")
+	if (rc == 0) then
+		return result
+	end -- if
+end -- function
+
+function detectScreenReader()
+	local rc, result = CallPlugin(luatolk_plugin, "detectScreenReader")
+	if (rc == 0) then
+		return result
+	end -- if
 end -- function

@@ -68,16 +68,11 @@ function OnPluginListChanged()
 end -- ListChanged
 
 local function tts_say(texto)
-	if mushreader then
-		mushreader.say(texto)
-	end -- if
+	output(texto, true)
 end -- function
 
 local function tts_interrupt(texto)
-	if mushreader then
-		mushreader.stop()
-	end -- if
-	tts_say(texto)
+	output(texto, true)
 end -- function
 
 function OnPluginEnable()
@@ -176,7 +171,7 @@ end
 end
 function OnPluginCommandEntered(s)
 	if world.GetVariable("interrupt")=="1" then
-		if mushreader then mushreader.stop() end
+		silence()
 	end
 end
 function OnPluginInstall()
