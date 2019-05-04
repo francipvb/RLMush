@@ -28,6 +28,3 @@ tips.txt
 # Ignoramos los perfiles generados por el script
 rlmud/personajes/
 !rlmud/personajes/.keep
-
-# Biblioteca luatolk compilada desde los fuentes
-luatolk.dll
