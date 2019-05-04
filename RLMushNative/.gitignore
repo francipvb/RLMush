@@ -1,0 +1,8 @@
+# Ignoramos archivos que no son de código fuente
+[Dd]ebug/
+[Rr]elease/
+**/[Dd]ebug/
+**/[Rr]elease/
+*.filters
+*.user
+.vs/
