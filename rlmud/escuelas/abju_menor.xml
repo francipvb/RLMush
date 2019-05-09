@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="^gni(\d+)$"
+   enabled="y"
+   group="Globo Menor"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>gni y%1</send>
+  </alias>
+  <alias
+   match="gni"
+   enabled="y"
+   expand_variables="y"
+   group="Globo Menor"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>gni @nombre</send>
+  </alias>
+  <alias
+   match="gni *"
+   enabled="y"
+   group="Globo Menor"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular globo menor de invulnerabilidad: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="escn"
+   enabled="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular escudo</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="ppd"
+   enabled="y"
+   group="Parpadeo"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular parpadeo</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="^ind(\d+)$"
+   enabled="y"
+   group="Indetectable"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>ind y%1</send>
+  </alias>
+  <alias
+   match="ind"
+   enabled="y"
+   expand_variables="y"
+   group="Indetectable"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>ind @nombre</send>
+  </alias>
+  <alias
+   match="ind *"
+   enabled="y"
+   group="Indetectable"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular indetectable: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="^rmg(\d+)$"
+   enabled="y"
+   group="Resistir Mágico"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rmg y%1</send>
+  </alias>
+  <alias
+   match="rmg"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Mágico"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>rmg @nombre</send>
+  </alias>
+  <alias
+   match="rmg *"
+   enabled="y"
+   group="Resistir Mágico"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir magico: %1</send>
+  </alias>
+</aliases>

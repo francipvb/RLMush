@@ -35,38 +35,32 @@ gmcpdata = {}
 prev_data = {}
 
 function mostrar_pvs()
-	if mushreader then
-		if IsConnected() then
-			mushreader.say(string.format([[
-			%i/%i (%i%%)
-			]], gmcpdata.pvs.min, gmcpdata.pvs.max, (gmcpdata.pvs.min / gmcpdata.pvs.max) * 100))
-		else
-			mushreader.say("No estás conectado.")
-		end -- if
+	if IsConnected() then
+		output(string.format([[
+		%i/%i (%i%%)
+		]], gmcpdata.pvs.min, gmcpdata.pvs.max, (gmcpdata.pvs.min / gmcpdata.pvs.max) * 100))
+	else
+		output("No estás conectado.")
 	end -- if
 end -- function
 
 function mostrar_pes()
-	if mushreader then
-		if IsConnected() then
-			mushreader.say(string.format([[
-			%i/%i (%i%%)
-			]], gmcpdata.pe.min, gmcpdata.pe.max, (gmcpdata.pe.min / gmcpdata.pe.max) * 100))
-		else
-			mushreader.say("No estás conectado.")
-		end -- if
+	if IsConnected() then
+		output(string.format([[
+		%i/%i (%i%%)
+		]], gmcpdata.pe.min, gmcpdata.pe.max, (gmcpdata.pe.min / gmcpdata.pe.max) * 100))
+	else
+		output("No estás conectado.")
 	end -- if
 end -- function
 
 function mostrar_xp()
-	if mushreader then
-		if IsConnected() then
-			mushreader.say(string.format([[
-			%i/%i (%i%%)
-			]], gmcpdata.xp.min, gmcpdata.xp.max, (gmcpdata.xp.min / gmcpdata.xp.max) * 100))
-		else
-			mushreader.say("No estás conectado.")
-		end -- if
+	if IsConnected() then
+		output(string.format([[
+		%i/%i (%i%%)
+		]], gmcpdata.xp.min, gmcpdata.xp.max, (gmcpdata.xp.min / gmcpdata.xp.max) * 100))
+	else
+		output("No estás conectado.")
 	end -- if
 end -- function
 

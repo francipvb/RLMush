@@ -1,20 +1,240 @@
 <?xml version="1.0" encoding="iso8859-15"?>
 
 <aliases>
+  <!-- Hechizos varios -->
+  <alias
+   match="^wy(\d+)$"
+   enabled="y"
+   group="Conjuración"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>wy x%1</send>
+  </alias>
+  <alias
+   match="facida"
+   enabled="y"
+   group="Conjuración"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>facida x</send>
+  </alias>
   <alias
    match="facida *"
    enabled="y"
+   group="Conjuración"
    sequence="100"
    temporary="y"
   >
   <send>formular flecha acida de dvneil: %1</send>
   </alias>
   <alias
+   match="fhielo"
+   enabled="y"
+   group="Conjuración"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>fhielo x</send>
+  </alias>
+  <alias
+   match="fhielo *"
+   enabled="y"
+   group="Conjuración"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular flecha de hielo: %1</send>
+  </alias>
+  <alias
+   match="fllamas"
+   enabled="y"
+   group="Conjuración"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>fllamas</send>
+  </alias>
+  <alias
    match="fllamas *"
    enabled="y"
+   group="Conjuración"
    sequence="100"
    temporary="y"
   >
   <send>formular flecha de llamas: %1</send>
+  </alias>
+  <alias
+   match="mignis"
+   enabled="y"
+   group="Conjuración"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>mignis x</send>
+  </alias>
+  <alias
+   match="mignis *"
+   enabled="y"
+   group="Conjuración"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular meteoros diminutos de ignis: %1</send>
+  </alias>
+  <alias
+   match="tlr"
+   enabled="y"
+   group="Conjuración"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>tlr x</send>
+  </alias>
+  <alias
+   match="tlr *"
+   enabled="y"
+   group="Conjuración"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular telaraña: %1</send>
+  </alias>
+  <alias
+   match="wy *"
+   enabled="y"
+   group="Conjuración"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular esfera elastica de wylan: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <!-- Invocación de monturas -->
+
+  <alias
+   match="^mont (mula|elemental|guerra|halada)$"
+   enabled="y"
+   group="Monturas"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular montura: %1</send>
+  </alias>
+  <alias
+   match="melemental"
+   enabled="y"
+   group="Monturas"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>mont elemental</send>
+  </alias>
+  <alias
+   match="mguerra"
+   enabled="y"
+   group="Monturas"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>mont guerra</send>
+  </alias>
+  <alias
+   match="mhalada"
+   enabled="y"
+   group="Monturas"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>mont halada</send>
+  </alias>
+  <alias
+   match="mmula"
+   enabled="y"
+   group="Monturas"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>mont mula</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <!-- Invocación de muros -->
+  
+  <alias
+   match="^mfg(\w+)$"
+   enabled="y"
+   group="Muros"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>mfuego %1</send>
+  </alias>
+  <alias
+   match="^mhl(\w+)$"
+   enabled="y"
+   group="Muros"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>mhielo %1</send>
+  </alias>
+  <alias
+   match="^mnb(\w+)$"
+   enabled="y"
+   group="Muros"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>mniebla %1</send>
+  </alias>
+  <alias
+   match="mfuego *"
+   enabled="y"
+   group="Muros"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular muro de fuego: %1</send>
+  </alias>
+  <alias
+   match="mhielo *"
+   enabled="y"
+   group="Muros"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular muro de hielo: %1</send>
+  </alias>
+  <alias
+   match="mniebla *"
+   enabled="y"
+   group="Muros"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular muro de niebla: %1</send>
   </alias>
 </aliases>

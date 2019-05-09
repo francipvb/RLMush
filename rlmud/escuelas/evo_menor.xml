@@ -2,12 +2,30 @@
 
 <aliases>
   <alias
+   match="gr"
+   enabled="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>gr x</send>
+  </alias>
+  <alias
    match="gr *"
    enabled="y"
    sequence="100"
    temporary="y"
   >
   <send>formular golpe de rayo: %1</send>
+  </alias>
+  <alias
+   match="estf"
+   enabled="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>estf x</send>
   </alias>
   <alias
    match="estf *"
@@ -27,5 +45,112 @@
    temporary="y"
   >
   <send>formular proyectil magico menor: %1</send>
+  </alias>
+  <alias
+   match="pron"
+   enabled="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>pron %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
+   match="bf"
+   enabled="y"
+   group="Evocación"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>bf x</send>
+  </alias>
+  <alias
+   match="bf *"
+   enabled="y"
+   group="Evocación"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular bola de fuego: %1</send>
+  </alias>
+  <alias
+   match="esfll"
+   enabled="y"
+   group="Evocación"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>esfll x</send>
+  </alias>
+  <alias
+   match="esfll *"
+   enabled="y"
+   group="Evocación"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular esfera llameante: %1</send>
+  </alias>
+  <alias
+   match="grz"
+   enabled="y"
+   group="Evocación"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>grz x</send>
+  </alias>
+  <alias
+   match="grz *"
+   enabled="y"
+   group="Evocación"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular granizo: %1</send>
+  </alias>
+  <alias
+   match="nbhd"
+   enabled="y"
+   group="Evocación"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>nbhd x</send>
+  </alias>
+  <alias
+   match="nbhd *"
+   enabled="y"
+   group="Evocación"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular nube hedionda: %1</send>
+  </alias>
+  <alias
+   match="tlar"
+   enabled="y"
+   group="Evocación"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>tlar x</send>
+  </alias>
+  <alias
+   match="tlar *"
+   enabled="y"
+   group="Evocación"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular telaraña: %1</send>
   </alias>
 </aliases>

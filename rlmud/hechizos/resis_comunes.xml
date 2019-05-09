@@ -2,6 +2,40 @@
 
 <aliases>
   <alias
+   match="^racd(\d+)$"
+   enabled="y"
+   group="Resistir Ácido"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>racd y%1</send>
+  </alias>
+  <alias
+   match="racd"
+   enabled="y"
+   expand_variables="y"
+   group="Resistir Ácido"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>racd @nombre</send>
+  </alias>
+  <alias
+   match="racd *"
+   enabled="y"
+   group="Resistir Ácido"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular resistir acido: %1</send>
+  </alias>
+</aliases>
+
+<aliases>
+  <alias
    match="^rg(\d+)$"
    enabled="y"
    group="Resistir Agua"

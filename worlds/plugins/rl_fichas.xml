@@ -605,7 +605,10 @@ local function recargar_todo()
 		for k, archivo in ipairs(clase.archivos) do
 			ejecutar_archivo(archivo, "clases/"..clase.nombre)
 		end -- for
-		ImportXML(clase.mushclient)
+		
+		if clase.mushclient then
+			ImportXML(clase.mushclient)
+		end -- if
 		
 		-- Escuelas y esferas
 		for k, elem in ipairs(clase.magia) do
@@ -636,9 +639,11 @@ local function recargar_todo()
 	-- Y la especialización
 	if especializacion then
 		for k, archivo in ipairs(especializacion.archivos) do
-			ejecutar_archivo(archivo)
+			ejecutar_archivo(archivo, "clases/"..clase.nombre)
 		end -- for
-		ImportXML(especializacion.mushclient)
+		if especializacion.mushclient then
+			ImportXML(especializacion.mushclient)
+		end -- if
 		
 		
 		-- Escuelas y esferas

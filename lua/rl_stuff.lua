@@ -226,6 +226,25 @@ function denuevo_xml(nodo, indent, nivel)
 	return cadena
 end -- function
 
+local function llamar_plugin(throwerror, plugin, func_name, ...)
+	local results
+	if not throwerror then
+		results = {pcall(CallPlugin, plugin, func_name, ...)}
+		
+		-- If an error has ocurred, return the error without raising it
+		if not results[1] then
+			table.remove(results, 1)
+			return unpack(results)
+		end -- if
+	else
+		results = {CallPlugin(plugin, funcname, unpack(varargs))}
+	end -- if
+	if results[1] == 0 then
+		table.remove(arg, 1)
+		return unpack(results)
+	end -- if
+end -- function
+
 function output(str, interrumpir)
 	local rc, result = CallPlugin(luatolk_plugin, "output", str, interrumpir)
 	if (rc == 0) then

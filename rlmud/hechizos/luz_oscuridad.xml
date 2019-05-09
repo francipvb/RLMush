@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="lz"
+   enabled="y"
+   group="Luz y Oscuridad"
+   send_to="10"
+   sequence="100"
+  >
+  <send>lz armadura</send>
+  </alias>
+  <alias
+   match="lz *"
+   enabled="y"
+   group="Luz y Oscuridad"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular luz: %1</send>
+  </alias>
+  <alias
+   match="osz"
+   enabled="y"
+   group="Luz y Oscuridad"
+   send_to="10"
+   sequence="100"
+  >
+  <send>osz armadura</send>
+  </alias>
+  <alias
+   match="osz *"
+   enabled="y"
+   group="Luz y Oscuridad"
+   sequence="100"
+  >
+  <send>formular oscuridad: %1</send>
+  </alias>
+</aliases>

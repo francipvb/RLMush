@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<!-- Fila inferior (ALT+{a|s|d|f}, ALT+SHIFT+{a|s|d|f}) -->
+<aliases>
+  <!-- Hechizos de objetivo individual
+
+       Estos hechizos atacan a un solo objetivo.
+       -->
+  <alias
+   match="s1"
+   enabled="y"
+   group="Abjurador"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>gr x , xp</send>
+  </alias>
+  <alias
+   match="s2"
+   enabled="y"
+   group="Abjurador"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>fllamas x , xp</send>
+  </alias>
+  <alias
+   match="s3"
+   enabled="y"
+   group="Abjurador"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>facida x , xp</send>
+  </alias>
+  <alias
+   match="s4"
+   enabled="y"
+   group="Abjurador"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>mignis x , xp</send>
+  </alias>
+
+  <!-- Hechizos de área
+       
+	   Estos hechizos atacan a varios jugadores, por lo que hay que ir con cuidado.
+  -->
+  <alias
+   match="s5"
+   enabled="y"
+   group="Abjurador"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>bf x , xp</send>
+  </alias>
+  <alias
+   match="s6"
+   enabled="y"
+   group="Abjurador"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>trac x , xp</send>
+  </alias>
+  <alias
+   match="s7"
+   enabled="y"
+   group="Abjurador"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>grz x , xp</send>
+  </alias>
+  <alias
+   match="s8"
+   enabled="y"
+   send_to="10"
+   group="Abjurador"
+   sequence="100"
+   temporary="y"
+  >
+  <send>nbhd x , xp</send>
+  </alias>
+</aliases>

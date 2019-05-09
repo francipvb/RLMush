@@ -27,9 +27,9 @@
 	local pieles = tonumber(GetVariable("pieles", "0"))
 
 	if pieles and pieles > 0 then
-	  Execute("tts_interrupt "..pieles.." pieles.")
+	  output(pieles.." pieles.", true)
 	else
-	  Execute("tts_interrupt No tienes pieles.")
+	  output("No tienes pieles.", true)
 	end -- if
   </send>
   </alias>

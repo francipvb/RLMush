@@ -68,10 +68,12 @@ function OnPluginListChanged()
 end -- ListChanged
 
 local function tts_say(texto)
-	output(texto, true)
+	if not texto then return end
+	output(texto)
 end -- function
 
 local function tts_interrupt(texto)
+	if not texto then return end
 	output(texto, true)
 end -- function
 

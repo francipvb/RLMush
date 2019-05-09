@@ -2,6 +2,7 @@
 <!DOCTYPE clase>
 
 <clase nombre="abjurador_blanco" nombre_completo="Abjurador blanco">
+	<archivo ruta="comandos_abju.xml" />
 
 	<magia>
 		<escuela nombre="abjuracion" acceso="mayor" />
@@ -17,26 +18,4 @@
 		<escuela nombre="encantamiento" acceso="menor" />
 	</magia>
 
-	<mushclient>
-		<aliases>
-		  <alias
-		   match="s1"
-		   enabled="y"
-		   send_to="10"
-		   sequence="100"
-		   temporary="y"
-		  >
-		  <send>facida x , xp</send>
-		  </alias>
-		  <alias
-		   match="s2"
-		   enabled="y"
-		   send_to="10"
-		   sequence="100"
-		   temporary="y"
-		  >
-		  <send>gr x , xp</send>
-		  </alias>
-		</aliases>
-	</mushclient>
 </clase>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+
+<aliases>
+  <alias
+   match="^gmi(\d+)$"
+   enabled="y"
+   group="Globo Mayor"
+   regexp="y"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>gmi y%1</send>
+  </alias>
+  <alias
+   match="gmi"
+   enabled="y"
+   expand_variables="y"
+   group="Globo Mayor"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>gmi @nombre</send>
+  </alias>
+  <alias
+   match="gmi *"
+   enabled="y"
+   group="Globo Mayor"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular globo mayor de invulnerabilidad: %1</send>
+  </alias>
+</aliases>

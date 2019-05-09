@@ -4,43 +4,12 @@
 <escuela nombre="abjuracion" nombre_completo="Abjuración">
 	<archivo ruta="~/hechizos/resis_comunes.xml" acceso="menor" />
 	<archivo ruta="piel_piedra.xml" acceso="menor" />
+	
+	<!-- Hechizos que solo pertenecen a esta escuela -->
+	<archivo ruta="abju_menor.xml" acceso="menor" />
+	<archivo ruta="abju_neutral.xml" acceso="neutral" />
+	<archivo ruta="abju_mayor.xml" acceso="mayor" />
 
 	<mushclient>
-		<!-- Alias y triggers en bruto de mushclient -->
-
-		<aliases>
-		  <alias
-		   match="gni"
-		   enabled="y"
-		   expand_variables="y"
-		   group="Globo Menor"
-		   send_to="10"
-		   sequence="100"
-		   temporary="y"
-		  >
-		  <send>gni @nombre</send>
-		  </alias>
-		  <alias
-		   match="gni *"
-		   enabled="y"
-		   group="Globo Menor"
-		   sequence="100"
-		   temporary="y"
-		  >
-		  <send>formular globo menor de invulnerabilidad: %1</send>
-		  </alias>
-		</aliases>
-
-		<aliases>
-		  <alias
-		   match="ppd"
-		   enabled="y"
-		   group="Parpadeo"
-		   sequence="100"
-		   temporary="y"
-		  >
-		  <send>formular parpadeo</send>
-		  </alias>
-		</aliases>
 	</mushclient>
 </escuela>

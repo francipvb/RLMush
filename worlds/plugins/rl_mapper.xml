@@ -891,10 +891,10 @@ function modo_rapido()
 	require "var"
 	
 	if var.rapido then
-		mushreader.say("Desactivando el modo rápido.")
+		output("Desactivando el modo rápido.")
 		var.rapido = nil
 	else
-		mushreader.say("Activando el modo rápido")
+		output("Activando el modo rápido")
 		var.rapido = true
 	end -- if
 end -- if

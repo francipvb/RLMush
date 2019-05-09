@@ -6,8 +6,9 @@
    enabled="y"
    sequence="100"
    temporary="y"
+   send_to="10"
   >
-  <send>formular cono de frio: x</send>
+  <send>cofr x</send>
   </alias>
   <alias
    match="cofr *"
@@ -22,8 +23,9 @@
    enabled="y"
    sequence="100"
    temporary="y"
+   send_to="10"
   >
-  <send>formular defenestrar: x</send>
+  <send>defr x</send>
   </alias>
   <alias
    match="dfr *"
@@ -38,8 +40,9 @@
    enabled="y"
    sequence="100"
    temporary="y"
+   send_to="10"
   >
-  <send>formular proyectil magico mayor: x</send>
+  <send>prom x</send>
   </alias>
   <alias
    match="prom *"
@@ -54,8 +57,9 @@
    enabled="y"
    sequence="100"
    temporary="y"
+   send_to="10"
   >
-  <send>formular tormenta acida: x</send>
+  <send>trac x</send>
   </alias>
   <alias
    match="trac *"

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE clase>
+
+<clase nombre="conjurador_blanco">
+	<magia>
+		<!-- Lista de esferas/escuelas -->
+		
+		<!-- Escuelas menores -->
+		<escuela nombre="necromancia" acceso="menor" />
+		<escuela nombre="alteracion" acceso="menor" />
+		
+		<!-- Escuelas neutrales -->
+		<escuela nombre="ilusion" acceso="neutral" />
+		<escuela nombre="encantamiento" acceso="neutral" />
+		<escuela nombre="universal" acceso="neutral" />
+		<escuela nombre="abjuracion" acceso="neutral" />
+		
+		<!-- Especialidad -->
+		<escuela nombre="conjuracion" acceso="mayor" />
+	</magia>
+
+</clase>
