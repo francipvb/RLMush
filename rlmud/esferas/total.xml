@@ -5,8 +5,4 @@
 	<!-- Este es el único caso de un hechizo suelto entre esferas -->
 	<archivo ruta="curar_ligeras.xml" acceso="menor" />
 
-	<mushclient>
-		<!-- Alias y triggers en bruto de mushclient -->
-
-	</mushclient>
 </esfera>

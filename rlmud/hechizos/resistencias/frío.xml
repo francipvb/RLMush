@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE aliases[
+  <!ENTITY grupo "Resistir Frío">
+  <!ENTITY corto "rfr">
+]>
 
 <aliases>
   <alias
-   match="^pf(\d+)$"
+   match="^&corto;(\d+)$"
    enabled="y"
-   group="Protección Fuego"
+   group="&grupo;"
    regexp="y"
-   send_to="10"
    sequence="100"
    temporary="y"
+   send_to="10"
   >
-  <send>pf y%1</send>
+  <send>&corto; y%1</send>
   </alias>
   <alias
-   match="pf"
+   match="&corto;"
    enabled="y"
    expand_variables="y"
-   group="Protección Fuego"
+   group="&grupo;"
    send_to="10"
    sequence="100"
    temporary="y"
   >
-  <send>pf @nombre</send>
+  <send>&corto; @nombre</send>
   </alias>
   <alias
-   match="pf *"
+   match="&corto; *"
    enabled="y"
-   group="Protección Fuego"
+   group="&grupo;"
    sequence="100"
    temporary="y"
   >
-  <send>formular proteccion fuego: %1</send>
+  <send>formular resistir magico: %1</send>
   </alias>
 </aliases>

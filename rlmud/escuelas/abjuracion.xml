@@ -2,14 +2,41 @@
 <!DOCTYPE escuela>
 
 <escuela nombre="abjuracion" nombre_completo="Abjuración">
-	<archivo ruta="~/hechizos/resis_comunes.xml" acceso="menor" />
 	<archivo ruta="piel_piedra.xml" acceso="menor" />
+	
+	<!-- Resistencias (con acceso menor) -->
+	<archivo ruta="~/hechizos/resistencias/bien.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/mal.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/enfermedad.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/mágico.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/veneno.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/aire.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/agua.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/eléctrico.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/frío.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/fuego.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/tierra.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/ácido.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/mental.xml" acceso="menor" />
+
+	<!-- Protecciones -->
+	<archivo ruta="~/hechizos/protecciones/mal.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/bien.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/mágico.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/veneno.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/fuego.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/enfermedad.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/ácido.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/eléctrico.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/aire.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/tierra.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/agua.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/mental.xml" acceso="neutral" />
+	<archivo ruta="~/hechizos/protecciones/frío.xml" acceso="neutral" />
 	
 	<!-- Hechizos que solo pertenecen a esta escuela -->
 	<archivo ruta="abju_menor.xml" acceso="menor" />
 	<archivo ruta="abju_neutral.xml" acceso="neutral" />
 	<archivo ruta="abju_mayor.xml" acceso="mayor" />
 
-	<mushclient>
-	</mushclient>
 </escuela>

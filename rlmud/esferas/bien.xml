@@ -2,10 +2,7 @@
 <!DOCTYPE esfera>
 
 <esfera nombre="bien" nombre_completo="Bien">
-	<archivo ruta="~/hechizos/prote_mal.xml" acceso="menor" />
-
-	<mushclient>
-		<!-- Alias y triggers en bruto de mushclient -->
-
-	</mushclient>
+	<archivo ruta="~/hechizos/protecciones/mal.xml" acceso="menor" />
+	<archivo ruta="~/hechizos/resistencias/mal.xml" acceso="menor" />
+	
 </esfera>

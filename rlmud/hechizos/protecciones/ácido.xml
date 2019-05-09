@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE aliases[
+  <!ENTITY grupo "Protección Ácido">
+  <!ENTITY corto "pacid">
+]>
+
+<aliases>
+  <alias
+   match="^&corto;(\d+)$"
+   enabled="y"
+   group="&grupo;"
+   regexp="y"
+   sequence="100"
+   temporary="y"
+   send_to="10"
+  >
+  <send>&corto; y%1</send>
+  </alias>
+  <alias
+   match="&corto;"
+   enabled="y"
+   expand_variables="y"
+   group="&grupo;"
+   send_to="10"
+   sequence="100"
+   temporary="y"
+  >
+  <send>&corto; @nombre</send>
+  </alias>
+  <alias
+   match="&corto; *"
+   enabled="y"
+   group="&grupo;"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular proteccion acido: %1</send>
+  </alias>
+</aliases>

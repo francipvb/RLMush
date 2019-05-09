@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE aliases[
+  <!ENTITY grupo "Resistir Ácido">
+  <!ENTITY corto "racid">
+]>
 
 <aliases>
   <alias
-   match="^pm(\d+)$"
+   match="^&corto;(\d+)$"
    enabled="y"
-   group="Protección Mal"
+   group="&grupo;"
    regexp="y"
    sequence="100"
    temporary="y"
    send_to="10"
   >
-  <send>pm y%1</send>
+  <send>&corto; y%1</send>
   </alias>
   <alias
-   match="pm"
+   match="&corto;"
    enabled="y"
    expand_variables="y"
-   group="Protección Mal"
+   group="&grupo;"
    send_to="10"
    sequence="100"
    temporary="y"
   >
-  <send>pm @nombre</send>
+  <send>&corto; @nombre</send>
   </alias>
   <alias
-   match="pm *"
+   match="&corto; *"
    enabled="y"
-   group="Protección Mal"
+   group="&grupo;"
    sequence="100"
    temporary="y"
   >
-  <send>formular proteccion mal: %1</send>
+  <send>formular resistir acido: %1</send>
   </alias>
 </aliases>

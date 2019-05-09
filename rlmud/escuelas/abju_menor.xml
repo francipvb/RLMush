@@ -90,37 +90,3 @@
   <send>formular indetectable: %1</send>
   </alias>
 </aliases>
-
-<aliases>
-  <alias
-   match="^rmg(\d+)$"
-   enabled="y"
-   group="Resistir Mágico"
-   regexp="y"
-   send_to="10"
-   sequence="100"
-   temporary="y"
-  >
-  <send>rmg y%1</send>
-  </alias>
-  <alias
-   match="rmg"
-   enabled="y"
-   expand_variables="y"
-   group="Resistir Mágico"
-   send_to="10"
-   sequence="100"
-   temporary="y"
-  >
-  <send>rmg @nombre</send>
-  </alias>
-  <alias
-   match="rmg *"
-   enabled="y"
-   group="Resistir Mágico"
-   sequence="100"
-   temporary="y"
-  >
-  <send>formular resistir magico: %1</send>
-  </alias>
-</aliases>

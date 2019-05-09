@@ -64,6 +64,7 @@
 
 
 
+
 <!--  Script  -->
 <script>
 <![CDATA[
@@ -413,7 +414,7 @@ local function cargar_magia(elem)
 	for k, nodo in ipairs(xml.nodes) do
 		if nodo.name == "archivo" then
 			if not nodo.attributes.ruta or nodo.attributes.ruta == "" then
-				error(string.format("%s %s: No se especificó una ruta de archivo válida.", ruta, nodo.line))
+				error(string.format("%s %s: No se especificó una ruta de archivo válida.", nodo.name, nodo.line))
 			end -- if
 			
 			-- Forzamos a que se especifique el nivel de acceso de cada archivo
@@ -583,19 +584,25 @@ local function recargar_todo()
 				else
 					archivos_cargados[ruta_archivo] = false
 					print("Error en la importación del archivo \""..archivo.."\".")
+					return false
 				end -- if
 			else
 				archivos_cargados[ruta_archivo] = false
 				print(string.format("Error: %s", mensaje))
+				return false
 			end -- if
 		end -- if
+		
+		return true
 	end -- function
 	
 	-- Cargamos un personaje
 	if personaje then
 		-- Lo lógico es cargar los archivos en primer lugar
 		for k, archivo in ipairs(personaje.archivos) do
-			ejecutar_archivo(archivo, "personajes")
+			if not ejecutar_archivo(archivo, "personajes") then
+				print("Error al cargar ep personaje \""..personaje.nombre.."\".")
+			end -- if
 		end -- for
 		ImportXML(personaje.mushclient)
 	end -- if
@@ -603,7 +610,9 @@ local function recargar_todo()
 	-- Cargamos la clase
 	if clase then
 		for k, archivo in ipairs(clase.archivos) do
-			ejecutar_archivo(archivo, "clases/"..clase.nombre)
+			if not ejecutar_archivo(archivo, "clases/"..clase.nombre) then
+				print("Error al cargar la clase \""..clase.nombre.."\".")
+			end -- if
 		end -- for
 		
 		if clase.mushclient then
@@ -617,21 +626,30 @@ local function recargar_todo()
 				
 				for j, archivo in ipairs(magia.archivos) do
 					if elem.acceso >= archivo.acceso then
-						ejecutar_archivo(archivo.ruta, "esferas")
+						if not ejecutar_archivo(archivo.ruta, "esferas") then
+							print("Error al cargar la esfera \""..magia.nombre.."\".")
+						end -- if
+						
 					end -- if
 				end -- for
-				
-				ImportXML(magia.mushclient)
+
+				if magia.mushclient then
+					ImportXML(magia.mushclient)
+				end -- if
 			elseif elem.tipo == "escuela" and escuelas[elem.nombre] then
 				magia = escuelas[elem.nombre]
 				
 				for j, archivo in ipairs(magia.archivos) do
 					if elem.acceso >= archivo.acceso then
-						ejecutar_archivo(archivo.ruta, "escuelas")
+						if not ejecutar_archivo(archivo.ruta, "escuelas") then
+							print("Error al cargar la escuela \""..magia.nombre.."\".")
+						end -- if
 					end -- if
 				end -- for
 				
-				ImportXML(magia.mushclient)
+				if magia.mushclient then
+					ImportXML(magia.mushclient)
+				end -- if
 			end -- if
 		end -- for
 	end -- if
@@ -666,8 +684,9 @@ local function recargar_todo()
 						ejecutar_archivo(archivo.ruta, "escuelas")
 					end -- if
 				end -- for
-				
-				ImportXML(magia.mushclient)
+				if magia.mushclient then
+					ImportXML(magia.mushclient)
+				end -- magia.mushclient
 			end -- if
 		end -- for
 	end -- if
