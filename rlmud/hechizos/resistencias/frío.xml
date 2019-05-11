@@ -34,6 +34,6 @@
    sequence="100"
    temporary="y"
   >
-  <send>formular resistir magico: %1</send>
+  <send>formular resistir frio: %1</send>
   </alias>
 </aliases>

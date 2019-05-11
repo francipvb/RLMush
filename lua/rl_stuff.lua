@@ -300,3 +300,10 @@ function detectScreenReader()
 		return result
 	end -- if
 end -- function
+
+function ignore_next()
+	local rc, result = CallPlugin(luatolk_plugin, "ignore_next")
+	if (rc == 0) then
+		return result
+	end -- if
+end -- function

@@ -442,50 +442,55 @@ function OnGMCP(mensaje)
 		return
 	end -- if
 	
-	-- Pedimos los datos, eso lo primero
-	local data = PedirGMCP(mensaje)
-
-	if mensaje == "Comm.MensajeCanal" then
-		-- Parseamos los datos, convirtiendo a utf-8 y reemplazando los caracteres html
-		data.mensaje = utf8convert(replace_html(data.mensaje))
-
-		if data.canal == "bueno"
-				or data.canal == "malo"
-				or data.canal == "malvados"
-				or data.canal == "anarquico"
-				or data.canal == "mercenario"
-				or data.canal == "renegado" then
-			-- Canales de bando
-			history_add("Bando", StripANSI(data.mensaje))
-			play_sound("canales/bando.ogg")
-		elseif data.canal == "takome"
-				or data.canal == "poldarn"
-				or data.canal == "thorin"
-				or data.canal == "veleiron"
-				or data.canal == "kheleb"
-				or data.canal == "kattak"
-				or data.canal == "eldor"
-				or data.canal == "dendra"
-				or data.canal == "golthur" then
-			-- Canales de ciudadanía (faltan la mayoría)
-			history_add("Ciudad", StripANSI(data.mensaje))
-			play_sound("canales/ciu.ogg")
-		elseif data.canal:find("grupo%-(%a+)") then
-			history_add("Grupos", StripANSI(data.mensaje))
-			play_sound("canales/grupo.ogg")
-		else
-			-- Cualquier otro canal (info, chat, omiq...)
-			history_add(data.canal, StripANSI(data.mensaje))
-			play_sound("canales/"..data.canal..".ogg")
-		end -- data.canal
-		output(StripANSI(data.mensaje))
-	elseif mensaje == "Comm.MensajeCanalHistorico" then
-		AnsiNote(data.mensaje)
-	elseif mensaje == "Comm.EnciendeCanal" then
+	if mensaje == "Comm.EnciendeCanal" then
 		play_sound("canales/on.ogg")
 	elseif mensaje == "Comm.ApagaCanal" then
 		play_sound("canales/off.ogg")
 	end -- text
+	
+	-- Pedimos los datos, eso lo primero
+	local data = PedirGMCP(mensaje)
+	
+	if mensaje == "Comm.MensajeCanalHistorico" then
+		AnsiNote(data.mensaje)
+		return
+	end -- if
+	
+	-- Parseamos los datos, convirtiendo a utf-8 y reemplazando los caracteres html
+	local mensaje_canal = utf8convert(data.mensaje)
+
+	if data.canal == "bueno"
+			or data.canal == "malo"
+			or data.canal == "malvados"
+			or data.canal == "anarquico"
+			or data.canal == "mercenario"
+			or data.canal == "renegado" then
+		-- Canales de bando
+		history_add("Bando", StripANSI(mensaje_canal))
+		play_sound("canales/bando.ogg")
+	elseif data.canal == "takome"
+			or data.canal == "poldarn"
+			or data.canal == "thorin"
+			or data.canal == "veleiron"
+			or data.canal == "kheleb"
+			or data.canal == "kattak"
+			or data.canal == "eldor"
+			or data.canal == "dendra"
+			or data.canal == "golthur" then
+		-- Canales de ciudadanía (faltan la mayoría)
+		history_add("Ciudad", StripANSI(mensaje_canal))
+		play_sound("canales/ciu.ogg")
+	elseif data.canal:find("grupo%-(%a+)") then
+		history_add("Grupos", StripANSI(mensaje_canal))
+		play_sound("canales/grupo.ogg")
+	else
+		-- Cualquier otro canal (info, chat, omiq...)
+		history_add(data.canal, StripANSI(mensaje_canal))
+		play_sound("canales/"..data.canal..".ogg")
+	end -- data.canal
+	
+	output(StripANSI(mensaje_canal))
+	AppendToNotepad(data.canal, StripANSI(mensaje_canal).."\r\n")
 end -- OnGMCP
 
 ]]>

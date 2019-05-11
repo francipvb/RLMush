@@ -1646,16 +1646,16 @@ end)</send>
 
 
 
-
-
-
-
 <script>
 <![CDATA[
 require("var")
 require("math")
 require("string")
 require("rl_stuff")
+
+-- Expresión regular para verificar la línea parcial del prompt predeterminado (no funciona con prompts arbitrariamente modificados)
+local prompt_regex = rex.new("^(>|\\]|\\}) $")
+local prompt_anunciado = false
 
 function OnPluginListChanged()
 	RLStuffListChanged()
@@ -1874,6 +1874,21 @@ function on_seguir(n,l,wc)
 	
 	if en_lista(var.objetivos, pjs) then
 		play_sound("notificaciones/Enemigo.ogg")
+	end -- if
+end -- function
+
+function OnPluginPartialLine(linea)
+	local inicio, fin, wc = prompt_regex:match(linea)
+	if inicio and fin then
+		-- Evitamos que el lector lea esta línea
+		ignore_next()
+		
+		if wc[1] ~= ">" and not prompt_anunciado then
+			play_sound("generales/hb en espera.wav")
+			prompt_anunciado = true
+		else
+			prompt_anunciado = false
+		end -- if
 	end -- if
 end -- function
 

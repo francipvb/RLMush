@@ -849,8 +849,8 @@ function OnPluginInstall()
 	}
 	
 	mapper.init(init_config)
-	config.SCAN.depth = 5000
-	config.DELAY.time = 0.9
+	config.SCAN.depth = 500
+	config.DELAY.time = 0.85
 	
 
 	if var.oculto then
