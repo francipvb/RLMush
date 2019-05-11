@@ -444,8 +444,10 @@ function OnGMCP(mensaje)
 	
 	if mensaje == "Comm.EnciendeCanal" then
 		play_sound("canales/on.ogg")
+		return
 	elseif mensaje == "Comm.ApagaCanal" then
 		play_sound("canales/off.ogg")
+		return
 	end -- text
 	
 	-- Pedimos los datos, eso lo primero

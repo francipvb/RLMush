@@ -1889,6 +1889,9 @@ function OnPluginPartialLine(linea)
 		else
 			prompt_anunciado = false
 		end -- if
+	else
+		-- Nos aseguramos de que lo siguiente se hable
+		output_next()
 	end -- if
 end -- function
 

@@ -307,3 +307,10 @@ function ignore_next()
 		return result
 	end -- if
 end -- function
+
+function output_next()
+	local rc, result = CallPlugin(luatolk_plugin, "output_next")
+	if (rc == 0) then
+		return result
+	end -- if
+end -- function
