@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE escuela>
+
+<escuela nombre="ilusion" nombre_completo="Ilusión">
+	<archivo ruta="ilu_menor.xml" acceso="menor" />
+	<archivo ruta="ilu_neutral.xml" acceso="neutral" />
+	<archivo ruta="ilu_mayor.xml" acceso="neutral" />
+
+</escuela>

@@ -2,7 +2,7 @@
 <!DOCTYPE clase>
 
 <clase nombre="abjurador_blanco" nombre_completo="Abjurador blanco">
-	<archivo ruta="comandos_abju.xml" />
+	<archivo ruta="abjurador.xml" />
 
 	<magia>
 		<escuela nombre="abjuracion" acceso="mayor" />

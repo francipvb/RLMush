@@ -2,6 +2,8 @@
 <!DOCTYPE clase>
 
 <clase nombre="conjurador_blanco">
+	<archivo ruta="conjurador.xml" />
+
 	<magia>
 		<!-- Lista de esferas/escuelas -->
 		

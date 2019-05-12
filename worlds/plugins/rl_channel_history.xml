@@ -492,7 +492,6 @@ function OnGMCP(mensaje)
 	end -- data.canal
 	
 	output(StripANSI(mensaje_canal))
-	AppendToNotepad(data.canal, StripANSI(mensaje_canal).."\r\n")
 end -- OnGMCP
 
 ]]>

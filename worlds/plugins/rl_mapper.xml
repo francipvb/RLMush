@@ -925,35 +925,39 @@ end -- function
 function on_mirar(name, line, wildcards, style)
 	require "rex"
 	local regexp = rex.new("^([\\-*~|]*)(\\w+)([\\-*~|]*)$")
-	local aviso_puertas
+	local aviso_puertas, hay_salidas
 
-	data.nombre = wildcards.room_name
-	data.salidas = wildcards.exits
-	
 	salidas = {}
-	
+
 	for _, salida in pairs(utils.split(wildcards.exits, ",")) do
 		local sstart, send, matches = regexp:match(salida)
-		local tipo = matches[1]
-		local nombre = matches[2]
-		
-		nombre = salidaValida(nombre) or nombre
-		
-		if tipo:find("|") then
-			salidas[nombre] = "c"
-			if not aviso_puertas then
-				play_sound("puertas/puertas_aqui.ogg")
-			end -- aviso_puertas
-		elseif tipo == "*" then
-			salidas[nombre] = "r"
-		else
-			salidas[nombre] = "a"
-		end -- if
-		
+		if matches then
+			hay_salidas = true
+			local tipo = matches[1]
+			local nombre = matches[2]
+
+			nombre = salidaValida(nombre) or nombre
+
+			if tipo:find("|") then
+				salidas[nombre] = "c"
+				if not aviso_puertas then
+					play_sound("puertas/puertas_aqui.ogg")
+				end -- aviso_puertas
+			elseif tipo == "*" then
+				salidas[nombre] = "r"
+			else
+				salidas[nombre] = "a"
+			end -- if
+		end -- matches
 	end -- salidas
 
-	if var.rapido then
-		output(mostrar_salidas(), true)
+	-- Si hay salidas, es una room válida
+	if hay_salidas then
+		data.nombre = wildcards.room_name
+		data.salidas = wildcards.exits
+		if var.rapido then
+			output(mostrar_salidas(), true)
+		end -- if
 	end -- if
 end -- on_mirar
 

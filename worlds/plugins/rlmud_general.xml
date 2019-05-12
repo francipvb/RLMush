@@ -1657,6 +1657,9 @@ require("rl_stuff")
 local prompt_regex = rex.new("^(>|\\]|\\}) $")
 local prompt_anunciado = false
 
+-- Esto es para cuando se leen las contraseñas
+local prompt_contrasenia = false
+
 function OnPluginListChanged()
 	RLStuffListChanged()
 end -- ListChanged
@@ -1883,12 +1886,20 @@ function OnPluginPartialLine(linea)
 		-- Evitamos que el lector lea esta línea
 		ignore_next()
 		
-		if wc[1] ~= ">" and not prompt_anunciado then
+		if wc[1] == ">" then
 			play_sound("generales/hb en espera.wav")
 			prompt_anunciado = true
 		else
 			prompt_anunciado = false
 		end -- if
+	elseif linea == "Introduce la contraseña de tu ficha o de tu cuenta: " then
+		if not prompt_contrasenia then
+			output(linea)
+			prompt_contrasenia = true
+		else
+			prompt_contrasenia = false
+		end -- if
+		ignore_next()
 	else
 		-- Nos aseguramos de que lo siguiente se hable
 		output_next()

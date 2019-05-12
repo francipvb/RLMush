@@ -4,38 +4,41 @@
   <alias
    match="s1"
    enabled="y"
-   group="Caballeros"
+   group="Conjurador"
+   send_to="10"
    sequence="100"
    temporary="y"
   >
-  <send>matar x , xp
-seguir x1</send>
+  <send>fllamas x1 , x , xp</send>
   </alias>
   <alias
    match="s2"
    enabled="y"
-   group="Caballeros"
+   group="Conjurador"
+   send_to="10"
    sequence="100"
    temporary="y"
   >
-  <send>cargar x1 , x , xp</send>
+  <send>facida x1 , x , xp</send>
   </alias>
   <alias
    match="s3"
    enabled="y"
-   group="Caballeros"
+   group="Conjurador"
+   send_to="10"
    sequence="100"
    temporary="y"
   >
-  <send>golperedentor x , xp</send>
+  <send>fhielo x1 , x , xp</send>
   </alias>
   <alias
-   match="s5"
+   match="s4"
    enabled="y"
-   group="Caballeros"
+   group="Conjurador"
+   send_to="10"
    sequence="100"
    temporary="y"
   >
-  <send>golperedentor area</send>
+  <send>mignis x1 , x , xp</send>
   </alias>
 </aliases>

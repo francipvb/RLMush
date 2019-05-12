@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="iso8859-15"?>
+<!DOCTYPE muclient[
+  <!ENTITY prefijo "(?:(\&gt;|\}|\]) |)">
+  ]>
+
+<muclient>
+<aliases>
+  <alias
+   match="ej"
+   enabled="y"
+   group="Espejismo"
+   send_to="12"
+   sequence="100"
+   temporary="y"
+  >
+  <send>
+    local espejos = tonumber(GetVariable("imagenes"))
+    if espejos and espejos &gt; 0 then
+      output(espejos.." imágenes", true)
+    else
+      output("Sin espejismo.", true)
+    end -- if
+  </send>
+  </alias>
+  <alias
+   match="esp"
+   enabled="y"
+   group="Espejismo"
+   sequence="100"
+   temporary="y"
+  >
+  <send>formular espejismo</send>
+  </alias>
+</aliases>
+
+<triggers>
+  <trigger
+   enabled="y"
+   group="Espejismo"
+   match="^(?:(&gt;|\]|\}) |)\# Una de tus imagenes desaparece cuando (.*?) la golpea\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+   temporary="y"
+  >
+  <send>
+    local num_imagenes = tonumber(GetVariable("imagenes", "0"))
+
+    if num_imagenes &gt; 0 then
+      num_imagenes = num_imagenes -1
+    end -- if
+
+    SetVariable("imagenes", num_imagenes)
+  </send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Espejismo"
+   match="^(?:(&gt;|\]|\}) |)¡Tus imágenes se desvanecen\!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+   temporary="y"
+  >
+  <send>
+    play_sound("hechizos/piel off.ogg")
+    DeleteVariable("imagenes")
+  </send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Espejismo"
+   match="^(?:(?:&gt;|\]|\}) |)Tus clones ilusorios se dividen y reorganizan\, haciendo que tu total de imágenes suba a (\d+?)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+   temporary="y"
+  >
+  <send>
+    SetVariable("imagenes", "%1")
+  </send>
+  </trigger>
+  <trigger
+   enabled="y"
+   group="Espejismo"
+   match="^(\w+) imagenes semejantes a ti aparecen a tu alrededor\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+   temporary="y"
+  >
+  <send>
+    local numeros = {
+      "una", "dos", "tres", "cuatro",
+      "cinco", "seis", "siete", "ocho", "nueve", "diez",
+      "once", "doce", "trece", "catorce",
+      "quince", "dieciseis", "diecisiete",
+      "dieciocho", "diecinueve", "veinte", "veintiuno"
+    }
+
+    local imagenes = string.lower("%1")
+    local num_imagenes = 0
+
+    for k, v in ipairs(numeros) do
+      if v == imagenes then
+        num_imagenes = k
+        break
+      end -- if
+    end -- for
+
+    SetVariable("imagenes", num_imagenes)</send>
+  </trigger>
+</triggers>
+
+</muclient>

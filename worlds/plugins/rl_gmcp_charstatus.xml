@@ -35,7 +35,7 @@ gmcpdata = {}
 prev_data = {}
 
 function mostrar_pvs()
-	if IsConnected() then
+	if IsConnected() and gmcpdata.pvs then
 		output(string.format([[
 		%i/%i (%i%%)
 		]], gmcpdata.pvs.min, gmcpdata.pvs.max, (gmcpdata.pvs.min / gmcpdata.pvs.max) * 100))
@@ -45,7 +45,7 @@ function mostrar_pvs()
 end -- function
 
 function mostrar_pes()
-	if IsConnected() then
+	if IsConnected() and gmcpdata.pe then
 		output(string.format([[
 		%i/%i (%i%%)
 		]], gmcpdata.pe.min, gmcpdata.pe.max, (gmcpdata.pe.min / gmcpdata.pe.max) * 100))
@@ -55,7 +55,7 @@ function mostrar_pes()
 end -- function
 
 function mostrar_xp()
-	if IsConnected() then
+	if IsConnected() and gmcpdata.xp then
 		output(string.format([[
 		%i/%i (%i%%)
 		]], gmcpdata.xp.min, gmcpdata.xp.max, (gmcpdata.xp.min / gmcpdata.xp.max) * 100))
